@@ -3,13 +3,14 @@ import { cors } from '@elysiajs/cors'
 import { logOnStart } from '@/utils/log-on-start';
 import { wrap } from '@bogeychan/elysia-logger';
 import { logger } from '@/lib/logger';
+import { env } from '@/config/env';
 
 const app = new Elysia()
   .use(
     wrap(logger)
   )
 .use(cors({
-    origin: 'http://localhost:3000'
+    origin: env.APP_ORIGIN
 }))
     .get('/', () => 'Hi Elysia 12322s')
     .get('/id/:id', ({ params: { id } }) => id)
@@ -20,7 +21,7 @@ const app = new Elysia()
         })
     })
     
-    .listen(3001)
+    .listen(env.PORT)
 
 logOnStart()
 
