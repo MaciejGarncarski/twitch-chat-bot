@@ -1,6 +1,6 @@
 export const formatDuration = (totalSeconds: number): string => {
   if (totalSeconds < 0 || !Number.isFinite(totalSeconds)) {
-    return "0:00"; // Handle invalid input
+    return "0:00";
   }
 
   const hours = Math.floor(totalSeconds / 3600);

@@ -1,0 +1,2 @@
+export const MAX_VIDEO_DURATION_SECONDS = 300;
+export const MIN_VIDEO_DURATION_SECONDS = 1;

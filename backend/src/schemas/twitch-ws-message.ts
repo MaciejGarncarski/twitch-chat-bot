@@ -41,6 +41,18 @@ const messageFragments = z.union([
   mentionFragment,
 ]);
 
+const replySchema = z.object({
+  parent_message_id: z.string(),
+  parent_message_body: z.string(),
+  parent_user_id: z.string(),
+  parent_user_login: z.string(),
+  parent_user_name: z.string(),
+  thread_message_id: z.string(),
+  thread_user_id: z.string(),
+  thread_user_login: z.string(),
+  thread_user_name: z.string(),
+});
+
 export const twitchMessageSchema = z.object({
   metadata: z.object({
     message_type: z.string(),
@@ -87,7 +99,7 @@ export const twitchMessageSchema = z.object({
         source_badges: z.null(),
         message_type: z.string(),
         cheer: z.null(),
-        reply: z.null(),
+        reply: replySchema.nullable(),
         channel_points_custom_reward_id: z.null(),
         channel_points_animation_id: z.null(),
       })

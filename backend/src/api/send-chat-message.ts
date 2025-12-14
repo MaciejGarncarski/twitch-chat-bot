@@ -1,6 +1,9 @@
 import { env } from "@/config/env";
 
-export const sendChatMessage = async (message: string) => {
+export const sendChatMessage = async (
+  message: string,
+  replyChatId?: string
+) => {
   await fetch("https://api.twitch.tv/helix/chat/messages", {
     method: "POST",
     headers: {
@@ -12,6 +15,7 @@ export const sendChatMessage = async (message: string) => {
       broadcaster_id: "487187142",
       sender_id: "487187142",
       message: message,
+      reply_parent_message_id: replyChatId ? replyChatId : undefined,
     }),
   });
 };

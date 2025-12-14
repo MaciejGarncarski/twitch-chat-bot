@@ -5,7 +5,7 @@ const ytDlpDurationSchema = z.object({
   title: z.string(),
 });
 
-export const getVideoLength = async (videoUrl: string): Promise<number> => {
+export const getVideoLengthAndTitle = async (videoUrl: string) => {
   const command = ["yt-dlp", "-J", "--skip-download", videoUrl];
 
   const process = Bun.spawn(command, {
@@ -38,7 +38,10 @@ export const getVideoLength = async (videoUrl: string): Promise<number> => {
       throw new Error(`Could not find duration for video: ${metadata.title}`);
     }
 
-    return metadata.duration;
+    return {
+      duration: metadata.duration,
+      title: metadata.title,
+    };
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(
