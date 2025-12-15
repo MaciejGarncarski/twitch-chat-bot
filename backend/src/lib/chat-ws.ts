@@ -1,13 +1,11 @@
 import { sendChatMessage } from "@/api/send-chat-message";
 import { env } from "@/config/env";
-import { getYtVideo } from "@/lib/get-yt-video";
 import { logger } from "@/lib/logger";
 import { SongQueue } from "@/lib/queue";
 import { twitchMessageSchema } from "@/schemas/twitch-ws-message";
 import { formatDuration } from "@/utils/format-duration";
 
 await unsubscribeAll();
-
 export const songQueue = new SongQueue();
 
 export class ChatWebSocket {
@@ -74,52 +72,44 @@ export class ChatWebSocket {
         const added = await songQueue.add({
           userId: user,
           videoUrl: videoLink,
+          videoId: videoId,
         });
+
+        const durationUntilPlay = songQueue.getDurationBeforePlayingCurrent();
+        console.log(durationUntilPlay, formatDuration(durationUntilPlay));
 
         await sendChatMessage(
           `Dodano do kolejki ${videoLink} przez @${user} (długość: ${formatDuration(
             added.duration
-          )}). Pozycja w kolejce ${added.position}. Odtwarzanie za ${
-            added.formattedTimeUntilPlay
-          }.`,
+          )}). Pozycja w kolejce ${
+            added.position
+          }. Odtwarzanie za ${formatDuration(durationUntilPlay)}.`,
           messageId
         );
       } catch (e) {
+        let message = `FootYellow Nie udało się dodać do kolejki ${videoLink} przez @${user} FootYellow`;
+
         if (e instanceof Error) {
           logger.error(e.message);
 
           if (e.message === "ALREADY_EXISTS") {
-            await sendChatMessage(
-              `FootYellow Filmik już dodany FootYellow`,
-              messageId
-            );
+            message = `FootYellow Filmik już dodany FootYellow`;
+          }
 
-            return;
+          if (e.message === "QUEUE_FULL") {
+            message = `PoroSad Kolejka jest pełna! Spróbuj ponownie później PoroSad`;
           }
 
           if (e.message === "TOO_LONG") {
-            await sendChatMessage(
-              `FootYellow Za długi filmik ${videoLink} dodany przez @${user} FootYellow`,
-              messageId
-            );
-
-            return;
+            message = `FootYellow Za długi filmik FootYellow`;
           }
 
           if (e.message === "TOO_SHORT") {
-            await sendChatMessage(
-              `FootYellow Za krótki filmik ${videoLink} dodany przez @${user} FootYellow`,
-              messageId
-            );
-
-            return;
+            message = `FootYellow Za krótki filmik FootYellow`;
           }
         }
 
-        await sendChatMessage(
-          `FootYellow Nie udało się dodać do kolejki ${videoLink} przez @${user} FootYellow`,
-          messageId
-        );
+        await sendChatMessage(message, messageId);
       }
     }
   }
@@ -177,8 +167,8 @@ async function subscribeToChat(sessId: string) {
         type: "channel.chat.message",
         version: "1",
         condition: {
-          broadcaster_user_id: "487187142",
-          user_id: "487187142",
+          broadcaster_user_id: env.TWITCH_BROADCASTER_ID,
+          user_id: env.TWITCH_USER_ID,
         },
         transport: {
           method: "websocket",

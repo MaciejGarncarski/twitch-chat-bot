@@ -1,28 +1,27 @@
 import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { logOnStart } from "@/utils/log-on-start";
-import { wrap } from "@bogeychan/elysia-logger";
-import { logger } from "@/lib/logger";
 import { env } from "@/config/env";
 import { ChatWebSocket, songQueue } from "@/lib/chat-ws";
 import { sendChatMessage } from "@/api/send-chat-message";
-import { getBunServer, setBunServer } from "@/utils/init-ws";
-import { serve } from "bun";
+import { setBunServer } from "@/utils/init-ws";
+import { playbackManager } from "@/lib/playback-manager";
 
 new ChatWebSocket();
 
 export const app = new Elysia()
-  .use(wrap(logger))
   .use(
     cors({
-      origin: env.APP_ORIGIN,
+      origin:
+        env.NODE_ENV === "development"
+          ? ["http://localhost:3000", env.APP_ORIGIN]
+          : [env.APP_ORIGIN],
     })
   )
   .onStart(async ({ server }) => {
     logOnStart();
-    await sendChatMessage("CoolCat Bot działa GoatEmotey");
+    await sendChatMessage("CoolCat Inicjalizacja bota zakończona GoatEmotey");
     setBunServer(server);
-    throw new Error();
   })
   .onStop(async () => {
     await sendChatMessage("Bot wyłączony ResidentSleeper");
@@ -42,48 +41,32 @@ export const app = new Elysia()
     const data = songQueue.getQueue();
     return data;
   })
-  .post("/next", async ({ set }) => {
-    const nextItem = await songQueue.prepareNext();
-    if (!nextItem) {
-      set.status = 204;
-      return "Kolejka pusta.";
+  .get("/song/:id", async ({ params, set, status }) => {
+    const id = params.id;
+    const item = songQueue.getQueue().find((item) => item.id === id);
+
+    if (!item) {
+      return status(404, "Song not found");
     }
-    return { id: nextItem.id };
+
+    return "OK";
   })
-  .get("/play-current", async ({ set, request }) => {
-    const current = songQueue.getCurrent();
-    if (!current) {
-      set.status = 404;
-      return;
-    }
-
-    set.headers["Content-Type"] = "audio/mpeg";
-    set.headers["Accept-Ranges"] = "bytes";
-
-    const ffmpeg = Bun.spawn([
-      "ffmpeg",
-      "-reconnect",
-      "1",
-      "-reconnect_streamed",
-      "1",
-      "-reconnect_delay_max",
-      "5",
-      "-i",
-      current.audioUrl,
-      "-vn",
-      "-c:a",
-      "mp3",
-      "-f",
-      "mp3",
-      "pipe:1",
-    ]);
-
-    return new Response(ffmpeg.stdout);
+  .post("/pause", async () => {
+    playbackManager.pause();
+    return {
+      status: "ok",
+    };
+  })
+  .post("/play", async () => {
+    playbackManager.play();
+    return {
+      status: "ok",
+    };
   })
   .ws("/ws", {
     open(ws) {
       console.log("New WebSocket connection established.");
-      ws.subscribe("playback");
+      ws.subscribe("playback-status");
     },
     message(ws, msg) {
       console.log(msg);
@@ -92,7 +75,7 @@ export const app = new Elysia()
       console.log(`WebSocket connection closed: ${code} - ${reason}`);
     },
   })
-  .listen(env.PORT);
+  .listen({ port: env.PORT || 3001 });
 
 process.on("SIGINT", () => {
   console.log("Received SIGINT. Stopping server...");

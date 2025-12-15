@@ -1,5 +1,15 @@
 export const getYtVideo = async (videoUrl: string): Promise<string> => {
-  const command = ["yt-dlp", "-f", "bestaudio", "-g", videoUrl];
+  const command = [
+    "yt-dlp",
+    "--quiet",
+    "--no-warnings",
+    "--no-playlist",
+    "--extractor-args=youtube:player_client=android",
+    "-f",
+    "ba/best",
+    "-g",
+    videoUrl,
+  ];
 
   const process = Bun.spawn(command, {
     stdout: "pipe",
@@ -16,16 +26,14 @@ export const getYtVideo = async (videoUrl: string): Promise<string> => {
   const errorOutput = new TextDecoder().decode(errorBytes).trim();
 
   if (exit !== 0) {
-    const errorMessage = errorOutput || `yt-dlp failed with exit code ${exit}.`;
-
     if (
-      errorMessage.includes("Video unavailable") ||
-      errorMessage.includes("Private video")
+      errorOutput.includes("Video unavailable") ||
+      errorOutput.includes("Private video")
     ) {
       throw new Error(`Video unavailable or private: ${videoUrl}`);
     }
 
-    throw new Error(`yt-dlp execution error: ${errorMessage}`);
+    throw new Error(`yt-dlp execution error: ${errorOutput || exit}`);
   }
 
   if (!output) {

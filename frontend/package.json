@@ -24,13 +24,15 @@
     "@ttv-song-request/eden-rpc": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "hls.js": "^1.5.17",
     "lucide-react": "^0.544.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-use-websocket": "^4.13.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.6",
-    "tw-animate-css": "^1.3.6"
+    "tw-animate-css": "^1.3.6",
+    "zod": "^4.2.0"
   },
   "devDependencies": {
     "@tanstack/devtools-vite": "^0.3.11",

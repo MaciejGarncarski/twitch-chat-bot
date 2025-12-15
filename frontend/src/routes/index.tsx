@@ -2,43 +2,50 @@ import { createFileRoute } from '@tanstack/react-router'
 import { treaty } from '@elysiajs/eden'
 import type { App as AppTreaty } from '@ttv-song-request/eden-rpc'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect } from 'react'
+import { z } from 'zod'
+import { getWebsocket } from '@/lib/websocket'
 import { Button } from '@/components/ui/button'
-import useWebSocket from 'react-use-websocket'
+
+const playbackSchema = z.object({
+  isPlaying: z.boolean(),
+  volume: z.number(),
+  playTime: z.number(),
+  startedAt: z.number().nullable(),
+  songId: z.string().nullable(),
+})
 
 export const Route = createFileRoute('/')({
   component: App,
 })
 
-const app = treaty<AppTreaty>('localhost:3001')
+const api = treaty<AppTreaty>('localhost:3001')
 
 function App() {
-  const [socketUrl] = useState('ws://localhost:3001/ws')
-
-  const { lastMessage } = useWebSocket(socketUrl)
-
   const { isLoading, data } = useQuery({
     queryKey: ['queue'],
-    queryFn: () => app.queue.get(),
+    queryFn: async () => {
+      const data = await api.queue.get()
+      return data.data
+    },
+    refetchInterval: 5000,
   })
 
-  const audioRef = useRef<HTMLAudioElement>(null)
-
-  console.log(lastMessage)
-
   useEffect(() => {
-    if (lastMessage !== null) {
-      const messageData = JSON.parse(lastMessage.data)
-      const status = messageData.status
+    const websocket = getWebsocket()
 
-      if (status === 'playing') {
-        if (!audioRef.current) return
-        console.log('playing audio')
-        audioRef.current.src = 'http://localhost:3001/play-current'
-        audioRef.current.play()
-      }
+    websocket.subscribe((message) => {
+      console.log('got', message)
+    })
+
+    websocket.on('open', () => {
+      websocket.send('hello from client')
+    })
+
+    return () => {
+      websocket.close()
     }
-  }, [lastMessage])
+  }, [])
 
   if (isLoading) {
     return <div>Loading...</div>
@@ -46,39 +53,33 @@ function App() {
 
   return (
     <div className="text-center">
-      <Button type="button" onClick={() => app.next.post()}>
-        load next
-      </Button>
-      <div>
-        {data?.data?.map((item) => (
-          <div key={item.id} className="border p-4 my-2">
-            <h2 className="text-xl font-bold">{item.title}</h2>
-            <p>Requested by: {item.userId}</p>
-            <p>Position in queue: {item.position}</p>
-            <p>Time until play: {item.formattedTimeUntilPlay}</p>
-            <p>
-              Duration: {Math.floor(item.duration / 60)}:
-              {(item.duration % 60).toString().padStart(2, '0')}
-            </p>
+      <div className="bg-black">
+        {data?.map((item) => (
+          <div key={item.id} className="p-4 border-b border-gray-700 flex items-center">
+            {item.thumbnail && (
+              <a href={item.videoUrl} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  className="h-16 object-cover mr-4 rounded border border-gray-500"
+                />
+              </a>
+            )}
+            <div className="text-left">
+              <div className="text-white font-semibold">{item.title}</div>
+              <div className="text-gray-400 text-sm">
+                Position: {item.position} | Duration: {Math.floor(item.duration / 60)}:
+                {item.duration % 60 < 10 ? '0' : ''}
+                {item.duration % 60} | Time Until Play: {item.formattedTimeUntilPlay}
+              </div>
+            </div>
           </div>
         ))}
-      </div>
-      <Button
-        onClick={() => {
-          if (!audioRef.current) return
 
-          audioRef.current.src = 'http://localhost:3001/play-current'
-          audioRef.current.play()
-        }}
-      >
-        play
-      </Button>
-      <audio controls ref={audioRef} autoPlay></audio>
-
-      <div>
-        <Button type="button" onClick={() => app.get()}>
-          fetch rpc
-        </Button>
+        <div>
+          <Button onClick={() => api.pause.post()}>Pause</Button>
+          <Button onClick={() => api.play.post()}>Play</Button>
+        </div>
       </div>
     </div>
   )

@@ -12,8 +12,8 @@ export const sendChatMessage = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      broadcaster_id: "487187142",
-      sender_id: "487187142",
+      broadcaster_id: env.TWITCH_BROADCASTER_ID,
+      sender_id: env.TWITCH_USER_ID,
       message: message,
       reply_parent_message_id: replyChatId ? replyChatId : undefined,
     }),

@@ -3,6 +3,7 @@ import z from "zod";
 export const songRequestInputSchema = z.object({
   userId: z.string().min(1),
   videoUrl: z.string(),
+  videoId: z.string(),
 });
 
 export type QueuedItem = {
@@ -12,10 +13,7 @@ export type QueuedItem = {
   duration: number;
   title: string;
   requestedAt: Date;
-};
-
-export type PlayableItem = QueuedItem & {
-  audioUrl: string;
+  thumbnail: string | null;
 };
 
 export type QueueTrackedItem = QueuedItem & {
