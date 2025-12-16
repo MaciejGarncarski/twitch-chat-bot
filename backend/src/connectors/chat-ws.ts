@@ -1,6 +1,8 @@
 import { CurrentSongCommandHandler } from "@/commands/current-song-command-handler";
 import { GithubCommandHandler } from "@/commands/github-commang-handler";
 import { HelpCommandHandler } from "@/commands/help-command-handler";
+import { PauseCommandHandler } from "@/commands/pause-command-handler";
+import { PlayCommandHandler } from "@/commands/play-command-handler";
 import { QueueCommandHandler } from "@/commands/quque-command-handler";
 import { SkipCommandHandler } from "@/commands/skip-command-handler";
 import { YoutubeSrHandler } from "@/commands/sr-command-handler";
@@ -24,6 +26,8 @@ const commandHandlers = [
   new VolumeCommandHandler(),
   new WrongSongCommandHandler(),
   new GithubCommandHandler(),
+  new PlayCommandHandler(),
+  new PauseCommandHandler(),
   new HelpCommandHandler(),
 ];
 const processor = new CommandProcessor(commandHandlers);

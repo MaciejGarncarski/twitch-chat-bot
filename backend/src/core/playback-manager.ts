@@ -84,7 +84,6 @@ export class PlaybackManager {
     }
 
     this.intervalId = setInterval(async () => {
-      console.log("pause interval");
       const currentPlayTime = this.getPlayTime();
 
       if (
