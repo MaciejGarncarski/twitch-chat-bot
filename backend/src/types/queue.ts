@@ -16,7 +16,14 @@ export type QueuedItem = {
   thumbnail: string | null;
 };
 
-export type QueueTrackedItem = QueuedItem & {
+export type QueueTrackedItem = {
+  id: string;
+  username: string;
+  videoUrl: string;
+  duration: number;
+  title: string;
+  requestedAt: Date;
+  thumbnail: string | null;
   position: number;
   timeUntilPlay: number;
   formattedTimeUntilPlay: string;
