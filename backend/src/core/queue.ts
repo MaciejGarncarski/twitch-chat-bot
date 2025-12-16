@@ -2,14 +2,14 @@ import {
   MAX_VIDEO_DURATION_SECONDS,
   MIN_VIDEO_DURATION_SECONDS,
 } from "@/config/video";
-import { getVideoMetadata } from "@/lib/get-video-metadata";
-import { playbackManager } from "@/lib/playback-manager";
+import { getVideoMetadata } from "@/data/get-video-metadata";
+import { playbackManager } from "@/core/playback-manager";
 import {
   QueuedItem,
   QueueTrackedItem,
   songRequestInputSchema,
-} from "@/schemas/queue";
-import { formatDuration } from "@/utils/format-duration";
+} from "@/types/queue";
+import { formatDuration } from "@/helpers/format-duration";
 import z from "zod";
 
 export class SongQueue {
@@ -53,6 +53,10 @@ export class SongQueue {
 
   public get length(): number {
     return this.queue.length;
+  }
+
+  public isEmpty(): boolean {
+    return this.queue.length === 0 && this.currentPlaying === null;
   }
 
   private checkIfExists(videoUrl: string): boolean {
@@ -115,6 +119,7 @@ export class SongQueue {
 
       playbackManager.setSong(newItem.id, newItem.duration);
       playbackManager.play();
+      this.queue.push(newItem);
     } else {
       this.queue.push(newItem);
     }

@@ -1,6 +1,6 @@
-import { songQueue } from "@/lib/chat-ws";
-import { logger } from "@/lib/logger";
-import { getBunServer } from "@/utils/init-ws";
+import { songQueue } from "@/connectors/chat-ws";
+import { logger } from "@/helpers/logger";
+import { getBunServer } from "@/helpers/init-ws";
 
 export class PlaybackManager {
   private isPlaying: boolean;
@@ -38,13 +38,13 @@ export class PlaybackManager {
     if (this.intervalId === null) {
       this.intervalId = setInterval(async () => {
         const currentPlayTime = this.getPlayTime();
-        console.log({ currentPlayTime });
+        // console.log({ currentPlayTime });
 
         if (
           this.currentSongDuration > 0 &&
           currentPlayTime >= this.currentSongDuration
         ) {
-          console.log("Utwór się zakończył. Wywołuję handleSongEnd.");
+          logger.info("[PLAYBACK] Song ended, handling next in queue.");
           this.handleSongEnd();
           return;
         }

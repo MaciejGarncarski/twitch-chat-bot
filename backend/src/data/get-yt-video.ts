@@ -4,9 +4,8 @@ export const getYtVideo = async (videoUrl: string): Promise<string> => {
     "--quiet",
     "--no-warnings",
     "--no-playlist",
-    "--extractor-args=youtube:player_client=android",
     "-f",
-    "ba/best",
+    "bestaudio",
     "-g",
     videoUrl,
   ];

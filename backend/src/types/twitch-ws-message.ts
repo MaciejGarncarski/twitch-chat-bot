@@ -106,3 +106,5 @@ export const twitchMessageSchema = z.object({
       .optional(),
   }),
 });
+
+export type TwitchWSMessage = z.infer<typeof twitchMessageSchema>;

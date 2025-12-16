@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
-import { logOnStart } from "@/utils/log-on-start";
+import { logOnStart } from "@/helpers/log-on-start";
 import { env } from "@/config/env";
-import { ChatWebSocket, songQueue } from "@/lib/chat-ws";
+import { ChatWebSocket, songQueue } from "@/connectors/chat-ws";
 import { sendChatMessage } from "@/api/send-chat-message";
-import { setBunServer } from "@/utils/init-ws";
-import { playbackManager } from "@/lib/playback-manager";
+import { setBunServer } from "@/helpers/init-ws";
+import { playbackManager } from "@/core/playback-manager";
 
 new ChatWebSocket();
 
@@ -22,12 +22,21 @@ export const app = new Elysia()
     logOnStart();
     await sendChatMessage("CoolCat Inicjalizacja bota zakończona GoatEmotey");
     setBunServer(server);
+
+    if (env.NODE_ENV === "development") {
+      // for convenience, add a test song on startup
+
+      await songQueue.add({
+        userId: "maciej_ga",
+        videoUrl: "https://www.youtube.com/watch?v=TWxXXcVQevI",
+        videoId: "TWxXXcVQevI",
+      });
+    }
   })
   .onStop(async () => {
     await sendChatMessage("Bot wyłączony ResidentSleeper");
   })
   .onError(async ({ code, status }) => {
-    console.log({ code, status });
     if (code === "NOT_FOUND") {
       return status(404, {
         status: "Endpoint not found",
