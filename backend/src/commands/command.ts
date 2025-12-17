@@ -1,6 +1,6 @@
 import { sendChatMessage } from "@/api/send-chat-message";
 import { PlaybackManager } from "@/core/playback-manager";
-import { SongQueue } from "@/core/queue";
+import { SongQueue } from "@/core/song-queue";
 import { logger } from "@/helpers/logger";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
 

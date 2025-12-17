@@ -70,6 +70,7 @@ export const twitchMessageSchema = z.object({
       .object({
         id: z.string().nullable(),
         reconnect_url: z.string().nullable(),
+        keepalive_timeout_seconds: z.number().nullable(),
       })
       .optional(),
     subscription: z

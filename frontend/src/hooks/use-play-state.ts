@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, type RefObject } from 'react'
 
 export const usePlayState = (
-  videoRef: React.RefObject<HTMLVideoElement | null>,
+  videoRef: RefObject<HTMLVideoElement | null>,
   playTime: number,
   isPlaying: boolean,
 ) => {

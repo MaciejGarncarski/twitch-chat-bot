@@ -5,9 +5,10 @@ import { formatDuration } from '@/utils/format-duration'
 import { useMutation } from '@tanstack/react-query'
 import { Clock3, LoaderIcon, Pause, Play, Volume, Volume1, Volume2, VolumeX } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+import { useState, type RefObject } from 'react'
 
 type PlayerProps = {
+  videoRef: RefObject<HTMLVideoElement | null>
   currentSong: {
     id: string
     title: string
@@ -24,13 +25,17 @@ type PlayerProps = {
   }
 }
 
-export const Player = ({ currentSong, playbackData }: PlayerProps) => {
+export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       if (playbackData.isPlaying) {
         await api.pause.post()
+
+        if (videoRef.current) {
+          videoRef.current.pause()
+        }
       } else {
         await api.play.post()
       }

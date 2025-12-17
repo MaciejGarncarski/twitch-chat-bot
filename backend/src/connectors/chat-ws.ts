@@ -12,7 +12,8 @@ import {
   subscribeToChat,
   unsubscribeAll,
 } from "@/connectors/chat-subscription";
-import { SongQueue } from "@/core/queue";
+import { SongQueue } from "@/core/song-queue";
+import { logger } from "@/helpers/logger";
 import CommandProcessor from "@/processors/command-processor";
 import { twitchMessageSchema } from "@/types/twitch-ws-message";
 
@@ -33,40 +34,95 @@ const commandHandlers = [
 const processor = new CommandProcessor(commandHandlers);
 
 export class ChatWebSocket {
-  private ws: WebSocket;
-  private sessionId: string;
-  private readonly WS_URL = "wss://eventsub.wss.twitch.tv/ws";
+  private ws!: WebSocket;
+  private sessionId: string = "";
+  private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws";
+  private keepaliveTimeout: number = 30_000;
+  private missedMessageTimer?: NodeJS.Timeout;
 
   constructor() {
-    this.sessionId = "";
-    this.ws = new WebSocket(this.WS_URL);
+    this.connect();
+  }
 
-    this.ws.addEventListener("message", async ({ data }) => {
-      this.handleMessage(data);
+  private connect(url: string = this.DEFAULT_WS_URL) {
+    const newWs = new WebSocket(url);
+
+    newWs.addEventListener("message", async ({ data }) => {
+      this.resetKeepaliveTimer();
+      await this.handleMessage(data, newWs);
+    });
+
+    newWs.addEventListener("close", () => {
+      this.stopKeepaliveTimer();
+      logger.info("[CHAT WS] Connection lost. Retrying in 3s...");
+      setTimeout(() => this.connect(), 3000);
     });
   }
 
-  async handleMessage(data: string) {
-    const parsed = twitchMessageSchema.parse(JSON.parse(data));
-    if (parsed?.payload?.session?.id) {
-      if (!this.sessionId) {
-        await subscribeToChat(parsed.payload.session.id);
+  async handleMessage(rawData: string, socketContext: WebSocket) {
+    const parsed = twitchMessageSchema.parse(JSON.parse(rawData));
+    const { message_type } = parsed.metadata;
+
+    switch (message_type) {
+      case "session_welcome": {
+        const timeoutSeconds =
+          parsed.payload.session?.keepalive_timeout_seconds;
+        if (timeoutSeconds) {
+          this.keepaliveTimeout = timeoutSeconds * 1000;
+        }
+
+        const newSessionId = parsed.payload.session?.id;
+
+        if (!newSessionId) {
+          logger.error("[CHAT WS] No session ID received in session_welcome.");
+          return;
+        }
+
+        if (this.ws && this.ws !== socketContext) {
+          logger.info("[CHAT WS] Reconnection successful. Closing old socket.");
+          this.ws.close();
+        } else {
+          logger.info("[CHAT WS] Connection established.");
+          await subscribeToChat(newSessionId);
+        }
+
+        this.ws = socketContext;
+        this.sessionId = newSessionId;
+        break;
       }
 
-      this.sessionId = parsed.payload.session.id;
+      case "session_reconnect": {
+        const reconnectUrl = parsed.payload.session?.reconnect_url;
+        if (reconnectUrl) {
+          logger.info(
+            "[CHAT WS] Received reconnect notice. Connecting to new URL..."
+          );
+          this.connect(reconnectUrl);
+        }
+        break;
+      }
+
+      case "notification": {
+        await processor.process(parsed);
+        break;
+      }
+
+      case "session_keepalive":
+        break;
     }
+  }
 
-    if (parsed.metadata.message_type === "session_reconnect") {
-      if (!parsed.payload?.session?.reconnect_url) {
-        throw new Error("Invalid recconect_url");
-      }
-
+  private resetKeepaliveTimer() {
+    this.stopKeepaliveTimer();
+    this.missedMessageTimer = setTimeout(() => {
+      logger.warn(
+        "[CHAT WS] No keepalive received. Connection ghosted. Reconnecting..."
+      );
       this.ws.close();
-      this.ws = new WebSocket(parsed.payload.session.reconnect_url);
-    }
+    }, this.keepaliveTimeout + 2000);
+  }
 
-    if (parsed.metadata.message_type === "notification") {
-      await processor.process(parsed);
-    }
+  private stopKeepaliveTimer() {
+    if (this.missedMessageTimer) clearTimeout(this.missedMessageTimer);
   }
 }

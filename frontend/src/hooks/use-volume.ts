@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, type RefObject } from 'react'
 
-export const useVolume = (videoRef: React.RefObject<HTMLVideoElement | null>, volume: number) => {
+export const useVolume = (videoRef: RefObject<HTMLVideoElement | null>, volume: number) => {
   useEffect(() => {
     const videoElement = videoRef.current
     if (!videoElement) {

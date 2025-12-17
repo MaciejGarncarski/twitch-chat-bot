@@ -1,10 +1,7 @@
 import Hls from 'hls.js'
-import { useEffect } from 'react'
+import { useEffect, type RefObject } from 'react'
 
-export const useHls = (
-  videoRef: React.RefObject<HTMLVideoElement | null>,
-  songId: string | null,
-) => {
+export const useHls = (videoRef: RefObject<HTMLVideoElement | null>, songId: string | null) => {
   useEffect(() => {
     const hlsUrl = 'http://localhost:3001/stream/' + songId + `/${songId}.m3u8`
     const videoElement = videoRef.current

@@ -69,9 +69,9 @@ function App() {
           ) : (
             <>
               {currentSong && playbackData ? (
-                <Player currentSong={currentSong} playbackData={playbackData} />
+                <Player currentSong={currentSong} playbackData={playbackData} videoRef={videoRef} />
               ) : (
-                <motion.p className="py-28 text-2xl">Brak piosenek w kolejce.</motion.p>
+                <motion.p className="py-20 text-2xl">Brak piosenek w kolejce.</motion.p>
               )}
             </>
           )}
