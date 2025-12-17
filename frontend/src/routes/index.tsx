@@ -62,7 +62,7 @@ function App() {
 
   return (
     <div className="text-center min-h-screen max-w-2xl mx-auto px-8 py-10">
-      <div className="flex flex-col gap-4 items-center h-40">
+      <div className="flex flex-col gap-4 items-center h-40 bg-neutral-900/80 px-4">
         <AnimatePresence mode="wait">
           {isLoading ? (
             <motion.p className="py-28 text-2xl">Ładowanie...</motion.p>
@@ -78,7 +78,9 @@ function App() {
         </AnimatePresence>
       </div>
 
-      <Queue />
+      <AnimatePresence mode="wait">
+        {isLoading || queueData?.length === 0 ? null : <Queue />}
+      </AnimatePresence>
 
       <div className="">
         <video ref={videoRef} />

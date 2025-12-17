@@ -1,4 +1,5 @@
 import { api } from '@/api/api-treaty'
+import { cn } from '@/lib/utils'
 import type { QueueTrackedItem } from '@/routes'
 import { formatDuration } from '@/utils/format-duration'
 import { useQuery } from '@tanstack/react-query'
@@ -19,11 +20,16 @@ export const Queue = () => {
   }
 
   return (
-    <div className="flex flex-col">
-      <h2 className="mr-auto ml-1 pb-2 text-lg font-semibold">Kolejka</h2>
-      <div className="border rounded-lg border-neutral-700 overflow-hidden min-h-56">
-        <AnimatePresence>
-          {queueData?.map((item) => (
+    <motion.div
+      className="flex flex-col bg-neutral-900/80 px-4"
+      animate={{ opacity: 1, transition: { duration: 0.5 } }}
+      initial={{ opacity: 0, transition: { duration: 0.5 } }}
+      exit={{ opacity: 0, transition: { duration: 1 } }}
+    >
+      <h2 className="mr-auto ml-1 pb-2 text-lg font-semibold text-neutral-300">Kolejka</h2>
+      <div className="border rounded-lg border-neutral-700 overflow-hidden">
+        <AnimatePresence mode="wait">
+          {queueData?.map((item, idx) => (
             <motion.div
               layout
               key={item.id}
@@ -45,7 +51,10 @@ export const Queue = () => {
                 translateX: 0,
                 transition: { duration: 0.3 },
               }}
-              className="p-4 border-b border-neutral-700 bg-neutral-800 flex gap-4 items-center"
+              className={cn(
+                'p-4 border-b border-neutral-700 bg-neutral-800 flex gap-4 items-center',
+                idx === queueData.length - 1 && 'border-b-0',
+              )}
             >
               {item.thumbnail && (
                 <a
@@ -57,7 +66,7 @@ export const Queue = () => {
                   <img
                     src={item.thumbnail}
                     alt={item.title}
-                    className="h-16 w-auto object-cover rounded border border-neutral-500"
+                    className="h-18 w-30 object-cover rounded border border-neutral-700"
                   />
                 </a>
               )}
@@ -71,6 +80,6 @@ export const Queue = () => {
           ))}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   )
 }

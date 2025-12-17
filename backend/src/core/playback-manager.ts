@@ -82,7 +82,8 @@ export class PlaybackManager {
 
       if (
         this.currentSongDuration > 0 &&
-        currentPlayTime >= this.currentSongDuration
+        currentPlayTime >= this.currentSongDuration &&
+        songQueue.length > 0
       ) {
         this.handleSongEnd();
         return;

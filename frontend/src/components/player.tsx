@@ -1,9 +1,11 @@
 import { api } from '@/api/api-treaty'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { formatDuration } from '@/utils/format-duration'
 import { useMutation } from '@tanstack/react-query'
-import { LoaderIcon, Pause, Play } from 'lucide-react'
-import { motion } from 'motion/react'
+import { Clock3, LoaderIcon, Pause, Play, Volume, Volume1, Volume2, VolumeX } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 
 type PlayerProps = {
   currentSong: {
@@ -23,6 +25,8 @@ type PlayerProps = {
 }
 
 export const Player = ({ currentSong, playbackData }: PlayerProps) => {
+  const [isHovered, setIsHovered] = useState(false)
+
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       if (playbackData.isPlaying) {
@@ -31,7 +35,7 @@ export const Player = ({ currentSong, playbackData }: PlayerProps) => {
         await api.play.post()
       }
 
-      return new Promise((resolve) => setTimeout(resolve, 1000))
+      return new Promise((resolve) => setTimeout(resolve, 1300))
     },
   })
 
@@ -42,41 +46,68 @@ export const Player = ({ currentSong, playbackData }: PlayerProps) => {
       exit={{ opacity: 0, transition: { duration: 0.5 } }}
       className="flex gap-8 items-center justify-center py-10 w-full px-2"
     >
-      <img
-        src={currentSong.thumbnail || undefined}
-        alt={currentSong.title}
-        className="h-24 rounded border border-gray-500"
-      />
+      <div
+        className="w-32 relative shrink-0"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <img
+          src={currentSong.thumbnail || undefined}
+          alt={currentSong.title}
+          className="w-full h-h-full rounded border border-gray-600"
+        />
+        <AnimatePresence mode="wait">
+          {(isHovered || !playbackData.isPlaying) && (
+            <motion.button
+              animate={{ opacity: 1, transition: { duration: 0.2 } }}
+              initial={{ opacity: 0, transition: { duration: 0.2 } }}
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
+              type="button"
+              onClick={() => {
+                mutate()
+              }}
+              className="absolute cursor-pointer top-0 z-10 bg-neutral-900/40 h-full w-full flex items-center justify-center rounded"
+            >
+              <span
+                className={cn('cursor-pointer', buttonVariants({ size: 'sm', variant: 'default' }))}
+              >
+                {isPending ? (
+                  <>
+                    <LoaderIcon size={10} className="animate-spin" />
+                    Ładowanie...
+                  </>
+                ) : (
+                  <>
+                    {playbackData.isPlaying ? <Pause size={10} /> : <Play size={10} />}
+                    {playbackData.isPlaying ? 'Pauzuj' : 'Odtwórz'}
+                  </>
+                )}
+              </span>
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
 
       <div className="flex flex-col justify-between gap-4 w-full">
         <div className="flex justify-between items-center">
-          <p className="text-xl font-semibold max-w-[24ch] truncate">{currentSong.title}</p>
-          <p>Głośność: {Math.round(playbackData?.volume * 100) || 0}%</p>
+          <p className="text-xl font-semibold max-w-[39ch] truncate">{currentSong.title}</p>
         </div>
         <div className="flex gap-2 justify-between items-center">
-          <Button
-            type="button"
-            variant={'outline'}
-            onClick={() => {
-              mutate()
-            }}
-          >
-            {isPending ? (
-              <>
-                <LoaderIcon size={13} className="animate-spin" />
-                Ładowanie...
-              </>
-            ) : (
-              <>
-                {playbackData.isPlaying ? <Pause size={13} /> : <Play size={13} />}
-                {playbackData.isPlaying ? 'Pauzuj' : 'Odtwórz'}
-              </>
-            )}
-          </Button>
-
-          <p className="text-base text-gray-200">
-            Czas: {formatDuration(playbackData?.playTime || 0)} /{' '}
+          <p className="text-base text-gray-200 flex items-center gap-2">
+            <Clock3 size={18} /> {formatDuration(playbackData?.playTime || 0)} /{' '}
             {formatDuration(currentSong.duration)}
+          </p>
+          <p className="flex items-center gap-1">
+            {playbackData.volume === 0 ? (
+              <VolumeX size={18} className="inline-block mr-1" />
+            ) : playbackData.volume < 0.2 ? (
+              <Volume size={18} className="inline-block mr-1" />
+            ) : playbackData.volume < 0.5 ? (
+              <Volume1 size={18} className="inline-block mr-1" />
+            ) : (
+              <Volume2 size={18} className="inline-block mr-1" />
+            )}
+            {Math.round(playbackData?.volume * 100) || 0}%
           </p>
         </div>
       </div>
