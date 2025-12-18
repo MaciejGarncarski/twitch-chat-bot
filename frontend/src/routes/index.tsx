@@ -6,7 +6,7 @@ import useWebSocket from 'react-use-websocket'
 import { useVolume } from '@/hooks/use-volume'
 import { usePlayState } from '@/hooks/use-play-state'
 import { useHls } from '@/hooks/use-hls'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { api } from '@/api/api-treaty'
 import { Player } from '@/components/player'
 import { Queue } from '@/components/queue'
@@ -61,19 +61,34 @@ function App() {
   const currentSong = queueData?.find((item) => item.id === playbackData?.songId)
 
   return (
-    <div className="text-center min-h-screen max-w-2xl mx-auto px-8 py-10">
-      <div className="flex flex-col gap-4 items-center h-40 bg-neutral-900/80 px-4">
+    <div className="text-center min-h-screen max-w-2xl mx-auto px-8 py-10 flex flex-col gap-4">
+      <div className="flex flex-col gap-4 items-center px-4 min-h-40">
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <motion.p className="py-28 text-2xl">Ładowanie...</motion.p>
+            <motion.p
+              key="loading"
+              className="h-27 flex items-center justify-center text-2xl"
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              Ładowanie...
+            </motion.p>
+          ) : currentSong && playbackData ? (
+            <Player
+              key={`${currentSong.id}-player`}
+              currentSong={currentSong}
+              playbackData={playbackData}
+              videoRef={videoRef}
+            />
           ) : (
-            <>
-              {currentSong && playbackData ? (
-                <Player currentSong={currentSong} playbackData={playbackData} videoRef={videoRef} />
-              ) : (
-                <motion.p className="py-20 text-2xl">Brak piosenek w kolejce.</motion.p>
-              )}
-            </>
+            <motion.p
+              key="empty"
+              className="h-27 flex items-center justify-center text-2xl"
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              Brak piosenek w kolejce.
+            </motion.p>
           )}
         </AnimatePresence>
       </div>

@@ -5,6 +5,7 @@ import { songQueue } from "@/connectors/chat-ws";
 import { sendChatMessage } from "@/api/send-chat-message";
 import { sanitizeMessage } from "@/helpers/sanitize-message";
 import { playbackManager } from "@/core/playback-manager";
+import { voteManager } from "@/core/vote-manager";
 
 class CommandProcessor {
   handlers: CommandHandler[];
@@ -31,6 +32,7 @@ class CommandProcessor {
       logger,
       sendChatMessage,
       playbackManager,
+      voteManager,
     };
 
     for (const handler of this.handlers) {

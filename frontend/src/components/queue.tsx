@@ -19,17 +19,19 @@ export const Queue = () => {
     return null
   }
 
+  const filteredCurrent = queueData?.filter((_, idx) => idx !== 0)
+
   return (
     <motion.div
-      className="flex flex-col bg-neutral-900/80 px-4"
+      className="flex flex-col bg-neutral-900/90 rounded-md px-4 py-4 mx-4 border pb-10"
       animate={{ opacity: 1, transition: { duration: 0.5 } }}
       initial={{ opacity: 0, transition: { duration: 0.5 } }}
       exit={{ opacity: 0, transition: { duration: 1 } }}
     >
       <h2 className="mr-auto ml-1 pb-2 text-lg font-semibold text-neutral-300">Kolejka</h2>
-      <div className="border rounded-lg border-neutral-700 overflow-hidden">
+      <div className="border rounded-lg min-h-26 overflow-hidden">
         <AnimatePresence mode="wait">
-          {queueData?.map((item, idx) => (
+          {filteredCurrent?.map((item, idx) => (
             <motion.div
               layout
               key={item.id}
@@ -52,8 +54,8 @@ export const Queue = () => {
                 transition: { duration: 0.3 },
               }}
               className={cn(
-                'p-4 border-b border-neutral-700 bg-neutral-800 flex gap-4 items-center',
-                idx === queueData.length - 1 && 'border-b-0',
+                'p-4 border-b flex gap-4 items-center bg-neutral-800',
+                idx === filteredCurrent?.length - 1 && 'border-b-0',
               )}
             >
               {item.thumbnail && (

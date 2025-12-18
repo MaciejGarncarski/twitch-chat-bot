@@ -3,7 +3,17 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { formatDuration } from '@/utils/format-duration'
 import { useMutation } from '@tanstack/react-query'
-import { Clock3, LoaderIcon, Pause, Play, Volume, Volume1, Volume2, VolumeX } from 'lucide-react'
+import {
+  Clock3,
+  LoaderIcon,
+  Pause,
+  Play,
+  UserIcon,
+  Volume,
+  Volume1,
+  Volume2,
+  VolumeX,
+} from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState, type RefObject } from 'react'
 
@@ -46,20 +56,20 @@ export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => 
 
   return (
     <motion.div
-      animate={{ opacity: 1, transition: { duration: 0.5 } }}
-      initial={{ opacity: 0, transition: { duration: 0.5 } }}
-      exit={{ opacity: 0, transition: { duration: 0.5 } }}
-      className="flex gap-8 items-center justify-center py-10 w-full px-2"
+      animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
+      initial={{ opacity: 0, y: 40, transition: { duration: 0.3 } }}
+      exit={{ opacity: 0, y: -40, transition: { duration: 0.3 } }}
+      className="flex gap-6 items-center justify-center py-4 w-full px-4 border bg-neutral-900/90 rounded-md"
     >
       <div
-        className="w-32 relative shrink-0"
+        className="w-32 h-20 relative shrink-0"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <img
           src={currentSong.thumbnail || undefined}
           alt={currentSong.title}
-          className="w-full h-h-full rounded border border-gray-600"
+          className="w-full h-full rounded border object-cover border-gray-700 block"
         />
         <AnimatePresence mode="wait">
           {(isHovered || !playbackData.isPlaying) && (
@@ -94,25 +104,32 @@ export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => 
       </div>
 
       <div className="flex flex-col justify-between gap-4 w-full">
-        <div className="flex justify-between items-center">
-          <p className="text-xl font-semibold max-w-[39ch] truncate">{currentSong.title}</p>
+        <div className="flex justify-between items-center gap-2">
+          <p className="text-lg font-semibold max-w-[40ch] truncate">{currentSong.title}</p>
         </div>
-        <div className="flex gap-2 justify-between items-center">
-          <p className="text-base text-gray-200 flex items-center gap-2">
-            <Clock3 size={18} /> {formatDuration(playbackData?.playTime || 0)} /{' '}
-            {formatDuration(currentSong.duration)}
-          </p>
+        <div className="flex gap-2 text-gray-200 justify-between items-center">
+          <div className="flex gap-3 items-center">
+            <p className="text-base flex items-center gap-2">
+              <Clock3 size={16} /> {formatDuration(playbackData?.playTime || 0)} /{' '}
+              {formatDuration(currentSong.duration)}
+            </p>
+            <span>-</span>
+            <p className="flex items-center gap-1 ">
+              {playbackData.volume === 0 ? (
+                <VolumeX size={17} className="inline-block mr-1" />
+              ) : playbackData.volume < 0.2 ? (
+                <Volume size={17} className="inline-block mr-1" />
+              ) : playbackData.volume < 0.5 ? (
+                <Volume1 size={17} className="inline-block mr-1" />
+              ) : (
+                <Volume2 size={17} className="inline-block mr-1" />
+              )}
+              {Math.round(playbackData?.volume * 100) || 0}%
+            </p>
+          </div>
           <p className="flex items-center gap-1">
-            {playbackData.volume === 0 ? (
-              <VolumeX size={18} className="inline-block mr-1" />
-            ) : playbackData.volume < 0.2 ? (
-              <Volume size={18} className="inline-block mr-1" />
-            ) : playbackData.volume < 0.5 ? (
-              <Volume1 size={18} className="inline-block mr-1" />
-            ) : (
-              <Volume2 size={18} className="inline-block mr-1" />
-            )}
-            {Math.round(playbackData?.volume * 100) || 0}%
+            <UserIcon size={16} />
+            {currentSong.username}
           </p>
         </div>
       </div>

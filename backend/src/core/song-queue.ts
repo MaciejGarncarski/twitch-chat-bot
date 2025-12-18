@@ -15,11 +15,13 @@ import { downloadYtAudioForStreaming } from "@/data/download-stream";
 import { checkIsInCache } from "@/helpers/cache";
 import { logger } from "@/helpers/logger";
 import { sendChatMessage } from "@/api/send-chat-message";
+import { voteManager, VoteManager } from "@/core/vote-manager";
 
 export class SongQueue {
   private queue: QueuedItem[] = [];
   private currentPlaying: QueuedItem | null = null;
   private readonly maxQueueLength = 5;
+  private readonly historyQueue: QueuedItem[] = [];
 
   public getCurrent(): QueuedItem | null {
     return this.currentPlaying;
@@ -31,6 +33,13 @@ export class SongQueue {
       .reduce((total, item) => total + item.duration, 0);
 
     return combinedDurationWithoutLast - playbackManager.getPlayTime();
+  }
+
+  public getDurationBeforePlayingNext(): number {
+    const durationOfCurrent = this.currentPlaying?.duration || 0;
+    const timePlayOfCurrent = playbackManager.getPlayTime();
+
+    return Math.max(0, durationOfCurrent - timePlayOfCurrent);
   }
 
   public getQueue(): QueueTrackedItem[] {
@@ -73,7 +82,8 @@ export class SongQueue {
   }
 
   public async add(
-    input: z.infer<typeof songRequestInputSchema>
+    input: z.infer<typeof songRequestInputSchema>,
+    messageId?: string
   ): Promise<QueueTrackedItem> {
     const validatedInput = songRequestInputSchema.parse(input);
 
@@ -137,7 +147,7 @@ export class SongQueue {
     }
 
     logger.info(`[QUEUE] [CACHE] Downloading: ${validatedInput.videoId}`);
-    await sendChatMessage(`Pobieranie audio...`);
+    await sendChatMessage(`Pobieranie audio...`, messageId);
     await downloadYtAudioForStreaming(
       validatedInput.videoUrl,
       validatedInput.videoId
@@ -161,13 +171,16 @@ export class SongQueue {
     const currentItem = this.currentPlaying;
     const currentId = this.currentPlaying ? this.currentPlaying.id : "";
 
+    if (currentItem) {
+      this.historyQueue.push(currentItem);
+    }
+    voteManager.reset();
     this.queue = this.queue.filter((item) => item.id !== currentId);
 
     if (this.queue.length === 0) {
       this.currentPlaying = null;
       return currentItem;
     }
-
     this.currentPlaying = this.queue[0];
     playbackManager.setSong(
       this.currentPlaying.id,
@@ -175,6 +188,13 @@ export class SongQueue {
     );
     playbackManager.play();
     return currentItem;
+  }
+
+  public peekNext(): QueuedItem | null {
+    if (this.queue.length <= 1) {
+      return null;
+    }
+    return this.queue[1];
   }
 
   public next(): QueuedItem | null {

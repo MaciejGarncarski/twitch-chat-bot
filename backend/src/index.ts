@@ -41,8 +41,8 @@ export const app = new Elysia()
       // });
       await songQueue.add({
         username: "maciej_ga",
-        videoUrl: "https://www.youtube.com/watch?v=XNpGNykVZ6U",
-        videoId: "XNpGNykVZ6U",
+        videoUrl: "https://www.youtube.com/watch?v=E8gmARGvPlI",
+        videoId: "E8gmARGvPlI",
       });
     }
   })

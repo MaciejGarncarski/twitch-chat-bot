@@ -1,11 +1,14 @@
 export const getVideoMetadata = async (videoUrl: string) => {
   const command = [
     "yt-dlp",
-    "--extractor-args=youtube:player_client=android",
+    "--ignore-config",
+    "--no-warnings",
     "--no-playlist",
+    "--flat-playlist",
     "--skip-download",
-    "--print",
-    "%(title)s\n%(duration)s\n%(thumbnail)s",
+    "--print-json",
+    "--extractor-args",
+    "youtube:player_client=android",
     videoUrl,
   ];
 
@@ -14,30 +17,22 @@ export const getVideoMetadata = async (videoUrl: string) => {
     stderr: "pipe",
   });
 
-  const [outputBytes, errorBytes, exit] = await Promise.all([
-    Bun.readableStreamToArrayBuffer(process.stdout),
-    Bun.readableStreamToArrayBuffer(process.stderr),
-    process.exited,
-  ]);
+  const stdout = await new Response(process.stdout).text();
+  const exitCode = await process.exited;
 
-  if (exit !== 0) {
-    throw new Error(new TextDecoder().decode(errorBytes));
+  if (exitCode !== 0) {
+    const error = await new Response(process.stderr).text();
+    throw new Error(`yt-dlp failed: ${error}`);
   }
 
-  const [title, durationRaw, thumbnailRaw] = new TextDecoder()
-    .decode(outputBytes)
-    .trim()
-    .split("\n");
-
-  const duration = Number(durationRaw);
-
-  if (Number.isNaN(duration)) {
-    throw new Error("Invalid duration");
+  try {
+    const data = JSON.parse(stdout);
+    return {
+      title: data.title,
+      duration: Number(data.duration),
+      thumbnail: data.thumbnail || data.thumbnails?.[0]?.url || null,
+    };
+  } catch (e) {
+    throw new Error("Failed to parse yt-dlp output");
   }
-
-  return {
-    title,
-    duration,
-    thumbnail: thumbnailRaw || null,
-  };
 };
