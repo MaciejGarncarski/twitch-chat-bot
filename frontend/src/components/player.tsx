@@ -18,7 +18,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState, type RefObject } from 'react'
 
 type PlayerProps = {
-  videoRef: RefObject<HTMLVideoElement | null>
+  playerRef: RefObject<HTMLVideoElement | null>
   currentSong: {
     id: string
     title: string
@@ -33,9 +33,10 @@ type PlayerProps = {
     volume: number
     playTime: number
   }
+  isReady: boolean
 }
 
-export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => {
+export const Player = ({ currentSong, playbackData, playerRef }: PlayerProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const { mutate, isPending } = useMutation({
@@ -43,8 +44,8 @@ export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => 
       if (playbackData.isPlaying) {
         await api.pause.post()
 
-        if (videoRef.current) {
-          videoRef.current.pause()
+        if (playerRef.current) {
+          playerRef.current.pause()
         }
       } else {
         await api.play.post()
@@ -62,7 +63,7 @@ export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => 
       className="flex gap-6 items-center justify-center py-4 w-full px-4 border bg-neutral-900/90 rounded-md"
     >
       <div
-        className="w-32 h-20 relative shrink-0"
+        className="w-48 h-28 relative shrink-0"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -71,6 +72,7 @@ export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => 
           alt={currentSong.title}
           className="w-full h-full rounded border object-cover border-gray-700 block"
         />
+
         <AnimatePresence mode="wait">
           {(isHovered || !playbackData.isPlaying) && (
             <motion.button
@@ -105,30 +107,30 @@ export const Player = ({ currentSong, playbackData, videoRef }: PlayerProps) => 
 
       <div className="flex flex-col justify-between gap-4 w-full">
         <div className="flex justify-between items-center gap-2">
-          <p className="text-lg font-semibold max-w-[40ch] truncate">{currentSong.title}</p>
+          <p className="text-xl font-semibold max-w-[35ch] truncate">{currentSong.title}</p>
         </div>
-        <div className="flex gap-2 text-gray-200 justify-between items-center">
+        <div className="flex gap-2 text-gray-200 justify-between items-center text-lg">
           <div className="flex gap-3 items-center">
-            <p className="text-base flex items-center gap-2">
-              <Clock3 size={16} /> {formatDuration(playbackData?.playTime || 0)} /{' '}
+            <p className="flex items-center gap-2">
+              <Clock3 size={19} /> {formatDuration(playbackData?.playTime || 0)} /{' '}
               {formatDuration(currentSong.duration)}
             </p>
             <span>-</span>
             <p className="flex items-center gap-1 ">
               {playbackData.volume === 0 ? (
-                <VolumeX size={17} className="inline-block mr-1" />
+                <VolumeX size={20} className="inline-block mr-1" />
               ) : playbackData.volume < 0.2 ? (
-                <Volume size={17} className="inline-block mr-1" />
+                <Volume size={20} className="inline-block mr-1" />
               ) : playbackData.volume < 0.5 ? (
-                <Volume1 size={17} className="inline-block mr-1" />
+                <Volume1 size={20} className="inline-block mr-1" />
               ) : (
-                <Volume2 size={17} className="inline-block mr-1" />
+                <Volume2 size={20} className="inline-block mr-1" />
               )}
               {Math.round(playbackData?.volume * 100) || 0}%
             </p>
           </div>
-          <p className="flex items-center gap-1">
-            <UserIcon size={16} />
+          <p className="flex items-center gap-2">
+            <UserIcon size={20} />
             {currentSong.username}
           </p>
         </div>

@@ -19,6 +19,7 @@ const envSchema = z.object({
   TWITCH_REFRESH_TOKEN: z.string(),
   TWITCH_ACCESS_TOKEN: z.string(),
   TWITCH_BROADCASTER_ID: z.string(),
+  YT_COOKIE: z.string().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

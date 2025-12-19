@@ -1,15 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { z } from 'zod'
 import useWebSocket from 'react-use-websocket'
 import { useVolume } from '@/hooks/use-volume'
 import { usePlayState } from '@/hooks/use-play-state'
-import { useHls } from '@/hooks/use-hls'
 import { AnimatePresence, motion } from 'motion/react'
 import { api } from '@/api/api-treaty'
 import { Player } from '@/components/player'
 import { Queue } from '@/components/queue'
+import { PlayerYT } from '@/components/player-yt'
+import { BackgroundWakeLock } from '@/components/bg-wake-lock'
 
 const playbackSchema = z
   .object({
@@ -39,7 +40,8 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isReady, setIsReady] = useState(true)
+  const playerRef = useRef<HTMLVideoElement>(null)
 
   const { isLoading, data: queueData } = useQuery({
     queryKey: ['queue'],
@@ -50,24 +52,26 @@ function App() {
     refetchInterval: 1500,
   })
 
-  const { lastJsonMessage } = useWebSocket('ws://localhost:3001/ws')
+  const { lastJsonMessage } = useWebSocket('ws://localhost:3001/ws', {
+    shouldReconnect: () => true,
+    reconnectAttempts: 10,
+    reconnectInterval: 3000,
+  })
   const parsedPlaybackData = playbackSchema.safeParse(lastJsonMessage)
   const playbackData = parsedPlaybackData.success ? parsedPlaybackData.data : null
 
-  useHls(videoRef, playbackData?.songId || null)
-  usePlayState(videoRef, playbackData?.playTime || 0, playbackData?.isPlaying || false)
-  useVolume(videoRef, playbackData?.volume ?? 0.2)
-
+  usePlayState(playerRef, playbackData?.playTime || 0, playbackData?.isPlaying || false)
+  useVolume(playerRef, playbackData?.volume ?? 0.2)
   const currentSong = queueData?.find((item) => item.id === playbackData?.songId)
 
   return (
-    <div className="text-center min-h-screen max-w-2xl mx-auto px-8 py-10 flex flex-col gap-4">
+    <div className="text-center min-h-screen max-w-3xl mx-auto px-8 py-10 flex flex-col gap-4">
       <div className="flex flex-col gap-4 items-center px-4 min-h-40">
         <AnimatePresence mode="wait">
           {isLoading ? (
             <motion.p
               key="loading"
-              className="h-27 flex items-center justify-center text-2xl"
+              className="h-34 flex items-center justify-center text-2xl bg-neutral-900/90 border rounded-md w-full"
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
@@ -75,15 +79,15 @@ function App() {
             </motion.p>
           ) : currentSong && playbackData ? (
             <Player
-              key={`${currentSong.id}-player`}
+              isReady={isReady}
               currentSong={currentSong}
               playbackData={playbackData}
-              videoRef={videoRef}
+              playerRef={playerRef}
             />
           ) : (
             <motion.p
               key="empty"
-              className="h-27 flex items-center justify-center text-2xl"
+              className="h-34 flex items-center justify-center text-2xl bg-neutral-900/90 border rounded-md w-full"
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
@@ -97,9 +101,16 @@ function App() {
         {isLoading || queueData?.length === 0 ? null : <Queue />}
       </AnimatePresence>
 
-      <div className="">
-        <video ref={videoRef} />
-      </div>
+      {currentSong && (
+        <PlayerYT
+          isReady={isReady}
+          currentSong={currentSong}
+          playbackData={playbackData}
+          playerRef={playerRef}
+          setIsReady={setIsReady}
+        />
+      )}
+      <BackgroundWakeLock />
     </div>
   )
 }

@@ -43,6 +43,7 @@ export class ChatWebSocket {
   private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws";
   private keepaliveTimeout: number = 30_000;
   private missedMessageTimer?: NodeJS.Timeout;
+  private isReconnecting: boolean = false;
 
   constructor() {
     this.connect();
@@ -71,37 +72,44 @@ export class ChatWebSocket {
       case "session_welcome": {
         const timeoutSeconds =
           parsed.payload.session?.keepalive_timeout_seconds;
+
         if (timeoutSeconds) {
           this.keepaliveTimeout = timeoutSeconds * 1000;
         }
 
         const newSessionId = parsed.payload.session?.id;
-
         if (!newSessionId) {
-          logger.error("[CHAT WS] No session ID received in session_welcome.");
+          logger.error("[CHAT WS] No session ID received.");
           return;
-        }
-
-        if (this.ws && this.ws !== socketContext) {
-          logger.info("[CHAT WS] Reconnection successful. Closing old socket.");
-          this.ws.close();
-        } else {
-          logger.info("[CHAT WS] Connection established.");
-          await subscribeToChat(newSessionId);
         }
 
         this.ws = socketContext;
         this.sessionId = newSessionId;
+
+        if (!this.isReconnecting) {
+          logger.info("[CHAT WS] Initial connection established.");
+          await subscribeToChat(newSessionId);
+        } else {
+          logger.info("[CHAT WS] Reconnected successfully.");
+          this.isReconnecting = false;
+        }
+
         break;
       }
 
       case "session_reconnect": {
         const reconnectUrl = parsed.payload.session?.reconnect_url;
+
+        this.isReconnecting = true;
+        this.ws.close();
+        this.resetKeepaliveTimer();
+
         if (reconnectUrl) {
           logger.info(
             "[CHAT WS] Received reconnect notice. Connecting to new URL..."
           );
           this.connect(reconnectUrl);
+          break;
         }
         break;
       }

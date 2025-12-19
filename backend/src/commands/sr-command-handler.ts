@@ -1,7 +1,10 @@
 import { CommandHandler, Deps } from "@/commands/command";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
 import { formatDuration } from "@/helpers/format-duration";
-import { logger } from "@/helpers/logger";
+import z from "zod";
+import { SongMetadata } from "@/data/get-video-metadata";
+import { innertube } from "@/data/innertube";
+import { YTNodes } from "youtubei.js/agnostic";
 
 export class YoutubeSrHandler extends CommandHandler {
   private readonly regex = /^!sr\s+(.+)$/i;
@@ -49,12 +52,16 @@ export class YoutubeSrHandler extends CommandHandler {
         videoLink = `https://www.youtube.com/watch?v=${videoId}`;
       }
 
+      let metadata: SongMetadata | null = null;
+
       if (!isYoutubeLink) {
         const searchResult = await this.searchYoutubeVideo(userInput);
         if (!searchResult) {
           throw new Error("No YT search results found.");
         }
-        videoId = searchResult;
+        videoId = searchResult.videoId;
+
+        metadata = searchResult.metadata;
         videoLink = `https://www.youtube.com/watch?v=${videoId}`;
       }
 
@@ -64,7 +71,7 @@ export class YoutubeSrHandler extends CommandHandler {
           videoUrl: videoLink,
           videoId: videoId,
         },
-        messageId
+        metadata || undefined
       );
 
       const durationFormatted = formatDuration(added.duration);
@@ -102,41 +109,47 @@ export class YoutubeSrHandler extends CommandHandler {
     return match ? match[1] : null;
   }
 
-  private async searchYoutubeVideo(query: string): Promise<string | null> {
-    const searchQuery = query.startsWith("http") ? query : `ytsearch1:${query}`;
+  private async searchYoutubeVideo(
+    query: string
+  ): Promise<{ videoId: string; metadata: SongMetadata } | null> {
+    const results = await innertube.search(query, { type: "video" });
 
-    const command = [
-      "yt-dlp",
-      searchQuery,
-      "--get-id",
-      "--no-playlist",
-      "--flat-playlist",
-    ];
+    const song = results.videos.find(
+      (node): node is YTNodes.Video => node.type === "Video"
+    );
 
-    const process = Bun.spawn(command, {
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-
-    const [outputBytes, errorBytes, exitCode] = await Promise.all([
-      Bun.readableStreamToArrayBuffer(process.stdout),
-      Bun.readableStreamToArrayBuffer(process.stderr),
-      process.exited,
-    ]);
-
-    const output = new TextDecoder().decode(outputBytes).trim();
-    const errorOutput = new TextDecoder().decode(errorBytes).trim();
-
-    if (exitCode !== 0) {
-      logger.error("yt-dlp error output");
-      throw new Error(`yt-dlp execution error: ${errorOutput || exitCode}`);
-    }
-
-    if (!output) {
+    if (!song) {
       return null;
     }
 
-    logger.info("[COMMAND] [SR] Song found via yt-dlp search");
-    return output;
+    const metadata: SongMetadata = {
+      duration: song.duration?.seconds ?? 0,
+      title: song.title.toString(),
+      thumbnail: song.thumbnails.at(-1)?.url ?? null,
+    };
+
+    return { videoId: song.video_id, metadata };
   }
 }
+
+export const SearchResultSchema = z
+  .object({
+    title: z.object({
+      text: z.string(),
+    }),
+    duration: z.object({
+      seconds: z.number(),
+    }),
+    thumbnails: z.array(
+      z.object({
+        url: z.string(),
+      })
+    ),
+  })
+  .transform(
+    (data): SongMetadata => ({
+      title: data.title.text,
+      duration: data.duration.seconds,
+      thumbnail: data.thumbnails.at(-1)?.url ?? null,
+    })
+  );

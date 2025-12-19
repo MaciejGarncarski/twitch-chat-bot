@@ -1,12 +1,12 @@
 import { useEffect, type RefObject } from 'react'
 
 export const usePlayState = (
-  videoRef: RefObject<HTMLVideoElement | null>,
+  playerRef: RefObject<HTMLVideoElement | null>,
   playTime: number,
   isPlaying: boolean,
 ) => {
   useEffect(() => {
-    const videoElement = videoRef.current
+    const videoElement = playerRef.current
 
     if (!videoElement) {
       return
@@ -27,5 +27,5 @@ export const usePlayState = (
     if (drift > MAX_DRIFT) {
       videoElement.currentTime = playTime
     }
-  }, [playTime, isPlaying, videoRef])
+  }, [playTime, isPlaying, playerRef])
 }

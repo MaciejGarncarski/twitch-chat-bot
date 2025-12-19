@@ -18,6 +18,7 @@ const pinoEnvOptions: Record<"development" | "production", pino.Logger> = {
     transport: {
       target: "pino/file",
       options: {
+        ignore: "hostname",
         destination: 1,
         all: true,
         translateTime: true,

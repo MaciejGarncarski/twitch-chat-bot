@@ -2,7 +2,7 @@ import {
   MAX_VIDEO_DURATION_SECONDS,
   MIN_VIDEO_DURATION_SECONDS,
 } from "@/config/video";
-import { getVideoMetadata } from "@/data/get-video-metadata";
+import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata";
 import { playbackManager } from "@/core/playback-manager";
 import {
   QueuedItem,
@@ -11,11 +11,8 @@ import {
 } from "@/types/queue";
 import { formatDuration } from "@/helpers/format-duration";
 import z from "zod";
-import { downloadYtAudioForStreaming } from "@/data/download-stream";
-import { checkIsInCache } from "@/helpers/cache";
 import { logger } from "@/helpers/logger";
-import { sendChatMessage } from "@/api/send-chat-message";
-import { voteManager, VoteManager } from "@/core/vote-manager";
+import { voteManager } from "@/core/vote-manager";
 
 export class SongQueue {
   private queue: QueuedItem[] = [];
@@ -83,13 +80,24 @@ export class SongQueue {
 
   public async add(
     input: z.infer<typeof songRequestInputSchema>,
-    messageId?: string
+    metadata?: SongMetadata
   ): Promise<QueueTrackedItem> {
     const validatedInput = songRequestInputSchema.parse(input);
 
-    const { duration, title, thumbnail } = await getVideoMetadata(
-      validatedInput.videoUrl
-    );
+    let title = "Unknown Title";
+    let thumbnail: string | null = null;
+    let duration = 0;
+
+    if (metadata) {
+      title = metadata.title;
+      thumbnail = metadata.thumbnail;
+      duration = metadata.duration;
+    } else {
+      const fetchedMetadata = await getVideoMetadata(validatedInput.videoId);
+      title = fetchedMetadata.title;
+      thumbnail = fetchedMetadata.thumbnail;
+      duration = fetchedMetadata.duration;
+    }
 
     if (this.checkIfExists(validatedInput.videoUrl)) {
       throw new Error("ALREADY_EXISTS");
@@ -129,30 +137,7 @@ export class SongQueue {
           : formatDuration(timeUntilPlay),
     };
 
-    const isInCache = checkIsInCache(validatedInput.videoId);
-
-    if (isInCache) {
-      logger.info(`[QUEUE] [CACHE] Song in cache: ${validatedInput.videoId}`);
-      if (!this.currentPlaying) {
-        this.currentPlaying = newItem;
-
-        playbackManager.setSong(newItem.id, newItem.duration);
-        playbackManager.play();
-        this.queue.push(newItem);
-      } else {
-        this.queue.push(newItem);
-      }
-
-      return trackedItem;
-    }
-
-    logger.info(`[QUEUE] [CACHE] Downloading: ${validatedInput.videoId}`);
-    await sendChatMessage(`Pobieranie audio...`, messageId);
-    await downloadYtAudioForStreaming(
-      validatedInput.videoUrl,
-      validatedInput.videoId
-    );
-
+    logger.info(`[QUEUE] [PLAYING-FROM-YT]`);
     if (!this.currentPlaying) {
       this.currentPlaying = newItem;
 
@@ -164,6 +149,42 @@ export class SongQueue {
     }
 
     return trackedItem;
+
+    // TODO: clean up for v2
+    // const isInCache = checkIsInCache(validatedInput.videoId);
+
+    // if (isInCache) {
+    //   logger.info(`[QUEUE] [CACHE] Song in cache: ${validatedInput.videoId}`);
+    //   if (!this.currentPlaying) {
+    //     this.currentPlaying = newItem;
+
+    //     playbackManager.setSong(newItem.id, newItem.duration);
+    //     playbackManager.play();
+    //     this.queue.push(newItem);
+    //   } else {
+    //     this.queue.push(newItem);
+    //   }
+
+    //   return trackedItem;
+    // }
+
+    // logger.info(`[QUEUE] [CACHE] Downloading: ${validatedInput.videoId}`);
+    // await downloadYtAudioForStreaming(
+    //   validatedInput.videoUrl,
+    //   validatedInput.videoId
+    // );
+
+    // if (!this.currentPlaying) {
+    //   this.currentPlaying = newItem;
+
+    //   playbackManager.setSong(newItem.id, newItem.duration);
+    //   playbackManager.play();
+    //   this.queue.push(newItem);
+    // } else {
+    //   this.queue.push(newItem);
+    // }
+
+    // return trackedItem;
   }
 
   public removeCurrent() {

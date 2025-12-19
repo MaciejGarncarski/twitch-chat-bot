@@ -1,38 +1,46 @@
-export const getVideoMetadata = async (videoUrl: string) => {
-  const command = [
-    "yt-dlp",
-    "--ignore-config",
-    "--no-warnings",
-    "--no-playlist",
-    "--flat-playlist",
-    "--skip-download",
-    "--print-json",
-    "--extractor-args",
-    "youtube:player_client=android",
-    videoUrl,
-  ];
+import { innertube } from "@/data/innertube";
+import z from "zod";
 
-  const process = Bun.spawn(command, {
-    stdout: "pipe",
-    stderr: "pipe",
+export const getVideoMetadata = async (
+  videoId: string
+): Promise<SongMetadata> => {
+  const info = await innertube.getBasicInfo(videoId);
+  const parsed = songMetadataSchema.parse(info);
+  return parsed;
+};
+
+export const songMetadataSchema = z
+  .object({
+    basic_info: z.object({
+      title: z.string(),
+      duration: z.number(),
+      thumbnail: z
+        .array(
+          z.object({
+            url: z.string(),
+            width: z.number(),
+            height: z.number(),
+          })
+        )
+        .optional(),
+    }),
+  })
+  .transform((data): SongMetadata => {
+    const thumbnails = data.basic_info.thumbnail;
+    const bestThumbnail =
+      thumbnails && thumbnails.length > 0
+        ? thumbnails[thumbnails.length - 1].url
+        : null;
+
+    return {
+      title: data.basic_info.title,
+      duration: data.basic_info.duration,
+      thumbnail: bestThumbnail,
+    };
   });
 
-  const stdout = await new Response(process.stdout).text();
-  const exitCode = await process.exited;
-
-  if (exitCode !== 0) {
-    const error = await new Response(process.stderr).text();
-    throw new Error(`yt-dlp failed: ${error}`);
-  }
-
-  try {
-    const data = JSON.parse(stdout);
-    return {
-      title: data.title,
-      duration: Number(data.duration),
-      thumbnail: data.thumbnail || data.thumbnails?.[0]?.url || null,
-    };
-  } catch (e) {
-    throw new Error("Failed to parse yt-dlp output");
-  }
+export type SongMetadata = {
+  title: string;
+  duration: number;
+  thumbnail: string | null;
 };

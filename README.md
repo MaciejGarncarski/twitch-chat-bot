@@ -1,8 +1,6 @@
 To run this project you need
 
 - bun
-- python
-- ffmpeg
 
 ## Prerequisites
 
@@ -38,4 +36,5 @@ TWITCH_CLIENT_SECRET=twitch_dev_client_secret
 TWITCH_ACCESS_TOKEN=generated_access_token
 TWITCH_REFRESH_TOKEN=generated_refresh_token
 TWITCH_BROADCASTER_ID=user_id_where_bot_works
+YT_COOKIE="OPTIONAL BUT RECOMMENDED https://ytjs.dev/guide/authentication.html#cookies"
 ```
