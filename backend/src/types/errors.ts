@@ -1,5 +1,6 @@
 export const CommandErrorCode = {
   NOT_A_MOD: "NOT_A_MOD",
+  ON_COOLDOWN: "ON_COOLDOWN",
 } as const;
 
 export type CommandErrorCode =

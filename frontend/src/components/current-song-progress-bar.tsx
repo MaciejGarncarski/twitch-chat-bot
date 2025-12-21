@@ -14,6 +14,7 @@ export function CurrentSongProgressBar({
       <motion.div
         className="bg-white h-full origin-left"
         initial={{ scaleX: 0 }}
+        exit={{ scaleX: 0 }}
         animate={{
           scaleX: progress,
         }}

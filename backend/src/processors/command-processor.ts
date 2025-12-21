@@ -57,9 +57,11 @@ class CommandProcessor {
                 messageId
               );
               break;
+
             default:
               logger.error(`[COMMAND] Unhandled CommandError: ${error.code}`);
           }
+
           return;
         }
 
