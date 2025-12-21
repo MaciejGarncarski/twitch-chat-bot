@@ -16,7 +16,7 @@ export class HelpCommandHandler extends CommandHandler {
 
     logger.info(`[COMMAND] [HELP] Sending help message.`);
 
-    const helpMessage = `Dostępne komendy: !sr <link | fraza>, !currentsong, !queue, !help - pokaż tę wiadomość, !wrongsong - usuń swoją piosenkę z kolejki, !github - link do repozytorium,
+    const helpMessage = `Dostępne komendy: !sr <link | fraza>, !song, !queue, !help - pokaż tę wiadomość, !wrongsong - usuń swoją piosenkę z kolejki, !github - link do repozytorium,
     !voteskip, !next - informacje o następnej piosence, !pause - (tylko mod), !play - (tylko mod), !skip (tylko mod), !volume <0-1> (tylko mod)`;
 
     await sendChatMessage(helpMessage, messageId);

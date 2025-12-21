@@ -4,7 +4,7 @@ import { formatDuration } from "@/helpers/format-duration";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
 
 export class CurrentSongCommandHandler extends CommandHandler {
-  private readonly regex = /^!currentsong\s*$/i;
+  private readonly regex = /^!song\s*$/i;
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

@@ -14,7 +14,7 @@ export class GithubCommandHandler extends CommandHandler {
 
     logger.info(`[COMMAND] [GITHUB] Sending GitHub repository link.`);
     await sendChatMessage(
-      "Link do repozytorium: https://github.com/maciejgarncarski/ttv-song-request",
+      "Link do repozytorium: https://github.com/maciejgarncarski/twitch-chat-bot",
       messageId
     );
   }
