@@ -6,7 +6,6 @@
     "serve": "NODE_ENV=production bun src/index.ts"
   },
   "dependencies": {
-    "@bogeychan/elysia-logger": "^0.1.10",
     "@elysiajs/cors": "^1.4.0",
     "elysia": "latest",
     "pino": "^10.1.0",
