@@ -1,5 +1,6 @@
 import { CommandHandler, Deps } from "@/commands/command";
 import { checkIsMod } from "@/helpers/check-is-mod";
+import { CommandError, CommandErrorCode } from "@/types/errors";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
 
 export class PauseCommandHandler extends CommandHandler {
@@ -11,41 +12,25 @@ export class PauseCommandHandler extends CommandHandler {
 
   async execute(
     parsedMessage: TwitchWSMessage,
-    { logger, sendChatMessage, playbackManager }: Deps
+    { logger, playbackManager }: Deps
   ) {
-    try {
-      const payload = parsedMessage.payload;
+    const payload = parsedMessage.payload;
 
-      if (!payload.event) {
-        throw new Error("No event found in payload.");
-      }
-
-      const isMod = checkIsMod(
-        payload.event.badges,
-        payload.event.chatter_user_id,
-        payload.event.broadcaster_user_id
-      );
-
-      if (!isMod) {
-        throw new Error("NOT_A_MOD");
-      }
-
-      logger.info(`[COMMAND] [Playback] Sending pause message.`);
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "NOT_A_MOD") {
-          logger.info(
-            `[COMMAND] [PAUSE] User is not a mod, cannot execute command.`
-          );
-          await sendChatMessage(
-            "Tylko moderatorzy mogą używać tej komendy.",
-            parsedMessage.payload.event?.message_id
-          );
-          return;
-        }
-        logger.error(`[COMMAND] [PAUSE] Error: ${error.message}`);
-      }
+    if (!payload.event) {
+      throw new Error("No event found in payload.");
     }
+
+    const isMod = checkIsMod(
+      payload.event.badges,
+      payload.event.chatter_user_id,
+      payload.event.broadcaster_user_id
+    );
+
+    if (!isMod) {
+      throw new CommandError(CommandErrorCode.NOT_A_MOD);
+    }
+
+    logger.info(`[COMMAND] [Playback] Sending pause message.`);
 
     playbackManager.pause();
   }

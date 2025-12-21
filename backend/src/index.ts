@@ -70,55 +70,6 @@ export const app = new Elysia()
         const data = songQueue.getQueue();
         return data;
       })
-      .get(
-        "/stream/:videoId/:fileNameWithExt",
-        async ({ params, set, status }) => {
-          const { videoId, fileNameWithExt } = params;
-
-          if (videoId === "undefined" || fileNameWithExt === "undefined") {
-            return status(400, "Invalid videoId or fileName.");
-          }
-
-          const pathWithVideoId = join(CACHE_DIR, videoId);
-          const filePath = join(pathWithVideoId, fileNameWithExt);
-
-          const ext = fileNameWithExt
-            .substring(fileNameWithExt.lastIndexOf("."))
-            .toLowerCase();
-
-          const contentType = HLS_MIME_TYPES[ext];
-
-          if (!contentType) {
-            console.error(
-              `Attempted to serve file with unsupported extension: ${ext}`
-            );
-            return status(403, "File type not supported for streaming.");
-          }
-
-          try {
-            const fileStats = await stat(filePath);
-
-            if (!fileStats.isFile()) {
-              return status(404, "File not found or is not a file.");
-            }
-
-            set.headers["Content-Type"] = contentType;
-            set.headers["Content-Length"] = fileStats.size.toString();
-
-            if (ext === ".ts") {
-              set.headers["Cache-Control"] =
-                "public, max-age=31536000, immutable";
-            } else {
-              set.headers["Cache-Control"] = "no-cache";
-            }
-
-            return Bun.file(filePath);
-          } catch (error) {
-            console.error(`Error serving HLS file: ${filePath}`, error);
-            return status(404, "Stream segment not found.");
-          }
-        }
-      )
       .post("/pause", async () => {
         playbackManager.pause();
         return {
@@ -135,8 +86,6 @@ export const app = new Elysia()
         open(ws) {
           ws.subscribe("playback-status");
         },
-        message(ws, msg) {},
-        close(ws, code, reason) {},
       });
   })
   .listen({ port: env.PORT || 3001 });
