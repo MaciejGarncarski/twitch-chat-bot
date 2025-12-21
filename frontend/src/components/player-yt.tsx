@@ -1,23 +1,19 @@
-import type { QueueTrackedItem } from '@/routes'
+import type { QueueTrackedItem } from '@/hooks/use-queue'
 import { useState, type RefObject } from 'react'
 import ReactPlayer from 'react-player'
 
 type Props = {
   isReady: boolean
+  volume: number
+  isPlaying: boolean
   currentSong: QueueTrackedItem | null
-  playbackData: {
-    volume: number
-    isPlaying: boolean
-  } | null
   playerRef: RefObject<HTMLVideoElement | null>
   setIsReady: (ready: boolean) => void
 }
 
-export function PlayerYT({ currentSong, playbackData, playerRef, setIsReady }: Props) {
+export function PlayerYT({ currentSong, volume, isPlaying, playerRef, setIsReady }: Props) {
   const [isMuted, setIsMuted] = useState(true)
 
-  const isPlaying = playbackData?.isPlaying ?? false
-  const volume = playbackData?.volume ?? 0
   const songSrc = currentSong?.videoUrl ?? undefined
 
   return (

@@ -3,10 +3,9 @@ import { checkIsMod } from "@/helpers/check-is-mod";
 import { logger } from "@/helpers/logger";
 import { sanitizeMessage } from "@/helpers/sanitize-message";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
-import z from "zod";
 
 export class VolumeCommandHandler extends CommandHandler {
-  private readonly regex = /^!volume\s+(0(\.\d+)?|1(\.[0]+)?)\s*$/;
+  private readonly regex = /^!volume(?:\s+(100|[1-9]?\d))?\s*$/;
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);
@@ -16,6 +15,8 @@ export class VolumeCommandHandler extends CommandHandler {
     parsedMessage: TwitchWSMessage,
     { playbackManager, sendChatMessage }: Deps
   ) {
+    const messageId = parsedMessage.payload.event?.message_id;
+
     try {
       const payload = parsedMessage.payload;
 
@@ -38,34 +39,37 @@ export class VolumeCommandHandler extends CommandHandler {
       );
 
       const match = messageText.match(this.regex);
-      const messageId = parsedMessage.payload.event?.message_id;
+      const isSetVolumeCommand = match ? match[1] !== undefined : false;
+
+      if (!isSetVolumeCommand) {
+        const volume = playbackManager.getVolume();
+        await sendChatMessage(`Aktualna głośność to ${volume}%.`, messageId);
+        return;
+      }
 
       if (!match || !messageId) {
         throw new Error("Not matching VOLUME command or missing messageId.");
       }
 
-      const volume = parseFloat(match[1]);
+      const volume = parseInt(match[1]);
 
-      if (volume > 1) {
+      if (volume > 100 || volume < 0) {
         return;
       }
 
       playbackManager.setVolume(volume);
 
-      await sendChatMessage(
-        `Ustawiono głośność na ${volume * 100}%.`,
-        messageId
-      );
+      await sendChatMessage(`Ustawiono głośność na ${volume}%.`, messageId);
     } catch (error) {
       if (error instanceof Error) {
         await sendChatMessage(
           "Tylko moderatorzy mogą używać tej komendy.",
-          parsedMessage.payload.event?.message_id
+          messageId
         );
       }
 
       logger.error(
-        `[COMMAND] [VOLUME] Error executing volume command: ${error}`
+        `[COMMAND] [VOLUME] Error executing set volume command: ${error}`
       );
     }
   }

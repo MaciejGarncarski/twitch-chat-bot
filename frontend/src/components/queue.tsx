@@ -1,37 +1,51 @@
-import { api } from '@/api/api-treaty'
+import { useQueue } from '@/hooks/use-queue'
 import { cn } from '@/lib/utils'
-import type { QueueTrackedItem } from '@/routes'
 import { formatDuration } from '@/utils/format-duration'
-import { useQuery } from '@tanstack/react-query'
 import { Clock3, UserIcon } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 
 export const Queue = () => {
-  const { data: queueData, isLoading } = useQuery({
-    queryKey: ['queue'],
-    queryFn: async () => {
-      const data = (await api.api.queue.get()) as { data: QueueTrackedItem[] }
-      return data.data
-    },
-    refetchInterval: 1500,
-  })
-
-  if (isLoading || queueData?.length === 0) {
-    return null
-  }
+  const { data: queueData } = useQueue()
 
   const filteredCurrent = queueData?.filter((_, idx) => idx !== 0)
+  const queuedCount = filteredCurrent?.length ?? 0
 
   return (
     <motion.div
-      className="flex flex-col bg-neutral-900/90 rounded-md px-4 py-4 mx-4 gap-1 border pb-10"
+      className={cn('flex flex-col bg-neutral-900/95 rounded-md px-4 py-4 mx-4 gap-1 border pb-10')}
       animate={{ opacity: 1, transition: { duration: 0.5 } }}
       initial={{ opacity: 0, transition: { duration: 0.5 } }}
-      exit={{ opacity: 0, transition: { duration: 1 } }}
+      exit={{ opacity: 0, transition: { duration: 0.7 } }}
     >
       <h2 className="mr-auto ml-1 pb-2 text-xl font-semibold text-neutral-300">Kolejka</h2>
-      <div className="border rounded-lg min-h-26 overflow-hidden">
+      <div
+        className={cn(
+          'border rounded-lg min-h-26 overflow-hidden',
+          queuedCount === 0 && 'border-transparent',
+        )}
+      >
         <AnimatePresence mode="popLayout">
+          {queuedCount === 0 && (
+            <motion.div
+              layout
+              key="empty-queue"
+              exit={{
+                opacity: 0,
+                transition: { duration: 0.3 },
+              }}
+              initial={{
+                opacity: 0,
+                transition: { duration: 0.3 },
+              }}
+              animate={{
+                opacity: 1,
+                transition: { duration: 0.3 },
+              }}
+              className="p-14 text-center text-neutral-200"
+            >
+              Brak pozycji w kolejce
+            </motion.div>
+          )}
           {filteredCurrent?.map((item, idx) => (
             <motion.div
               layout

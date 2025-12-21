@@ -4,7 +4,7 @@ import { getBunServer } from "@/helpers/init-ws";
 
 export class PlaybackManager {
   private isPlaying: boolean = false;
-  private volume: number = 0.2;
+  private volume: number = 20;
   private playTime: number = 0;
   private startedAt: number | null = null;
   private intervalId: NodeJS.Timeout | null = null;
@@ -20,6 +20,10 @@ export class PlaybackManager {
 
   public getCurrentSongId() {
     return this.songId;
+  }
+
+  public getVolume() {
+    return this.volume;
   }
 
   getPlayTime() {
@@ -109,8 +113,8 @@ export class PlaybackManager {
   }
 
   setVolume(volume: number) {
-    if (volume < 0 || volume > 1) {
-      throw new Error("Volume must be between 0.0 and 1.0");
+    if (volume < 0 || volume > 100) {
+      throw new Error("Volume must be between 0 and 100");
     }
     this.volume = volume;
   }

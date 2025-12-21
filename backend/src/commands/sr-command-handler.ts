@@ -77,8 +77,13 @@ export class YoutubeSrHandler extends CommandHandler {
         songQueue.getDurationBeforePlayingCurrent()
       );
 
+      const durationText =
+        durationUntilPlay === "0:00"
+          ? "teraz"
+          : `za około ${durationUntilPlay}`;
+
       await sendChatMessage(
-        `Dodano do kolejki ${metadata?.title} przez @${user} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie za ${durationUntilPlay}.`,
+        `Dodano do kolejki ${metadata?.title} przez @${user} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie ${durationText}.`,
         messageId
       );
     } catch (e) {
