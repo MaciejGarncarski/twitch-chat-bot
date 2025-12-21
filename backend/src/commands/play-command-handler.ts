@@ -14,7 +14,6 @@ export class PlayCommandHandler extends CommandHandler {
     { logger, sendChatMessage, playbackManager }: Deps
   ) {
     try {
-      const messageId = parsedMessage.payload.event?.message_id;
       const payload = parsedMessage.payload;
 
       if (!payload.event) {
@@ -32,7 +31,6 @@ export class PlayCommandHandler extends CommandHandler {
       }
 
       logger.info(`[COMMAND] [Playback] Sending play message.`);
-      await sendChatMessage("Wznawiam...", messageId);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === "NOT_A_MOD") {

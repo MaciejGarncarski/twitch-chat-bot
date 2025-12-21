@@ -10,7 +10,7 @@ export const Queue = () => {
   const { data: queueData, isLoading } = useQuery({
     queryKey: ['queue'],
     queryFn: async () => {
-      const data = (await api.queue.get()) as { data: QueueTrackedItem[] }
+      const data = (await api.api.queue.get()) as { data: QueueTrackedItem[] }
       return data.data
     },
     refetchInterval: 1500,

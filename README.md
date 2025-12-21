@@ -27,10 +27,19 @@ To run this project you need
 
 ## ENV
 
+Frontend
+
 ```
-APP_ORIGIN=http://localhost:3000
-API_URL=http://localhost:3001
-PORT=3001
+VITE_WS_URL=ws://localhost:3302/api/ws
+VITE_API_URL=http://localhost:3302/
+```
+
+Backend
+
+```
+APP_ORIGINS=http://localhost:3301,http://192.168.0.1:3301
+API_URL=http://localhost:3302
+PORT=3302
 TWITCH_CLIENT_ID=twitch_dev_client_id
 TWITCH_CLIENT_SECRET=twitch_dev_client_secret
 TWITCH_ACCESS_TOKEN=generated_access_token
@@ -38,3 +47,9 @@ TWITCH_REFRESH_TOKEN=generated_refresh_token
 TWITCH_BROADCASTER_ID=user_id_where_bot_works
 YT_COOKIE="OPTIONAL BUT RECOMMENDED https://ytjs.dev/guide/authentication.html#cookies"
 ```
+
+## Running Project
+
+Fill env then run `bun install` in project root
+
+In /frontend and /backend each run `bun dev`

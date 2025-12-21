@@ -2,7 +2,7 @@ import { CommandHandler, Deps } from "@/commands/command";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
 import { formatDuration } from "@/helpers/format-duration";
 import z from "zod";
-import { SongMetadata } from "@/data/get-video-metadata";
+import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata";
 import { innertube } from "@/data/innertube";
 import { YTNodes } from "youtubei.js/agnostic";
 
@@ -37,8 +37,8 @@ export class YoutubeSrHandler extends CommandHandler {
 
     logger.info(`[COMMAND] [SR] ${messageText}`);
 
-    let videoLink = "";
     let videoId = "";
+    let metadata: SongMetadata | null = null;
 
     try {
       if (isYoutubeLink) {
@@ -48,11 +48,10 @@ export class YoutubeSrHandler extends CommandHandler {
           throw new Error("Invalid YouTube link.");
         }
 
+        const videoInfo = await getVideoMetadata(newVideoId);
         videoId = newVideoId;
-        videoLink = `https://www.youtube.com/watch?v=${videoId}`;
+        metadata = videoInfo;
       }
-
-      let metadata: SongMetadata | null = null;
 
       if (!isYoutubeLink) {
         const searchResult = await this.searchYoutubeVideo(userInput);
@@ -60,10 +59,9 @@ export class YoutubeSrHandler extends CommandHandler {
           throw new Error("No YT search results found.");
         }
         videoId = searchResult.videoId;
-
         metadata = searchResult.metadata;
-        videoLink = `https://www.youtube.com/watch?v=${videoId}`;
       }
+      const videoLink = `https://www.youtube.com/watch?v=${videoId}`;
 
       const added = await songQueue.add(
         {
@@ -80,23 +78,27 @@ export class YoutubeSrHandler extends CommandHandler {
       );
 
       await sendChatMessage(
-        `Dodano do kolejki ${videoLink} przez @${user} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie za ${durationUntilPlay}.`,
+        `Dodano do kolejki ${metadata?.title} przez @${user} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie za ${durationUntilPlay}.`,
         messageId
       );
     } catch (e) {
-      let message = `FootYellow Nie udało się dodać do kolejki ${videoLink} przez @${user} FootYellow`;
+      let message = `FootYellow Nie udało się dodać do kolejki. Tytuł: ${
+        metadata?.title || "Nieznany"
+      }, Długość: ${
+        metadata ? formatDuration(metadata.duration) : "Nieznana"
+      }, Link: https://www.youtube.com/watch?v=${videoId}`;
 
       if (e instanceof Error) {
         logger.error(e.message);
 
         if (e.message === "ALREADY_EXISTS") {
-          message = `FootYellow Filmik już dodany FootYellow`;
+          message = `FootYellow Filmik już dodany`;
         } else if (e.message === "QUEUE_FULL") {
-          message = `PoroSad Kolejka jest pełna! Spróbuj ponownie później PoroSad`;
+          message = `PoroSad Kolejka jest pełna!`;
         } else if (e.message === "TOO_LONG") {
-          message = `FootYellow Za długi filmik FootYellow`;
+          message = `FootYellow Za długi filmik`;
         } else if (e.message === "TOO_SHORT") {
-          message = `FootYellow Za krótki filmik FootYellow`;
+          message = `FootYellow Za krótki filmik`;
         }
       }
 

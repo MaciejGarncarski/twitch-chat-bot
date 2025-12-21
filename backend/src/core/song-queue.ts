@@ -17,7 +17,7 @@ import { voteManager } from "@/core/vote-manager";
 export class SongQueue {
   private queue: QueuedItem[] = [];
   private currentPlaying: QueuedItem | null = null;
-  private readonly maxQueueLength = 5;
+  private readonly maxQueueLength = 10;
   private readonly historyQueue: QueuedItem[] = [];
 
   public getCurrent(): QueuedItem | null {

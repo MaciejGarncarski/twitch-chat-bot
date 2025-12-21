@@ -8,6 +8,10 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    port: 3301,
+    allowedHosts: true,
+  },
   plugins: [
     devtools(),
     tanstackRouter({

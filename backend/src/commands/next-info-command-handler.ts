@@ -21,7 +21,7 @@ export class NextInfoCommandHandler extends CommandHandler {
     if (!nextSong) {
       logger.info(`[COMMAND] [NEXT] No next song in the queue.`);
 
-      await sendChatMessage(`Brak następnego utworu w kolejce.`, messageId);
+      await sendChatMessage(`Brak następnego utworu.`, messageId);
       return;
     }
 

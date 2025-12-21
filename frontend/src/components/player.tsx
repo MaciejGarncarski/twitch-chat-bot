@@ -42,13 +42,13 @@ export const Player = ({ currentSong, playbackData, playerRef }: PlayerProps) =>
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       if (playbackData.isPlaying) {
-        await api.pause.post()
+        await api.api.pause.post()
 
         if (playerRef.current) {
           playerRef.current.pause()
         }
       } else {
-        await api.play.post()
+        await api.api.play.post()
       }
 
       return new Promise((resolve) => setTimeout(resolve, 1300))

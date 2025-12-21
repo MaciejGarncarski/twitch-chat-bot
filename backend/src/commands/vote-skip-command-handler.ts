@@ -42,7 +42,7 @@ export class VoteSkipCommandHandler extends CommandHandler {
 
     if (votesLeft > 0) {
       await sendChatMessage(
-        `@${username} zagłosował za pominięciem utworu. Potrzeba jeszcze ${votesLeft} głosów.`,
+        `[VOTESKIP] [${votesCount}/${voteManager.getVotesNeeded()}] @${username} zagłosował za pominięciem utworu.`,
         parsedMessage.payload.event?.message_id
       );
       return;
@@ -56,7 +56,9 @@ export class VoteSkipCommandHandler extends CommandHandler {
       const skippedSong = songQueue.removeCurrent();
       if (skippedSong) {
         await sendChatMessage(
-          `[VOTESKIP] Pominięto utwór ${skippedSong.title} (dodany przez @${skippedSong.username}).`,
+          `[VOTESKIP] [${votesCount}/${voteManager.getVotesNeeded()}] Pominięto utwór ${
+            skippedSong.title
+          } (dodany przez @${skippedSong.username}).`,
           parsedMessage.payload.event?.message_id
         );
       } else {

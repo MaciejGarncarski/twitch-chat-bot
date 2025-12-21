@@ -1,11 +1,10 @@
+import type { QueueTrackedItem } from '@/routes'
 import { useState, type RefObject } from 'react'
 import ReactPlayer from 'react-player'
 
 type Props = {
   isReady: boolean
-  currentSong: {
-    id: string
-  } | null
+  currentSong: QueueTrackedItem | null
   playbackData: {
     volume: number
     isPlaying: boolean
@@ -16,14 +15,19 @@ type Props = {
 
 export function PlayerYT({ currentSong, playbackData, playerRef, setIsReady }: Props) {
   const [isMuted, setIsMuted] = useState(true)
+
+  const isPlaying = playbackData?.isPlaying ?? false
+  const volume = playbackData?.volume ?? 0
+  const songSrc = currentSong?.videoUrl ?? undefined
+
   return (
     <ReactPlayer
-      src={currentSong?.id ? `https://www.youtube.com/watch?v=${currentSong?.id}` : undefined}
-      volume={playbackData?.volume}
+      src={songSrc}
+      volume={volume}
       muted={isMuted}
       ref={playerRef}
       autoPlay
-      playing={true}
+      playing={isPlaying}
       fallback={<div>Loading...</div>}
       className="absolute bottom-0"
       config={{

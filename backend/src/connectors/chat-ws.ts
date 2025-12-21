@@ -20,7 +20,9 @@ import CommandProcessor from "@/processors/command-processor";
 import { twitchMessageSchema } from "@/types/twitch-ws-message";
 
 await unsubscribeAll();
+
 export const songQueue = new SongQueue();
+
 const commandHandlers = [
   new YoutubeSrHandler(),
   new SkipCommandHandler(),
@@ -35,36 +37,60 @@ const commandHandlers = [
   new NextInfoCommandHandler(),
   new HelpCommandHandler(),
 ];
+
 const processor = new CommandProcessor(commandHandlers);
 
 export class ChatWebSocket {
-  private ws!: WebSocket;
-  private sessionId: string = "";
-  private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws";
-  private keepaliveTimeout: number = 30_000;
+  private ws?: WebSocket;
+  private sessionId = "";
   private missedMessageTimer?: NodeJS.Timeout;
-  private isReconnecting: boolean = false;
+
+  private isTransferring = false;
+
+  private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws";
+  private keepaliveTimeoutSeconds = 30_000;
 
   constructor() {
     this.connect();
   }
 
   private connect(url: string = this.DEFAULT_WS_URL) {
-    const newWs = new WebSocket(url);
+    logger.info(`[CHAT WS] Connecting to ${url}...`);
 
-    newWs.addEventListener("message", async ({ data }) => {
+    const ws = new WebSocket(url);
+    this.ws = ws;
+
+    ws.addEventListener("message", async ({ data }) => {
+      console.log("MESSAGE", data);
       this.resetKeepaliveTimer();
-      await this.handleMessage(data, newWs);
+      await this.handleMessage(data.toString(), ws);
     });
 
-    newWs.addEventListener("close", () => {
+    ws.addEventListener("close", () => {
       this.stopKeepaliveTimer();
+
+      if (this.isTransferring) {
+        logger.info(
+          "[CHAT WS] Old connection closed successfully (Transfer complete)."
+        );
+        return;
+      }
+
       logger.info("[CHAT WS] Connection lost. Retrying in 3s...");
+
+      this.isTransferring = false;
+
       setTimeout(() => this.connect(), 3000);
+    });
+
+    ws.addEventListener("error", (err) => {
+      logger.error("[CHAT WS] WebSocket error");
+      console.error(err);
+      ws.close();
     });
   }
 
-  async handleMessage(rawData: string, socketContext: WebSocket) {
+  private async handleMessage(rawData: string, socketContext: WebSocket) {
     const parsed = twitchMessageSchema.parse(JSON.parse(rawData));
     const { message_type } = parsed.metadata;
 
@@ -74,24 +100,29 @@ export class ChatWebSocket {
           parsed.payload.session?.keepalive_timeout_seconds;
 
         if (timeoutSeconds) {
-          this.keepaliveTimeout = timeoutSeconds * 1000;
+          this.keepaliveTimeoutSeconds = timeoutSeconds * 1000;
         }
 
         const newSessionId = parsed.payload.session?.id;
-        if (!newSessionId) {
-          logger.error("[CHAT WS] No session ID received.");
-          return;
-        }
+        if (!newSessionId) return;
 
-        this.ws = socketContext;
         this.sessionId = newSessionId;
 
-        if (!this.isReconnecting) {
-          logger.info("[CHAT WS] Initial connection established.");
-          await subscribeToChat(newSessionId);
+        this.ws = socketContext;
+
+        logger.info(`[CHAT WS] Connected. Session ID: ${newSessionId}`);
+
+        console.log("WELCOME");
+        this.resetKeepaliveTimer();
+
+        if (this.isTransferring) {
+          logger.info(
+            "[CHAT WS] Session transferred. Subscriptions preserved."
+          );
+          this.isTransferring = false;
         } else {
-          logger.info("[CHAT WS] Reconnected successfully.");
-          this.isReconnecting = false;
+          logger.info("[CHAT WS] Fresh session. Subscribing to events...");
+          await subscribeToChat(newSessionId);
         }
 
         break;
@@ -99,18 +130,12 @@ export class ChatWebSocket {
 
       case "session_reconnect": {
         const reconnectUrl = parsed.payload.session?.reconnect_url;
+        if (!reconnectUrl) return;
 
-        this.isReconnecting = true;
-        this.ws.close();
-        this.resetKeepaliveTimer();
+        logger.info("[CHAT WS] Twitch requested reconnect (Migration).");
 
-        if (reconnectUrl) {
-          logger.info(
-            "[CHAT WS] Received reconnect notice. Connecting to new URL..."
-          );
-          this.connect(reconnectUrl);
-          break;
-        }
+        this.isTransferring = true;
+        this.connect(reconnectUrl);
         break;
       }
 
@@ -126,15 +151,18 @@ export class ChatWebSocket {
 
   private resetKeepaliveTimer() {
     this.stopKeepaliveTimer();
+
     this.missedMessageTimer = setTimeout(() => {
-      logger.warn(
-        "[CHAT WS] No keepalive received. Connection ghosted. Reconnecting..."
-      );
-      this.ws.close();
-    }, this.keepaliveTimeout + 2000);
+      logger.warn("[CHAT WS] No keepalive received. Connection ghosted.");
+
+      this.ws?.close();
+    }, this.keepaliveTimeoutSeconds + 2000);
   }
 
   private stopKeepaliveTimer() {
-    if (this.missedMessageTimer) clearTimeout(this.missedMessageTimer);
+    if (this.missedMessageTimer) {
+      clearTimeout(this.missedMessageTimer);
+      this.missedMessageTimer = undefined;
+    }
   }
 }

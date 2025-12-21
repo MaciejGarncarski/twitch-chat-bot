@@ -14,9 +14,11 @@ export class CurrentSongCommandHandler extends CommandHandler {
     parsedMessage: TwitchWSMessage,
     { songQueue, logger, sendChatMessage }: Deps
   ) {
+    const messageId = parsedMessage.payload.event?.message_id;
+
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [SKIP] Queue is empty, skipping not possible.`);
-      await sendChatMessage(`Kolejka jest pusta.`);
+      await sendChatMessage(`Kolejka jest pusta.`, messageId);
       return;
     }
 
@@ -26,7 +28,6 @@ export class CurrentSongCommandHandler extends CommandHandler {
       return;
     }
 
-    const messageId = parsedMessage.payload.event?.message_id;
     const durationToEnd = currentSong.duration - playbackManager.getPlayTime();
     const formatDurationToEnd = formatDuration(durationToEnd);
 

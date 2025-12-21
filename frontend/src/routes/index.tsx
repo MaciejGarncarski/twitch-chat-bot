@@ -46,17 +46,20 @@ function App() {
   const { isLoading, data: queueData } = useQuery({
     queryKey: ['queue'],
     queryFn: async () => {
-      const data = (await api.queue.get()) as { data: QueueTrackedItem[] }
+      const data = (await api.api.queue.get()) as { data: QueueTrackedItem[] }
       return data.data
     },
     refetchInterval: 1500,
   })
 
-  const { lastJsonMessage } = useWebSocket('ws://localhost:3001/ws', {
-    shouldReconnect: () => true,
-    reconnectAttempts: 10,
-    reconnectInterval: 3000,
-  })
+  const { lastJsonMessage } = useWebSocket(
+    import.meta.env.VITE_WS_URL || 'ws://localhost:3001/ws',
+    {
+      shouldReconnect: () => true,
+      reconnectAttempts: 10,
+      reconnectInterval: 3000,
+    },
+  )
   const parsedPlaybackData = playbackSchema.safeParse(lastJsonMessage)
   const playbackData = parsedPlaybackData.success ? parsedPlaybackData.data : null
 

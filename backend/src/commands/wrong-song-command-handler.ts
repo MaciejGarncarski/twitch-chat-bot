@@ -33,7 +33,7 @@ export class WrongSongCommandHandler extends CommandHandler {
         `[COMMAND] [WRONGSONG] User ${parsedMessage.payload.event?.chatter_user_login} tried to skip currently playing song, which is not allowed.`
       );
       await sendChatMessage(
-        `@${parsedMessage.payload.event?.chatter_user_login} Nie możesz pominąć aktualnie odtwarzanego utworu.`,
+        `@${parsedMessage.payload.event?.chatter_user_login} Nie możesz pominąć odtwarzanego utworu.`,
         messageId
       );
 
