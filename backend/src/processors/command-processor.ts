@@ -70,7 +70,6 @@ class CommandProcessor {
       sendChatMessage,
       playbackManager,
       voteManager,
-      isMod,
     };
 
     for (const handler of this.handlers) {
@@ -109,6 +108,7 @@ class CommandProcessor {
           deps,
           sanitizedMessage,
           messageId,
+          isMod,
         });
         return;
       } catch (error) {

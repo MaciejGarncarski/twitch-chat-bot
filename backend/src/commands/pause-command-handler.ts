@@ -15,16 +15,14 @@ export class PauseCommandHandler extends CommandHandler {
     return this.regex.test(messageText);
   }
 
-  async execute({ deps: { logger, playbackManager }, payload }: ExecuteParams) {
+  async execute({
+    deps: { logger, playbackManager },
+    payload,
+    isMod,
+  }: ExecuteParams) {
     if (!payload.event) {
       throw new Error("No event found in payload.");
     }
-
-    const isMod = checkIsMod(
-      payload.event.badges,
-      payload.event.chatter_user_id,
-      payload.event.broadcaster_user_id
-    );
 
     if (!isMod) {
       throw new CommandError(CommandErrorCode.NOT_A_MOD);

@@ -12,7 +12,6 @@ export type Deps = {
   logger: typeof logger;
   playbackManager: PlaybackManager;
   sendChatMessage: typeof sendChatMessage;
-  isMod: boolean;
 };
 
 export type ExecuteParams = {
@@ -20,6 +19,7 @@ export type ExecuteParams = {
   deps: Deps;
   messageId: string | undefined;
   sanitizedMessage: string;
+  isMod: boolean;
 };
 
 export abstract class CommandHandler {
