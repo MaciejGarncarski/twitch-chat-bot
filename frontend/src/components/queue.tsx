@@ -18,7 +18,7 @@ export const Queue = () => {
       exit={{ opacity: 0, transition: { duration: 0.7 } }}
     >
       <h2 className="mr-auto ml-1 pb-2 text-xl font-semibold text-neutral-300">Kolejka</h2>
-      <div
+      <ul
         className={cn(
           'border rounded-lg min-h-26 overflow-hidden',
           queuedCount === 0 && 'border-transparent',
@@ -47,7 +47,7 @@ export const Queue = () => {
             </motion.div>
           )}
           {filteredCurrent?.map((item, idx) => (
-            <motion.div
+            <motion.li
               layout
               key={item.id}
               exit={{
@@ -84,8 +84,8 @@ export const Queue = () => {
                   />
                 </a>
               )}
-              <div className="text-left flex flex-col gap-2">
-                <div className="font-semibold text-lg">{item.title}</div>
+              <div className="text-left flex flex-col gap-3">
+                <h3 className="font-semibold text-lg max-w-[40ch] truncate">{item.title}</h3>
                 <div className="text-gray-400 text-base flex items-center gap-4">
                   <span className="flex items-center gap-2">
                     <Clock3 size={16} /> {formatDuration(item.duration)}
@@ -97,10 +97,10 @@ export const Queue = () => {
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </motion.li>
           ))}
         </AnimatePresence>
-      </div>
+      </ul>
     </motion.div>
   )
 }
