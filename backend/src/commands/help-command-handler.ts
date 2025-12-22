@@ -1,7 +1,13 @@
 import { CommandHandler, ExecuteParams } from "@/commands/command";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 
 export class HelpCommandHandler extends CommandHandler {
   private readonly regex = /^![^!]/i;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 60000,
+    max: 1,
+  };
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

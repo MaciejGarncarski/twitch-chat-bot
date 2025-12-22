@@ -1,8 +1,14 @@
 import { CommandHandler, ExecuteParams } from "@/commands/command";
 import { formatDuration } from "@/helpers/format-duration";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 
 export class CurrentSongCommandHandler extends CommandHandler {
   private readonly regex = /^!song\s*$/i;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 5000,
+    max: 3,
+  };
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

@@ -1,9 +1,15 @@
 import { CommandHandler, Deps, ExecuteParams } from "@/commands/command";
 import { formatDuration } from "@/helpers/format-duration";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
 
 export class NextInfoCommandHandler extends CommandHandler {
   private readonly regex = /^!next\s*$/i;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 5000,
+    max: 3,
+  };
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

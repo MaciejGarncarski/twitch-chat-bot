@@ -1,12 +1,15 @@
 import { CommandHandler, Deps } from "@/commands/command";
-import { logger } from "@/helpers/logger";
-import { TwitchWSMessage } from "@/types/twitch-ws-message";
-import { songQueue } from "@/connectors/chat-ws";
 import { sendChatMessage } from "@/api/send-chat-message";
-import { sanitizeMessage } from "@/helpers/sanitize-message";
 import { playbackManager } from "@/core/playback-manager";
+import { songQueue } from "@/connectors/chat-ws";
+import { logger } from "@/helpers/logger";
+import { rateLimiter } from "@/helpers/rate-limit";
+import { checkIsMod } from "@/helpers/check-is-mod";
+import { sanitizeMessage } from "@/helpers/sanitize-message";
 import { voteManager } from "@/core/vote-manager";
 import { CommandError, CommandErrorCode } from "@/types/errors";
+import { TwitchWSMessage } from "@/types/twitch-ws-message";
+
 
 class CommandProcessor {
   handlers: CommandHandler[];
@@ -28,6 +31,38 @@ class CommandProcessor {
     }
 
     const sanitizedMessage = sanitizeMessage(messageText);
+    const messageId = parsed.payload.event?.message_id;
+    const username =
+      parsed.payload.event?.chatter_user_login ||
+      parsed.payload.event?.chatter_user_name;
+    const badges = parsed.payload.event?.badges;
+    const chatterId = parsed.payload.event?.chatter_user_id;
+    const broadcasterId = parsed.payload.event?.broadcaster_user_id;
+
+    if (!username) {
+      logger.warn("[COMMAND] Received message without username.");
+      return;
+    }
+
+    const normalizedUser = username.toLowerCase();
+    const isMod = checkIsMod(badges, chatterId, broadcasterId);
+
+    if (!isMod) {
+      const globalRateResult = rateLimiter.check(`global:${normalizedUser}`);
+
+      if (!globalRateResult.allowed) {
+        const retrySeconds = Math.max(
+          1,
+          Math.ceil((globalRateResult.retryIn ?? 0) / 1000)
+        );
+
+        logger.warn(
+          `[COMMAND] [RATE_LIMIT] Global limit hit for ${normalizedUser}. Retry in ${retrySeconds}s`
+        );
+
+        return;
+      }
+    }
 
     const deps: Deps = {
       songQueue,
@@ -35,6 +70,7 @@ class CommandProcessor {
       sendChatMessage,
       playbackManager,
       voteManager,
+      isMod,
     };
 
     for (const handler of this.handlers) {
@@ -44,17 +80,38 @@ class CommandProcessor {
       }
 
       try {
+        const commandName = handler.constructor.name;
+        const commandRateConfig = handler.rateLimit;
+
+        if (commandRateConfig && !isMod) {
+          const commandRateResult = rateLimiter.check(
+            `command:${commandName}:${normalizedUser}`,
+            commandRateConfig
+          );
+
+          if (!commandRateResult.allowed) {
+            const retrySeconds = Math.max(
+              1,
+              Math.ceil((commandRateResult.retryIn ?? 0) / 1000)
+            );
+
+            logger.warn(
+              `[COMMAND] [RATE_LIMIT] ${commandName} hit limit for ${normalizedUser}. Retry in ${retrySeconds}s`
+            );
+
+            return;
+          }
+        }
+
         logger.info(`[COMMAND] [EXEC] ${handler.constructor.name}`);
         await handler.execute({
           payload: parsed.payload,
           deps,
           sanitizedMessage,
-          messageId: parsed.payload.event?.message_id,
+          messageId,
         });
         return;
       } catch (error) {
-        const messageId = parsed.payload.event?.message_id;
-
         if (error instanceof CommandError) {
           switch (error.code) {
             case CommandErrorCode.NOT_A_MOD:

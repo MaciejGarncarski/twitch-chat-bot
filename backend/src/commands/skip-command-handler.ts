@@ -1,9 +1,15 @@
 import { CommandHandler, ExecuteParams } from "@/commands/command";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 import { checkIsMod } from "@/helpers/check-is-mod";
 import { CommandError, CommandErrorCode } from "@/types/errors";
 
 export class SkipCommandHandler extends CommandHandler {
   private readonly regex = /^!skip\s*$/i;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 5000,
+    max: 2,
+  };
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

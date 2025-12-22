@@ -1,8 +1,14 @@
 import { CommandHandler, Deps, ExecuteParams } from "@/commands/command";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 import { TwitchWSMessage } from "@/types/twitch-ws-message";
 
 export class QueueCommandHandler extends CommandHandler {
   private readonly regex = /^!queue\s*$/i;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 8000,
+    max: 3,
+  };
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

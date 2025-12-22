@@ -1,7 +1,13 @@
 import { CommandHandler, ExecuteParams } from "@/commands/command";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 
 export class WrongSongCommandHandler extends CommandHandler {
   private readonly regexp = /^!wrongsong\b/i;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 15000,
+    max: 1,
+  };
 
   public canHandle(message: string): boolean {
     return this.regexp.test(message);

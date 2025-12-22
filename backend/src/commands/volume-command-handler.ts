@@ -1,9 +1,15 @@
 import { CommandHandler, ExecuteParams } from "@/commands/command";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 import { checkIsMod } from "@/helpers/check-is-mod";
 import { CommandError, CommandErrorCode } from "@/types/errors";
 
 export class VolumeCommandHandler extends CommandHandler {
   private readonly regex = /^!volume(?:\s+(100|[1-9]?\d))?\s*$/;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 5000,
+    max: 3,
+  };
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

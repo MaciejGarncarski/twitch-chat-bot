@@ -1,5 +1,6 @@
 import { CommandHandler, ExecuteParams } from "@/commands/command";
 import { formatDuration } from "@/helpers/format-duration";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 import z from "zod";
 import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata";
 import { innertube } from "@/data/innertube";
@@ -9,6 +10,11 @@ export class YoutubeSrHandler extends CommandHandler {
   private readonly regex = /^!sr\s+(.+)$/i;
   private readonly ytLinkRegex =
     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]{11})/;
+
+  rateLimit: RateLimitConfig = {
+    windowMs: 8000,
+    max: 1,
+  };
 
   canHandle(messageText: string): boolean {
     return this.regex.test(messageText);

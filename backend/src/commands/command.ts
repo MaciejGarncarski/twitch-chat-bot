@@ -3,6 +3,7 @@ import { PlaybackManager } from "@/core/playback-manager";
 import { SongQueue } from "@/core/song-queue";
 import { VoteManager } from "@/core/vote-manager";
 import { logger } from "@/helpers/logger";
+import { RateLimitConfig } from "@/helpers/rate-limit";
 import { TwitchMessagePayload } from "@/types/twitch-ws-message";
 
 export type Deps = {
@@ -11,6 +12,7 @@ export type Deps = {
   logger: typeof logger;
   playbackManager: PlaybackManager;
   sendChatMessage: typeof sendChatMessage;
+  isMod: boolean;
 };
 
 export type ExecuteParams = {
@@ -21,6 +23,8 @@ export type ExecuteParams = {
 };
 
 export abstract class CommandHandler {
+  rateLimit?: RateLimitConfig;
+
   canHandle(messageText: string): boolean {
     throw new Error("Method canHandle has not been implemented.");
   }
