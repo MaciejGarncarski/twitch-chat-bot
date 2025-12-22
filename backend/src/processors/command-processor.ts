@@ -110,6 +110,12 @@ class CommandProcessor {
               await sendChatMessage('Tylko moderatorzy mogą używać tej komendy.', messageId)
               break
 
+            case CommandErrorCode.EVENT_NOT_FOUND:
+              logger.error(
+                `[COMMAND] [ERROR] ${handler.constructor.name} Missing event in payload.`,
+              )
+              break
+
             default:
               logger.error(
                 `[COMMAND] [ERROR] ${handler.constructor.name} Unhandled CommandError: ${error.code}`,

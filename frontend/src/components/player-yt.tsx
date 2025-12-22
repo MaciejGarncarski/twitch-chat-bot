@@ -11,9 +11,17 @@ type Props = {
   currentSong: QueueTrackedItem | null
   playerRef: RefObject<HTMLVideoElement | null>
   setIsReady: (ready: boolean) => void
+  isReady: boolean
 }
 
-export function PlayerYT({ currentSong, volume, isPlaying, playerRef, setIsReady }: Props) {
+export function PlayerYT({
+  currentSong,
+  volume,
+  isPlaying,
+  playerRef,
+  setIsReady,
+  isReady,
+}: Props) {
   const [isMuted, setIsMuted] = useState(true)
   const [retryCount, setRetryCount] = useState(0)
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -28,26 +36,20 @@ export function PlayerYT({ currentSong, volume, isPlaying, playerRef, setIsReady
 
     if (retryTimeoutRef.current) {
       clearTimeout(retryTimeoutRef.current)
+      retryTimeoutRef.current = null
     }
   }, [songSrc, setIsReady])
 
   const handleReady = () => {
-    retryTimeoutRef.current = setTimeout(() => {
-      setIsMuted(false)
-      setIsReady(true)
-    }, RETRY_BASE_DELAY_MS)
+    setIsMuted(false)
+    setIsReady(true)
   }
 
-  const handleError = (error: unknown) => {
-    console.error('ReactPlayer error:', error)
-
+  const handleError = () => {
     setIsReady(false)
     setIsMuted(true)
 
-    if (retryCount >= MAX_RETRIES) {
-      console.error('Max retries reached. Giving up.')
-      return
-    }
+    if (retryCount >= MAX_RETRIES) return
 
     const delay = Math.min(RETRY_BASE_DELAY_MS * 2 ** retryCount, 10_000)
 
@@ -65,8 +67,9 @@ export function PlayerYT({ currentSong, volume, isPlaying, playerRef, setIsReady
       src={songSrc}
       volume={volume}
       muted={isMuted}
-      playing={isPlaying}
-      fallback={<div>Loading…</div>}
+      playing={isPlaying && isReady}
+      onReady={handleReady}
+      onError={handleError}
       className="absolute bottom-0"
       config={{
         youtube: {
@@ -75,8 +78,6 @@ export function PlayerYT({ currentSong, volume, isPlaying, playerRef, setIsReady
           iv_load_policy: 3,
         },
       }}
-      onReady={handleReady}
-      onError={handleError}
     />
   )
 }

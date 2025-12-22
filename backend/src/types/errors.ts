@@ -1,6 +1,6 @@
 export const CommandErrorCode = {
   NOT_A_MOD: 'NOT_A_MOD',
-  ON_COOLDOWN: 'ON_COOLDOWN',
+  EVENT_NOT_FOUND: 'EVENT_NOT_FOUND',
 } as const
 
 export type CommandErrorCode = (typeof CommandErrorCode)[keyof typeof CommandErrorCode]

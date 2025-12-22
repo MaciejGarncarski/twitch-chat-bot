@@ -34,6 +34,7 @@ function App() {
             <QueueLoadingMessage />
           ) : currentSong ? (
             <CurrentSong
+              videoId={currentSong.id}
               duration={currentSong.duration}
               title={currentSong.title}
               username={currentSong.username}
