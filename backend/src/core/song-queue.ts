@@ -1,11 +1,10 @@
 import z from 'zod'
 
 import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from '@/config/video'
-import { playbackManager } from '@/core/playback-manager'
-import { voteManager } from '@/core/vote-manager'
 import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
 import { formatDuration } from '@/helpers/format-duration'
 import { logger } from '@/helpers/logger'
+import type { IPlaybackManager, IVoteManager } from '@/types/core-interfaces'
 import { QueuedItem, QueueTrackedItem, songRequestInputSchema } from '@/types/queue'
 
 export class SongQueue {
@@ -13,6 +12,16 @@ export class SongQueue {
   private currentPlaying: QueuedItem | null = null
   private readonly maxQueueLength = 10
   private readonly historyQueue: QueuedItem[] = []
+  private playbackManager: IPlaybackManager | null = null
+  private voteManager: IVoteManager | null = null
+
+  public setPlaybackManager(manager: IPlaybackManager) {
+    this.playbackManager = manager
+  }
+
+  public setVoteManager(manager: IVoteManager) {
+    this.voteManager = manager
+  }
 
   public getCurrent(): QueuedItem | null {
     return this.currentPlaying
@@ -23,12 +32,12 @@ export class SongQueue {
       .slice(0, -1)
       .reduce((total, item) => total + item.duration, 0)
 
-    return combinedDurationWithoutLast - playbackManager.getPlayTime()
+    return combinedDurationWithoutLast - (this.playbackManager?.getPlayTime() ?? 0)
   }
 
   public getDurationBeforePlayingNext(): number {
     const durationOfCurrent = this.currentPlaying?.duration || 0
-    const timePlayOfCurrent = playbackManager.getPlayTime()
+    const timePlayOfCurrent = this.playbackManager?.getPlayTime() ?? 0
 
     return Math.max(0, durationOfCurrent - timePlayOfCurrent)
   }
@@ -132,8 +141,8 @@ export class SongQueue {
     if (!this.currentPlaying) {
       this.currentPlaying = newItem
 
-      playbackManager.setSong(newItem.id, newItem.duration)
-      playbackManager.play()
+      this.playbackManager?.setSong(newItem.id, newItem.duration)
+      this.playbackManager?.play()
       this.queue.push(newItem)
     } else {
       this.queue.push(newItem)
@@ -143,14 +152,14 @@ export class SongQueue {
   }
 
   public removeCurrent() {
-    playbackManager.pause()
+    this.playbackManager?.pause()
     const currentItem = this.currentPlaying
     const currentId = this.currentPlaying ? this.currentPlaying.id : ''
 
     if (currentItem) {
       this.historyQueue.push(currentItem)
     }
-    voteManager.reset()
+    this.voteManager?.reset()
     this.queue = this.queue.filter((item) => item.id !== currentId)
 
     if (this.queue.length === 0) {
@@ -158,8 +167,8 @@ export class SongQueue {
       return currentItem
     }
     this.currentPlaying = this.queue[0]
-    playbackManager.setSong(this.currentPlaying.id, this.currentPlaying.duration)
-    playbackManager.play()
+    this.playbackManager?.setSong(this.currentPlaying.id, this.currentPlaying.duration)
+    this.playbackManager?.play()
     return currentItem
   }
 

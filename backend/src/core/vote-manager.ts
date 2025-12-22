@@ -23,5 +23,3 @@ export class VoteManager {
     this.votes.clear()
   }
 }
-
-export const voteManager = new VoteManager()
