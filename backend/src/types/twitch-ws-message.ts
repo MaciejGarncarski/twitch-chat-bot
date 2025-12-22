@@ -1,7 +1,7 @@
-import z from "zod";
+import z from 'zod'
 
 const mentionFragment = z.object({
-  type: z.literal("mention"),
+  type: z.literal('mention'),
   text: z.string(),
   cheermote: z.object().nullable(),
   emote: z.null(),
@@ -10,18 +10,18 @@ const mentionFragment = z.object({
     user_login: z.string(),
     user_name: z.string(),
   }),
-});
+})
 
 const textFragment = z.object({
-  type: z.literal("text"),
+  type: z.literal('text'),
   text: z.string(),
   cheermote: z.object().nullable(),
   mention: z.object().nullable(),
   emote: z.null(),
-});
+})
 
 const emoteFragment = z.object({
-  type: z.literal("emote"),
+  type: z.literal('emote'),
   text: z.string(),
   cheermote: z.object().nullable(),
   emote: z
@@ -33,13 +33,9 @@ const emoteFragment = z.object({
     })
     .nullable(),
   mention: z.object().nullable(),
-});
+})
 
-const messageFragments = z.union([
-  emoteFragment,
-  textFragment,
-  mentionFragment,
-]);
+const messageFragments = z.union([emoteFragment, textFragment, mentionFragment])
 
 const replySchema = z.object({
   parent_message_id: z.string(),
@@ -51,15 +47,15 @@ const replySchema = z.object({
   thread_user_id: z.string(),
   thread_user_login: z.string(),
   thread_user_name: z.string(),
-});
+})
 
 export const chatBadgeSchema = z.object({
   set_id: z.string(),
   id: z.string(),
   info: z.string().optional(),
-});
+})
 
-export const badgesSchema = z.array(chatBadgeSchema).nullable().optional();
+export const badgesSchema = z.array(chatBadgeSchema).nullable().optional()
 
 export const twitchMessagePayloadSchema = z.object({
   session: z
@@ -109,14 +105,14 @@ export const twitchMessagePayloadSchema = z.object({
       channel_points_animation_id: z.null(),
     })
     .optional(),
-});
+})
 
 export const twitchMessageSchema = z.object({
   metadata: z.object({
     message_type: z.string(),
   }),
   payload: twitchMessagePayloadSchema,
-});
+})
 
-export type TwitchMessagePayload = z.infer<typeof twitchMessagePayloadSchema>;
-export type TwitchWSMessage = z.infer<typeof twitchMessageSchema>;
+export type TwitchMessagePayload = z.infer<typeof twitchMessagePayloadSchema>
+export type TwitchWSMessage = z.infer<typeof twitchMessageSchema>

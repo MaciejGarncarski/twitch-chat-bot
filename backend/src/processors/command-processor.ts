@@ -1,66 +1,61 @@
-import { CommandHandler, Deps } from "@/commands/command";
-import { sendChatMessage } from "@/api/send-chat-message";
-import { playbackManager } from "@/core/playback-manager";
-import { songQueue } from "@/connectors/chat-ws";
-import { logger } from "@/helpers/logger";
-import { rateLimiter } from "@/helpers/rate-limit";
-import { checkIsMod } from "@/helpers/check-is-mod";
-import { sanitizeMessage } from "@/helpers/sanitize-message";
-import { voteManager } from "@/core/vote-manager";
-import { CommandError, CommandErrorCode } from "@/types/errors";
-import { TwitchWSMessage } from "@/types/twitch-ws-message";
-
+import { sendChatMessage } from '@/api/send-chat-message'
+import { CommandHandler, Deps } from '@/commands/command'
+import { songQueue } from '@/connectors/chat-ws'
+import { playbackManager } from '@/core/playback-manager'
+import { voteManager } from '@/core/vote-manager'
+import { checkIsMod } from '@/helpers/check-is-mod'
+import { logger } from '@/helpers/logger'
+import { rateLimiter } from '@/helpers/rate-limit'
+import { sanitizeMessage } from '@/helpers/sanitize-message'
+import { CommandError, CommandErrorCode } from '@/types/errors'
+import { TwitchWSMessage } from '@/types/twitch-ws-message'
 
 class CommandProcessor {
-  handlers: CommandHandler[];
+  handlers: CommandHandler[]
 
   constructor(handlers: CommandHandler[]) {
-    this.handlers = handlers;
+    this.handlers = handlers
   }
 
   async process(parsed: TwitchWSMessage) {
-    if (parsed.metadata.message_type !== "notification") {
-      return;
+    if (parsed.metadata.message_type !== 'notification') {
+      return
     }
 
-    const messageText = parsed.payload.event?.message?.text.trim();
+    const messageText = parsed.payload.event?.message?.text.trim()
 
     if (!messageText) {
-      logger.warn("[COMMAND] Received message without text.");
-      return;
+      logger.warn('[COMMAND] Received message without text.')
+      return
     }
 
-    const sanitizedMessage = sanitizeMessage(messageText);
-    const messageId = parsed.payload.event?.message_id;
+    const sanitizedMessage = sanitizeMessage(messageText)
+    const messageId = parsed.payload.event?.message_id
     const username =
-      parsed.payload.event?.chatter_user_login ||
-      parsed.payload.event?.chatter_user_name;
-    const badges = parsed.payload.event?.badges;
-    const chatterId = parsed.payload.event?.chatter_user_id;
-    const broadcasterId = parsed.payload.event?.broadcaster_user_id;
+      parsed.payload.event?.chatter_user_login || parsed.payload.event?.chatter_user_name
+    const badges = parsed.payload.event?.badges
+    const chatterId = parsed.payload.event?.chatter_user_id
+    const broadcasterId = parsed.payload.event?.broadcaster_user_id
 
     if (!username) {
-      logger.warn("[COMMAND] Received message without username.");
-      return;
+      logger.warn('[COMMAND] Received message without username.')
+      return
     }
 
-    const normalizedUser = username.toLowerCase();
-    const isMod = checkIsMod(badges, chatterId, broadcasterId);
+    const normalizedUser = username.toLowerCase()
+    const isMod = checkIsMod(badges, chatterId, broadcasterId)
 
     if (!isMod) {
-      const globalRateResult = rateLimiter.check(`global:${normalizedUser}`);
+      const globalRateResult = rateLimiter.check(`global:${normalizedUser}`)
 
       if (!globalRateResult.allowed) {
-        const retrySeconds = Math.max(
-          1,
-          Math.ceil((globalRateResult.retryIn ?? 0) / 1000)
-        );
+        const retrySeconds = Math.max(1, Math.ceil((globalRateResult.retryIn ?? 0) / 1000))
 
         logger.warn(
-          `[COMMAND] [RATE_LIMIT] Global limit hit for ${normalizedUser}. Retry in ${retrySeconds}s`
-        );
+          `[COMMAND] [RATE_LIMIT] Global limit hit for ${normalizedUser}. Retry in ${retrySeconds}s`,
+        )
 
-        return;
+        return
       }
     }
 
@@ -70,74 +65,68 @@ class CommandProcessor {
       sendChatMessage,
       playbackManager,
       voteManager,
-    };
+    }
 
     for (const handler of this.handlers) {
-      const canHandle = handler.canHandle(sanitizedMessage);
+      const canHandle = handler.canHandle(sanitizedMessage)
       if (!canHandle) {
-        continue;
+        continue
       }
 
       try {
-        const commandName = handler.constructor.name;
-        const commandRateConfig = handler.rateLimit;
+        const commandName = handler.constructor.name
+        const commandRateConfig = handler.rateLimit
 
         if (commandRateConfig && !isMod) {
           const commandRateResult = rateLimiter.check(
             `command:${commandName}:${normalizedUser}`,
-            commandRateConfig
-          );
+            commandRateConfig,
+          )
 
           if (!commandRateResult.allowed) {
-            const retrySeconds = Math.max(
-              1,
-              Math.ceil((commandRateResult.retryIn ?? 0) / 1000)
-            );
+            const retrySeconds = Math.max(1, Math.ceil((commandRateResult.retryIn ?? 0) / 1000))
 
             logger.warn(
-              `[COMMAND] [RATE_LIMIT] ${commandName} hit limit for ${normalizedUser}. Retry in ${retrySeconds}s`
-            );
+              `[COMMAND] [RATE_LIMIT] ${commandName} hit limit for ${normalizedUser}. Retry in ${retrySeconds}s`,
+            )
 
-            return;
+            return
           }
         }
 
-        logger.info(`[COMMAND] [EXEC] ${handler.constructor.name}`);
+        logger.info(`[COMMAND] [EXEC] ${handler.constructor.name}`)
         await handler.execute({
           payload: parsed.payload,
           deps,
           sanitizedMessage,
           messageId,
           isMod,
-        });
-        return;
+        })
+        return
       } catch (error) {
         if (error instanceof CommandError) {
           switch (error.code) {
             case CommandErrorCode.NOT_A_MOD:
-              await sendChatMessage(
-                "Tylko moderatorzy mogą używać tej komendy.",
-                messageId
-              );
-              break;
+              await sendChatMessage('Tylko moderatorzy mogą używać tej komendy.', messageId)
+              break
 
             default:
               logger.error(
-                `[COMMAND] [ERROR] ${handler.constructor.name} Unhandled CommandError: ${error.code}`
-              );
+                `[COMMAND] [ERROR] ${handler.constructor.name} Unhandled CommandError: ${error.code}`,
+              )
           }
 
-          return;
+          return
         }
 
         if (error instanceof Error) {
           logger.error(
-            `[COMMAND] [ERROR] ${handler.constructor.name} Error executing command: ${error.message}`
-          );
+            `[COMMAND] [ERROR] ${handler.constructor.name} Error executing command: ${error.message}`,
+          )
         }
       }
     }
   }
 }
 
-export default CommandProcessor;
+export default CommandProcessor

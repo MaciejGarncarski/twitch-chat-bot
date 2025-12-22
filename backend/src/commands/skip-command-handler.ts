@@ -1,18 +1,17 @@
-import { CommandHandler, ExecuteParams } from "@/commands/command";
-import { RateLimitConfig } from "@/helpers/rate-limit";
-import { checkIsMod } from "@/helpers/check-is-mod";
-import { CommandError, CommandErrorCode } from "@/types/errors";
+import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { RateLimitConfig } from '@/helpers/rate-limit'
+import { CommandError, CommandErrorCode } from '@/types/errors'
 
 export class SkipCommandHandler extends CommandHandler {
-  private readonly regex = /^!skip\s*$/i;
+  private readonly regex = /^!skip\s*$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
     max: 2,
-  };
+  }
 
   canHandle(messageText: string): boolean {
-    return this.regex.test(messageText);
+    return this.regex.test(messageText)
   }
 
   async execute({
@@ -22,38 +21,37 @@ export class SkipCommandHandler extends CommandHandler {
     isMod,
   }: ExecuteParams) {
     if (songQueue.isEmpty()) {
-      logger.info(`[COMMAND] [SKIP] Queue is empty, skipping not possible.`);
-      await sendChatMessage(`Kolejka jest pusta.`, messageId);
-      return;
+      logger.info(`[COMMAND] [SKIP] Queue is empty, skipping not possible.`)
+      await sendChatMessage(`Kolejka jest pusta.`, messageId)
+      return
     }
 
     if (!payload.event) {
-      throw new Error("No event found in payload.");
+      throw new Error('No event found in payload.')
     }
-
 
     if (!isMod) {
-      throw new CommandError(CommandErrorCode.NOT_A_MOD);
+      throw new CommandError(CommandErrorCode.NOT_A_MOD)
     }
 
-    const user = payload.event?.chatter_user_name;
+    const user = payload.event?.chatter_user_name
 
     if (!user) {
-      throw new Error("Missing user information.");
+      throw new Error('Missing user information.')
     }
 
-    logger.info(`[COMMAND] [SKIP] Requested by ${user}`);
+    logger.info(`[COMMAND] [SKIP] Requested by ${user}`)
 
-    const skippedSong = songQueue.removeCurrent();
+    const skippedSong = songQueue.removeCurrent()
 
     if (skippedSong) {
       await sendChatMessage(
         `Pominięto utwór ${skippedSong.title} (dodany przez @${skippedSong.username}).`,
-        messageId
-      );
-      return;
+        messageId,
+      )
+      return
     }
 
-    await sendChatMessage(`Kolejka jest pusta.`, messageId);
+    await sendChatMessage(`Kolejka jest pusta.`, messageId)
   }
 }

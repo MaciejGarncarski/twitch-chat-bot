@@ -1,16 +1,16 @@
-import { CommandHandler, ExecuteParams } from "@/commands/command";
-import { RateLimitConfig } from "@/helpers/rate-limit";
+import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class WrongSongCommandHandler extends CommandHandler {
-  private readonly regexp = /^!wrongsong\b/i;
+  private readonly regexp = /^!wrongsong\b/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 15000,
     max: 1,
-  };
+  }
 
   public canHandle(message: string): boolean {
-    return this.regexp.test(message);
+    return this.regexp.test(message)
   }
 
   async execute({
@@ -20,31 +20,31 @@ export class WrongSongCommandHandler extends CommandHandler {
   }: ExecuteParams) {
     const foundSoung = songQueue
       .getQueue()
-      .findLast((item) => item.username === payload.event?.chatter_user_name);
+      .findLast((item) => item.username === payload.event?.chatter_user_name)
 
     if (!foundSoung) {
       logger.info(
-        `[COMMAND] [WRONGSONG] No song found for user ${payload.event?.chatter_user_login}.`
-      );
-      return;
+        `[COMMAND] [WRONGSONG] No song found for user ${payload.event?.chatter_user_login}.`,
+      )
+      return
     }
 
     if (playbackManager.getCurrentSongId() === foundSoung.id) {
       logger.info(
-        `[COMMAND] [WRONGSONG] User ${payload.event?.chatter_user_login} tried to skip currently playing song, which is not allowed.`
-      );
+        `[COMMAND] [WRONGSONG] User ${payload.event?.chatter_user_login} tried to skip currently playing song, which is not allowed.`,
+      )
       await sendChatMessage(
         `@${payload.event?.chatter_user_login} Nie możesz pominąć odtwarzanego utworu.`,
-        messageId
-      );
+        messageId,
+      )
 
-      return;
+      return
     }
 
-    songQueue.removeSongById(foundSoung.id);
+    songQueue.removeSongById(foundSoung.id)
     logger.info(
-      `[COMMAND] [WRONGSONG] Removed song with ID ${foundSoung.id} for user ${payload.event?.chatter_user_login}.`
-    );
-    await sendChatMessage(`Usunięto z kolejki.`, messageId);
+      `[COMMAND] [WRONGSONG] Removed song with ID ${foundSoung.id} for user ${payload.event?.chatter_user_login}.`,
+    )
+    await sendChatMessage(`Usunięto z kolejki.`, messageId)
   }
 }

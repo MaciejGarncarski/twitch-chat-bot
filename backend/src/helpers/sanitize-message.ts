@@ -1,5 +1,5 @@
 export const sanitizeMessage = (text: string) =>
   text
-    .normalize("NFKC")
-    .replace(/[\p{M}\p{Cf}]/gu, "")
-    .trim();
+    .normalize('NFKC')
+    .replace(/[\p{M}\p{Cf}]/gu, '')
+    .trim()

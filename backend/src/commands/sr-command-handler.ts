@@ -1,23 +1,24 @@
-import { CommandHandler, ExecuteParams } from "@/commands/command";
-import { formatDuration } from "@/helpers/format-duration";
-import { RateLimitConfig } from "@/helpers/rate-limit";
-import z from "zod";
-import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata";
-import { innertube } from "@/data/innertube";
-import { YTNodes } from "youtubei.js/agnostic";
+import { YTNodes } from 'youtubei.js/agnostic'
+import z from 'zod'
+
+import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
+import { innertube } from '@/data/innertube'
+import { formatDuration } from '@/helpers/format-duration'
+import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class YoutubeSrHandler extends CommandHandler {
-  private readonly regex = /^!sr\s+(.+)$/i;
+  private readonly regex = /^!sr\s+(.+)$/i
   private readonly ytLinkRegex =
-    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]{11})/;
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]{11})/
 
   rateLimit: RateLimitConfig = {
     windowMs: 8000,
     max: 1,
-  };
+  }
 
   canHandle(messageText: string): boolean {
-    return this.regex.test(messageText);
+    return this.regex.test(messageText)
   }
 
   async execute({
@@ -25,48 +26,48 @@ export class YoutubeSrHandler extends CommandHandler {
     payload,
     messageId,
   }: ExecuteParams) {
-    const messageText = payload.event?.message?.text;
-    const messageMatch = messageText?.match(this.regex);
+    const messageText = payload.event?.message?.text
+    const messageMatch = messageText?.match(this.regex)
 
     if (!messageMatch || !messageText) {
-      throw new Error("Message does not match SR command.");
+      throw new Error('Message does not match SR command.')
     }
 
-    const userInput = messageMatch[1];
-    const isYoutubeLink = this.ytLinkRegex.test(userInput);
-    const user = payload.event?.chatter_user_name;
+    const userInput = messageMatch[1]
+    const isYoutubeLink = this.ytLinkRegex.test(userInput)
+    const user = payload.event?.chatter_user_name
 
     if (!user) {
-      throw new Error("Not matching SR command or missing user/messageId.");
+      throw new Error('Not matching SR command or missing user/messageId.')
     }
 
-    logger.info(`[COMMAND] [SR] ${messageText}`);
+    logger.info(`[COMMAND] [SR] ${messageText}`)
 
-    let videoId = "";
-    let metadata: SongMetadata | null = null;
+    let videoId = ''
+    let metadata: SongMetadata | null = null
 
     try {
       if (isYoutubeLink) {
-        const newVideoId = this.extractVideoId(userInput);
+        const newVideoId = this.extractVideoId(userInput)
 
         if (!newVideoId) {
-          throw new Error("Invalid YouTube link.");
+          throw new Error('Invalid YouTube link.')
         }
 
-        const videoInfo = await getVideoMetadata(newVideoId);
-        videoId = newVideoId;
-        metadata = videoInfo;
+        const videoInfo = await getVideoMetadata(newVideoId)
+        videoId = newVideoId
+        metadata = videoInfo
       }
 
       if (!isYoutubeLink) {
-        const searchResult = await this.searchYoutubeVideo(userInput);
+        const searchResult = await this.searchYoutubeVideo(userInput)
         if (!searchResult) {
-          throw new Error("No YT search results found.");
+          throw new Error('No YT search results found.')
         }
-        videoId = searchResult.videoId;
-        metadata = searchResult.metadata;
+        videoId = searchResult.videoId
+        metadata = searchResult.metadata
       }
-      const videoLink = `https://www.youtube.com/watch?v=${videoId}`;
+      const videoLink = `https://www.youtube.com/watch?v=${videoId}`
 
       const added = await songQueue.add(
         {
@@ -74,73 +75,66 @@ export class YoutubeSrHandler extends CommandHandler {
           videoUrl: videoLink,
           videoId: videoId,
         },
-        metadata || undefined
-      );
+        metadata || undefined,
+      )
 
-      const durationFormatted = formatDuration(added.duration);
-      const durationUntilPlay = formatDuration(
-        songQueue.getDurationBeforePlayingCurrent()
-      );
+      const durationFormatted = formatDuration(added.duration)
+      const durationUntilPlay = formatDuration(songQueue.getDurationBeforePlayingCurrent())
 
-      const durationText =
-        durationUntilPlay === "0:00"
-          ? "teraz"
-          : `za około ${durationUntilPlay}`;
+      const durationText = durationUntilPlay === '0:00' ? 'teraz' : `za około ${durationUntilPlay}`
 
       await sendChatMessage(
         `Dodano do kolejki ${metadata?.title} przez @${user} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie ${durationText}.`,
-        messageId
-      );
+        messageId,
+      )
     } catch (e) {
       let message = `FootYellow Nie udało się dodać do kolejki. Tytuł: ${
-        metadata?.title || "Nieznany"
+        metadata?.title || 'Nieznany'
       }, Długość: ${
-        metadata ? formatDuration(metadata.duration) : "Nieznana"
-      }, Link: https://www.youtube.com/watch?v=${videoId}`;
+        metadata ? formatDuration(metadata.duration) : 'Nieznana'
+      }, Link: https://www.youtube.com/watch?v=${videoId}`
 
       if (e instanceof Error) {
-        logger.error(e.message);
+        logger.error(e.message)
 
-        if (e.message === "ALREADY_EXISTS") {
-          message = `FootYellow Filmik już dodany`;
-        } else if (e.message === "QUEUE_FULL") {
-          message = `PoroSad Kolejka jest pełna!`;
-        } else if (e.message === "TOO_LONG") {
-          message = `FootYellow Za długi filmik`;
-        } else if (e.message === "TOO_SHORT") {
-          message = `FootYellow Za krótki filmik`;
+        if (e.message === 'ALREADY_EXISTS') {
+          message = `FootYellow Filmik już dodany`
+        } else if (e.message === 'QUEUE_FULL') {
+          message = `PoroSad Kolejka jest pełna!`
+        } else if (e.message === 'TOO_LONG') {
+          message = `FootYellow Za długi filmik`
+        } else if (e.message === 'TOO_SHORT') {
+          message = `FootYellow Za krótki filmik`
         }
       }
 
-      await sendChatMessage(message, messageId);
+      await sendChatMessage(message, messageId)
     }
   }
 
   private extractVideoId(url: string): string | null {
-    const match = url.match(this.ytLinkRegex);
-    return match ? match[1] : null;
+    const match = url.match(this.ytLinkRegex)
+    return match ? match[1] : null
   }
 
   private async searchYoutubeVideo(
-    query: string
+    query: string,
   ): Promise<{ videoId: string; metadata: SongMetadata } | null> {
-    const results = await innertube.search(query, { type: "video" });
+    const results = await innertube.search(query, { type: 'video' })
 
-    const song = results.videos.find(
-      (node): node is YTNodes.Video => node.type === "Video"
-    );
+    const song = results.videos.find((node): node is YTNodes.Video => node.type === 'Video')
 
     if (!song) {
-      return null;
+      return null
     }
 
     const metadata: SongMetadata = {
       duration: song.duration?.seconds ?? 0,
       title: song.title.toString(),
       thumbnail: song.thumbnails.at(-1)?.url ?? null,
-    };
+    }
 
-    return { videoId: song.video_id, metadata };
+    return { videoId: song.video_id, metadata }
   }
 }
 
@@ -155,7 +149,7 @@ export const SearchResultSchema = z
     thumbnails: z.array(
       z.object({
         url: z.string(),
-      })
+      }),
     ),
   })
   .transform(
@@ -163,5 +157,5 @@ export const SearchResultSchema = z
       title: data.title.text,
       duration: data.duration.seconds,
       thumbnail: data.thumbnails.at(-1)?.url ?? null,
-    })
-  );
+    }),
+  )
