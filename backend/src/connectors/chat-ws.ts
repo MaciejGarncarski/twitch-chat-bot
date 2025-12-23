@@ -48,8 +48,7 @@ export class ChatWebSocket {
     })
 
     ws.addEventListener('error', (err) => {
-      logger.error('[CHAT WS] WebSocket error')
-      logger.error(err)
+      logger.error(err, '[CHAT WS] WebSocket error')
       ws.close()
     })
   }

@@ -53,7 +53,7 @@ export class SongRequestEngine {
 
         this.playbackManager.stop()
       } catch (error) {
-        logger.error(error, '[QUEUE] Error handling song-remove-current')
+        logger.error(`[QUEUE] Error handling song-remove-current for [${item?.title}]`)
       }
     })
 
