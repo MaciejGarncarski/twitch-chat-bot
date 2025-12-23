@@ -1,14 +1,14 @@
 import { IPlaybackManager, PlaybackManager } from '@/core/playback-manager'
 import { ISongQueue, SongQueue } from '@/core/song-queue'
-import { VoteManager } from '@/core/vote-manager'
+import { IVoteManager, VoteManager } from '@/core/vote-manager'
 import { logger } from '@/helpers/logger'
 
 export class SongRequestEngine {
   private readonly songQueue: ISongQueue
-  private readonly voteManager: VoteManager
+  private readonly voteManager: IVoteManager
   private readonly playbackManager: IPlaybackManager
 
-  constructor(songQueue: ISongQueue, voteManager: VoteManager, playbackManager: IPlaybackManager) {
+  constructor(songQueue: ISongQueue, voteManager: IVoteManager, playbackManager: IPlaybackManager) {
     this.songQueue = songQueue
     this.voteManager = voteManager
     this.playbackManager = playbackManager
@@ -53,8 +53,7 @@ export class SongRequestEngine {
 
         this.playbackManager.stop()
       } catch (error) {
-        logger.error('[QUEUE] Error handling song-remove-current')
-        logger.error(error)
+        logger.error(error, '[QUEUE] Error handling song-remove-current')
       }
     })
 

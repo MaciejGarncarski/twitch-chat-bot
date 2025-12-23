@@ -1,4 +1,12 @@
-export class VoteManager {
+export interface IVoteManager {
+  addVote(username: string): number
+  hasVoted(username: string): boolean
+  getVotesNeeded(): number
+  getCurrentCount(): number
+  reset(): void
+}
+
+export class VoteManager implements IVoteManager {
   private votes: Set<string> = new Set()
   private readonly votesNeeded = 2
 
