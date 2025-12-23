@@ -1,6 +1,7 @@
 import { getBunServer } from '@/helpers/init-ws'
 import { logger } from '@/helpers/logger'
 import type { ISongQueue } from '@/types/core-interfaces'
+import { playbackStatusWSSchema } from '@/types/playback-status-ws'
 
 export class PlaybackManager {
   private isPlaying: boolean = false
@@ -31,17 +32,23 @@ export class PlaybackManager {
       return
     }
 
-    bunInstance.publish(
-      'playback-status',
-      JSON.stringify({
-        isPlaying: this.isPlaying,
-        volume: this.volume,
-        songId: this.songId,
-        playTime: this.isPlaying ? currentPlayTime : this.playTime,
-        startedAt: this.startedAt,
-        serverTime: Date.now(),
-      }),
-    )
+    const playbackStatus = {
+      isPlaying: this.isPlaying,
+      volume: this.volume,
+      songId: this.songId,
+      playTime: this.isPlaying ? currentPlayTime : this.playTime,
+      startedAt: this.startedAt,
+      serverTime: Date.now(),
+    }
+
+    const parsedStatus = playbackStatusWSSchema.safeParse(playbackStatus)
+
+    if (!parsedStatus.success) {
+      logger.error('[PLAYBACK] Invalid playback status')
+      return
+    }
+
+    bunInstance.publish('playback-status', JSON.stringify(parsedStatus.data))
   }
 
   private startHeartbeat() {
