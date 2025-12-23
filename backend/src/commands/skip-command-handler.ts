@@ -27,7 +27,7 @@ export class SkipCommandHandler extends CommandHandler {
     }
 
     if (!payload.event) {
-      throw new Error('No event found in payload.')
+      throw new CommandError(CommandErrorCode.EVENT_NOT_FOUND)
     }
 
     if (!isMod) {

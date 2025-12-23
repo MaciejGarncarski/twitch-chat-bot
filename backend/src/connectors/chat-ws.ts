@@ -1,40 +1,10 @@
-import { CurrentSongCommandHandler } from '@/commands/current-song-command-handler'
-import { GithubCommandHandler } from '@/commands/github-commang-handler'
-import { HelpCommandHandler } from '@/commands/help-command-handler'
-import { NextInfoCommandHandler } from '@/commands/next-info-command-handler'
-import { PauseCommandHandler } from '@/commands/pause-command-handler'
-import { PlayCommandHandler } from '@/commands/play-command-handler'
-import { QueueCommandHandler } from '@/commands/quque-command-handler'
-import { SkipCommandHandler } from '@/commands/skip-command-handler'
-import { YoutubeSrHandler } from '@/commands/sr-command-handler'
-import { VolumeCommandHandler } from '@/commands/volume-command-handler'
-import { VoteSkipCommandHandler } from '@/commands/vote-skip-command-handler'
-import { WrongSongCommandHandler } from '@/commands/wrong-song-command-handler'
+import { commandHandlers } from '@/commands/handlers'
 import { subscribeToChat, unsubscribeAll } from '@/connectors/chat-subscription'
-import { SongQueue } from '@/core/song-queue'
 import { logger } from '@/helpers/logger'
 import CommandProcessor from '@/processors/command-processor'
 import { twitchMessageSchema } from '@/types/twitch-ws-message'
 
 await unsubscribeAll()
-
-export const songQueue = new SongQueue()
-
-const commandHandlers = [
-  new YoutubeSrHandler(),
-  new SkipCommandHandler(),
-  new CurrentSongCommandHandler(),
-  new QueueCommandHandler(),
-  new VolumeCommandHandler(),
-  new WrongSongCommandHandler(),
-  new GithubCommandHandler(),
-  new PlayCommandHandler(),
-  new PauseCommandHandler(),
-  new VoteSkipCommandHandler(),
-  new NextInfoCommandHandler(),
-  new HelpCommandHandler(),
-]
-
 const processor = new CommandProcessor(commandHandlers)
 
 export class ChatWebSocket {
@@ -79,6 +49,7 @@ export class ChatWebSocket {
 
     ws.addEventListener('error', (err) => {
       logger.error('[CHAT WS] WebSocket error')
+      // eslint-disable-next-line no-console
       console.error(err)
       ws.close()
     })

@@ -1,8 +1,6 @@
 import { sendChatMessage } from '@/api/send-chat-message'
 import { CommandHandler, Deps } from '@/commands/command'
-import { songQueue } from '@/connectors/chat-ws'
-import { playbackManager } from '@/core/playback-manager'
-import { voteManager } from '@/core/vote-manager'
+import { playbackManager, songQueue, voteManager } from '@/core/instances'
 import { checkIsMod } from '@/helpers/check-is-mod'
 import { logger } from '@/helpers/logger'
 import { rateLimiter } from '@/helpers/rate-limit'
@@ -108,6 +106,12 @@ class CommandProcessor {
           switch (error.code) {
             case CommandErrorCode.NOT_A_MOD:
               await sendChatMessage('Tylko moderatorzy mogą używać tej komendy.', messageId)
+              break
+
+            case CommandErrorCode.EVENT_NOT_FOUND:
+              logger.error(
+                `[COMMAND] [ERROR] ${handler.constructor.name} Missing event in payload.`,
+              )
               break
 
             default:

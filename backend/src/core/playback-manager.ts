@@ -1,6 +1,6 @@
-import { songQueue } from '@/connectors/chat-ws'
 import { getBunServer } from '@/helpers/init-ws'
 import { logger } from '@/helpers/logger'
+import type { ISongQueue } from '@/types/core-interfaces'
 
 export class PlaybackManager {
   private isPlaying: boolean = false
@@ -10,6 +10,11 @@ export class PlaybackManager {
   private intervalId: NodeJS.Timeout | null = null
   private songId: string | null = null
   private currentSongDuration: number = 0
+  private songQueue: ISongQueue | null = null
+
+  public setSongQueue(queue: ISongQueue) {
+    this.songQueue = queue
+  }
 
   public setSong(songId: string, duration: number) {
     this.songId = songId
@@ -84,7 +89,8 @@ export class PlaybackManager {
       if (
         this.currentSongDuration > 0 &&
         currentPlayTime >= this.currentSongDuration &&
-        songQueue.length > 0
+        this.songQueue &&
+        this.songQueue.length > 0
       ) {
         this.handleSongEnd()
         return
@@ -127,7 +133,7 @@ export class PlaybackManager {
   handleSongEnd() {
     logger.info('[PLAYBACK] Current song finished playing.')
 
-    const nextSong = songQueue.next()
+    const nextSong = this.songQueue?.next()
     const bunInstance = getBunServer()
 
     if (nextSong) {
@@ -157,5 +163,3 @@ export class PlaybackManager {
     }
   }
 }
-
-export const playbackManager = new PlaybackManager()

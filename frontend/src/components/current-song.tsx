@@ -14,6 +14,7 @@ type CurrentSongProps = {
   thumbnail: string | null
   isPlaying: boolean
   volume: number
+  videoId: string
   playTime: number
   title: string
   duration: number
@@ -29,6 +30,7 @@ export const CurrentSong = ({
   duration,
   username,
   thumbnail,
+  videoId,
 }: CurrentSongProps) => {
   const [isHovered, setIsHovered] = useState(false)
   const { mutate, isPending } = useSetPlayState({ isPlaying, playerRef })
@@ -99,7 +101,7 @@ export const CurrentSong = ({
               {username}
             </p>
           </div>
-          <CurrentSongProgressBar duration={duration} playTime={playTime} />
+          <CurrentSongProgressBar key={videoId} duration={duration} playTime={playTime} />
         </div>
       </div>
     </motion.div>

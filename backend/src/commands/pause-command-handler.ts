@@ -16,7 +16,7 @@ export class PauseCommandHandler extends CommandHandler {
 
   async execute({ deps: { logger, playbackManager }, payload, isMod }: ExecuteParams) {
     if (!payload.event) {
-      throw new Error('No event found in payload.')
+      throw new CommandError(CommandErrorCode.EVENT_NOT_FOUND)
     }
 
     if (!isMod) {

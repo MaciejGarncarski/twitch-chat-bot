@@ -22,7 +22,7 @@ export class VolumeCommandHandler extends CommandHandler {
     isMod,
   }: ExecuteParams) {
     if (!payload.event) {
-      throw new Error('No event found in payload.')
+      throw new CommandError(CommandErrorCode.EVENT_NOT_FOUND)
     }
 
     if (!isMod) {
