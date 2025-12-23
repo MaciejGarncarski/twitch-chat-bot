@@ -33,8 +33,8 @@ export class SongRequestEngine {
       const isAddedToEmptyQueue = this.songQueue.getQueue().length === 1
 
       if (isAddedToEmptyQueue) {
-        this.playbackManager.play()
         this.playbackManager.setSong(item.id, item.duration)
+        this.playbackManager.play()
         return
       }
     })
