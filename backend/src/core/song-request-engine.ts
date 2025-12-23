@@ -8,7 +8,7 @@ export class SongRequestEngine {
   private readonly voteManager: VoteManager
   private readonly playbackManager: IPlaybackManager
 
-  constructor(songQueue: SongQueue, voteManager: VoteManager, playbackManager: PlaybackManager) {
+  constructor(songQueue: ISongQueue, voteManager: VoteManager, playbackManager: IPlaybackManager) {
     this.songQueue = songQueue
     this.voteManager = voteManager
     this.playbackManager = playbackManager
@@ -40,17 +40,22 @@ export class SongRequestEngine {
     })
 
     this.songQueue.on('song-remove-current', (item) => {
-      logger.info(`[QUEUE] [REMOVED] [${item.title}] by [${item.username}]`)
-      const nextSong = this.songQueue.getCurrent()
-      this.voteManager.reset()
+      try {
+        logger.info(`[QUEUE] [REMOVED] [${item.title}] by [${item.username}]`)
+        const nextSong = this.songQueue.getCurrent()
+        this.voteManager.reset()
 
-      if (nextSong) {
-        this.playbackManager.setSong(nextSong.id, nextSong.duration)
-        this.playbackManager.play()
-        return
+        if (nextSong) {
+          this.playbackManager.setSong(nextSong.id, nextSong.duration)
+          this.playbackManager.play()
+          return
+        }
+
+        this.playbackManager.stop()
+      } catch (error) {
+        logger.error('[QUEUE] Error handling song-remove-current')
+        logger.error(error)
       }
-
-      this.playbackManager.stop()
     })
 
     this.playbackManager.on('song-ended', () => {

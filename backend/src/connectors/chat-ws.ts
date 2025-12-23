@@ -49,8 +49,7 @@ export class ChatWebSocket {
 
     ws.addEventListener('error', (err) => {
       logger.error('[CHAT WS] WebSocket error')
-      // eslint-disable-next-line no-console
-      console.error(err)
+      logger.error(err)
       ws.close()
     })
   }
