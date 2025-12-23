@@ -1,16 +1,17 @@
+import { Logger } from 'pino'
+
 import { sendChatMessage } from '@/api/send-chat-message'
-import { PlaybackManager } from '@/core/playback-manager'
-import { SongQueue } from '@/core/song-queue'
-import { VoteManager } from '@/core/vote-manager'
-import { logger } from '@/helpers/logger'
+import { IPlaybackManager } from '@/core/playback-manager'
+import { ISongQueue } from '@/core/song-queue'
+import { IVoteManager } from '@/core/vote-manager'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { TwitchMessagePayload } from '@/types/twitch-ws-message'
 
 export type Deps = {
-  songQueue: SongQueue
-  voteManager: VoteManager
-  logger: typeof logger
-  playbackManager: PlaybackManager
+  songQueue: ISongQueue
+  voteManager: IVoteManager
+  logger: Logger
+  playbackManager: IPlaybackManager
   sendChatMessage: typeof sendChatMessage
 }
 

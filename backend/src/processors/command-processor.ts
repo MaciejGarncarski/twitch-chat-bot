@@ -1,6 +1,6 @@
 import { sendChatMessage } from '@/api/send-chat-message'
 import { CommandHandler, Deps } from '@/commands/command'
-import { playbackManager, songQueue, voteManager } from '@/core/instances'
+import { songRequestEngine } from '@/core/song-request-engine'
 import { checkIsMod } from '@/helpers/check-is-mod'
 import { logger } from '@/helpers/logger'
 import { rateLimiter } from '@/helpers/rate-limit'
@@ -56,6 +56,10 @@ class CommandProcessor {
         return
       }
     }
+
+    const songQueue = songRequestEngine.getSongQueue()
+    const playbackManager = songRequestEngine.getPlaybackManager()
+    const voteManager = songRequestEngine.getVoteManager()
 
     const deps: Deps = {
       songQueue,

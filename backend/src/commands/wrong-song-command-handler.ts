@@ -14,7 +14,7 @@ export class WrongSongCommandHandler extends CommandHandler {
   }
 
   async execute({
-    deps: { logger, songQueue, sendChatMessage, playbackManager },
+    deps: { logger, songQueue, sendChatMessage },
     payload,
     messageId,
   }: ExecuteParams) {
@@ -29,7 +29,7 @@ export class WrongSongCommandHandler extends CommandHandler {
       return
     }
 
-    if (playbackManager.getCurrentSongId() === foundSoung.id) {
+    if (songQueue.getCurrentSongId() === foundSoung.id) {
       logger.info(
         `[COMMAND] [WRONGSONG] User ${payload.event?.chatter_user_login} tried to skip currently playing song, which is not allowed.`,
       )
@@ -41,7 +41,7 @@ export class WrongSongCommandHandler extends CommandHandler {
       return
     }
 
-    songQueue.removeSongById(foundSoung.id)
+    songQueue.removeById(foundSoung.id)
     logger.info(
       `[COMMAND] [WRONGSONG] Removed song with ID ${foundSoung.id} for user ${payload.event?.chatter_user_login}.`,
     )

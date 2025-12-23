@@ -5,7 +5,9 @@ import { CommandHandler, ExecuteParams } from '@/commands/command'
 import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
 import { innertube } from '@/data/innertube'
 import { formatDuration } from '@/helpers/format-duration'
+import { getTimeUntilAddedSong } from '@/helpers/get-time-until-added-song'
 import { RateLimitConfig } from '@/helpers/rate-limit'
+import { QueueError } from '@/types/queue-errors'
 
 export class YoutubeSrHandler extends CommandHandler {
   private readonly regex = /^!sr\s+(.+)$/i
@@ -22,7 +24,7 @@ export class YoutubeSrHandler extends CommandHandler {
   }
 
   async execute({
-    deps: { logger, songQueue, sendChatMessage },
+    deps: { logger, songQueue, sendChatMessage, playbackManager },
     payload,
     messageId,
   }: ExecuteParams) {
@@ -44,7 +46,7 @@ export class YoutubeSrHandler extends CommandHandler {
     logger.info(`[COMMAND] [SR] ${messageText}`)
 
     let videoId = ''
-    let metadata: SongMetadata | null = null
+    let metadata: SongMetadata | undefined = undefined
 
     try {
       if (isYoutubeLink) {
@@ -69,17 +71,18 @@ export class YoutubeSrHandler extends CommandHandler {
       }
       const videoLink = `https://www.youtube.com/watch?v=${videoId}`
 
-      const added = await songQueue.add(
-        {
-          username: user,
-          videoUrl: videoLink,
-          videoId: videoId,
-        },
-        metadata || undefined,
-      )
+      const newSongInput = {
+        username: user,
+        videoUrl: videoLink,
+        videoId: videoId,
+      }
+
+      const added = await songQueue.add(newSongInput, metadata)
 
       const durationFormatted = formatDuration(added.duration)
-      const durationUntilPlay = formatDuration(songQueue.getDurationBeforePlayingCurrent())
+      const durationUntilPlay = formatDuration(
+        getTimeUntilAddedSong(songQueue.getQueue(), playbackManager.getPlayTime()),
+      )
 
       const durationText = durationUntilPlay === '0:00' ? 'teraz' : `za około ${durationUntilPlay}`
 
@@ -87,27 +90,38 @@ export class YoutubeSrHandler extends CommandHandler {
         `Dodano do kolejki ${metadata?.title} przez @${user} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie ${durationText}.`,
         messageId,
       )
-    } catch (e) {
-      let message = `FootYellow Nie udało się dodać do kolejki. Tytuł: ${
-        metadata?.title || 'Nieznany'
-      }, Długość: ${
-        metadata ? formatDuration(metadata.duration) : 'Nieznana'
-      }, Link: https://www.youtube.com/watch?v=${videoId}`
+    } catch (error) {
+      const title = metadata?.title || 'Nieznany'
+      const duration = metadata ? formatDuration(metadata.duration) : 'Nieznana'
+      const link = videoId ? `https://www.youtube.com/watch?v=${videoId}` : 'Brak'
 
-      if (e instanceof Error) {
-        logger.error(e.message)
+      let message = `FootYellow Nie udało się dodać do kolejki. Tytuł: ${title}, Długość: ${duration}, Link: ${link}`
 
-        if (e.message === 'ALREADY_EXISTS') {
-          message = `FootYellow Filmik już dodany`
-        } else if (e.message === 'QUEUE_FULL') {
-          message = `PoroSad Kolejka jest pełna!`
-        } else if (e.message === 'TOO_LONG') {
-          message = `FootYellow Za długi filmik`
-        } else if (e.message === 'TOO_SHORT') {
-          message = `FootYellow Za krótki filmik`
+      if (error instanceof QueueError) {
+        logger.error(`[COMMAND] [SR] QueueError: ${error.code}`)
+
+        switch (error.code) {
+          case 'ALREADY_EXISTS':
+            message = `FootYellow Ten filmik jest już w kolejce!`
+            break
+          case 'QUEUE_FULL':
+            message = `PoroSad Kolejka jest pełna! Spróbuj ponownie później.`
+            break
+          case 'TOO_SHORT':
+            message = `FootYellow Filmik jest za krótki.`
+            break
+          case 'TOO_LONG':
+            message = `FootYellow Filmik jest za długi.`
+            break
         }
+
+        await sendChatMessage(message, messageId)
+        return
       }
 
+      if (error instanceof Error) {
+        logger.error(error.message)
+      }
       await sendChatMessage(message, messageId)
     }
   }

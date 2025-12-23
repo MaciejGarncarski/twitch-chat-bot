@@ -4,15 +4,15 @@ import { Elysia } from 'elysia'
 import { sendChatMessage } from '@/api/send-chat-message'
 import { env } from '@/config/env'
 import { ChatWebSocket } from '@/connectors/chat-ws'
-import { playbackManager, songQueue } from '@/core/instances'
+import { songRequestEngine } from '@/core/song-request-engine'
 import { twitchAuth } from '@/core/twitch-auth-manager'
 import { setBunServer } from '@/helpers/init-ws'
-import { logOnStart } from '@/helpers/log-on-start'
 import { logger } from '@/helpers/logger'
 
 async function init() {
   await twitchAuth.fetchUserId()
   await twitchAuth.refresh()
+  songRequestEngine.setupEventListeners()
   new ChatWebSocket()
 }
 
@@ -25,21 +25,21 @@ export const app = new Elysia()
     }),
   )
   .onStart(async ({ server }) => {
-    logOnStart()
+    logger.info(`[SERVER] [UP] listening on ${env.API_URL}`)
     await sendChatMessage(`Bot uruchomiony${env.NODE_ENV === 'development' ? ' (dev)' : ''}`)
     setBunServer(server)
 
     if (env.NODE_ENV === 'development') {
-      // await songQueue.add({
-      //   username: "maciej_ga",
-      //   videoUrl: "https://www.youtube.com/watch?v=xuP4g7IDgDM",
-      //   videoId: "xuP4g7IDgDM",
-      // });
-      await songQueue.add({
-        username: 'maciej_ga',
-        videoUrl: 'https://www.youtube.com/watch?v=E8gmARGvPlI',
-        videoId: 'E8gmARGvPlI',
-      })
+      // await songRequestEngine.getSongQueue().add({
+      //   username: 'maciej_ga',
+      //   videoUrl: 'https://www.youtube.com/watch?v=xuP4g7IDgDM',
+      //   videoId: 'xuP4g7IDgDM',
+      // })
+      // await songRequestEngine.getSongQueue().add({
+      //   username: 'maciej_ga',
+      //   videoUrl: 'https://www.youtube.com/watch?v=E8gmARGvPlI',
+      //   videoId: 'E8gmARGvPlI',
+      // })
     }
   })
   .onStop(async () => {
@@ -58,17 +58,17 @@ export const app = new Elysia()
         return 'hi'
       })
       .get('/queue', async () => {
-        const data = songQueue.getQueue()
+        const data = songRequestEngine.getSongQueue().getQueue()
         return data
       })
       .post('/pause', async () => {
-        playbackManager.pause()
+        songRequestEngine.getPlaybackManager().pause()
         return {
           status: 'ok',
         }
       })
       .post('/play', async () => {
-        playbackManager.play()
+        songRequestEngine.getPlaybackManager().play()
         return {
           status: 'ok',
         }
@@ -82,9 +82,9 @@ export const app = new Elysia()
   .listen({ port: env.PORT || 3001 })
 
 process.on('SIGINT', () => {
-  logger.info('Received SIGINT. Stopping server...')
+  logger.info('[SERVER] Received SIGINT. Stopping server...')
   app.stop().then(() => {
-    logger.info('Server stopped')
+    logger.info(`[SERVER] [DOWN] Stopped`)
     process.exit(0)
   })
 })

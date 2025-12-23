@@ -21,6 +21,7 @@ const envSchema = z.object({
 const parsedEnv = envSchema.safeParse(process.env)
 
 if (!parsedEnv.success) {
+  // eslint-disable-next-line no-console
   console.log(parsedEnv.error)
   process.exit(1)
 }

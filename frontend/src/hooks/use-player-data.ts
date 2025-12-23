@@ -1,6 +1,6 @@
+import { playbackStatusWSSchema } from '@/schemas/playback-status-ws'
 import { useMemo } from 'react'
 import useWebSocket from 'react-use-websocket'
-import z from 'zod'
 
 export function usePlayerData() {
   const { lastJsonMessage } = useWebSocket(
@@ -13,9 +13,10 @@ export function usePlayerData() {
   )
 
   const parsedPlaybackData = useMemo(
-    () => playbackSchema.safeParse(lastJsonMessage),
+    () => playbackStatusWSSchema.safeParse(lastJsonMessage),
     [lastJsonMessage],
   )
+
   const playbackData = useMemo(
     () => (parsedPlaybackData.success ? parsedPlaybackData.data : null),
     [parsedPlaybackData],
@@ -28,13 +29,3 @@ export function usePlayerData() {
 
   return { volume, playTime, isPlaying, songId }
 }
-
-const playbackSchema = z
-  .object({
-    isPlaying: z.boolean(),
-    volume: z.number(),
-    playTime: z.number(),
-    startedAt: z.number().nullable(),
-    songId: z.string().nullable(),
-  })
-  .nullable()

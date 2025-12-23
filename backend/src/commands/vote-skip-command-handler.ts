@@ -48,21 +48,22 @@ export class VoteSkipCommandHandler extends CommandHandler {
       return
     }
 
-    if (votesCount >= voteManager.getVotesNeeded()) {
-      logger.info(`[COMMAND] [VOTESKIP] Vote skip passed with ${votesCount} votes. Skipping song.`)
-      voteManager.reset()
-      const skippedSong = songQueue.removeCurrent()
-      if (skippedSong) {
-        await sendChatMessage(
-          `[VOTESKIP] [${votesCount}/${voteManager.getVotesNeeded()}] Pominięto utwór ${
-            skippedSong.title
-          } (dodany przez @${skippedSong.username}).`,
-          payload.event?.message_id,
-        )
-      } else {
-        await sendChatMessage(`Kolejka jest pusta.`, payload.event?.message_id)
-      }
+    logger.info(`[COMMAND] [VOTESKIP] Vote skip passed with ${votesCount} votes. Skipping song.`)
+    const skippedSong = songQueue.removeCurrent()
+    voteManager.reset()
+
+    if (skippedSong) {
+      const votesMessage = `${votesCount}/${voteManager.getVotesNeeded()}`
+
+      await sendChatMessage(
+        `[VOTESKIP] [${votesMessage}] Pominięto utwór ${
+          skippedSong.title
+        } (dodany przez @${skippedSong.username}).`,
+        payload.event?.message_id,
+      )
       return
     }
+
+    await sendChatMessage(`Kolejka jest pusta.`, payload.event?.message_id)
   }
 }

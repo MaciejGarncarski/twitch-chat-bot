@@ -1,89 +1,66 @@
+import { EventEmitter } from 'node:events'
+
 import z from 'zod'
 
 import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from '@/config/video'
 import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
-import { formatDuration } from '@/helpers/format-duration'
-import { logger } from '@/helpers/logger'
-import type { IPlaybackManager, IVoteManager } from '@/types/core-interfaces'
-import { QueuedItem, QueueTrackedItem, songRequestInputSchema } from '@/types/queue'
+import { QueuedItem, songRequestInputSchema } from '@/types/queue'
+import { QueueError } from '@/types/queue-errors'
 
-export class SongQueue {
+export interface ISongQueue extends EventEmitter {
+  getCurrent(): QueuedItem | null
+  getQueue(): QueuedItem[]
+  length: number
+  addItemToQueue(item: QueuedItem): void
+  isEmpty(): boolean
+  add(input: z.infer<typeof songRequestInputSchema>, metadata?: SongMetadata): Promise<QueuedItem>
+  getCurrentSongId(): string | null
+  removeCurrent(): QueuedItem | null
+  removeById(songId: string): QueuedItem | null
+  peekNext(): QueuedItem | null
+
+  on(event: 'song-queued', listener: (item: QueuedItem) => void): this
+  on(event: 'song-remove-current', listener: (item: QueuedItem) => void): this
+}
+
+export class SongQueue extends EventEmitter implements ISongQueue {
   private queue: QueuedItem[] = []
-  private currentPlaying: QueuedItem | null = null
   private readonly maxQueueLength = 10
-  private readonly historyQueue: QueuedItem[] = []
-  private playbackManager: IPlaybackManager | null = null
-  private voteManager: IVoteManager | null = null
 
-  public setPlaybackManager(manager: IPlaybackManager) {
-    this.playbackManager = manager
-  }
-
-  public setVoteManager(manager: IVoteManager) {
-    this.voteManager = manager
+  constructor() {
+    super()
   }
 
   public getCurrent(): QueuedItem | null {
-    return this.currentPlaying
+    return this.queue[0] || null
   }
 
-  public getDurationBeforePlayingCurrent(): number {
-    const combinedDurationWithoutLast = this.queue
-      .slice(0, -1)
-      .reduce((total, item) => total + item.duration, 0)
-
-    return combinedDurationWithoutLast - (this.playbackManager?.getPlayTime() ?? 0)
-  }
-
-  public getDurationBeforePlayingNext(): number {
-    const durationOfCurrent = this.currentPlaying?.duration || 0
-    const timePlayOfCurrent = this.playbackManager?.getPlayTime() ?? 0
-
-    return Math.max(0, durationOfCurrent - timePlayOfCurrent)
-  }
-
-  public getQueue(): QueueTrackedItem[] {
-    let cumulativeTime = 0
-    const trackedQueue: QueueTrackedItem[] = []
-
-    for (let i = 0; i < this.queue.length; i++) {
-      const item = this.queue[i]
-
-      const timeUntilPlay = cumulativeTime
-
-      const trackedItem: QueueTrackedItem = {
-        ...item,
-        position: i + 1,
-        timeUntilPlay: timeUntilPlay,
-        formattedTimeUntilPlay: formatDuration(timeUntilPlay),
-      }
-
-      trackedQueue.push(trackedItem)
-
-      cumulativeTime += item.duration
-    }
-
-    return trackedQueue
+  public getQueue(): QueuedItem[] {
+    return this.queue
   }
 
   public get length(): number {
     return this.queue.length
   }
 
+  public addItemToQueue(item: QueuedItem) {
+    this.queue.push(item)
+  }
+
   public isEmpty(): boolean {
-    return this.queue.length === 0 && this.currentPlaying === null
+    return this.queue.length === 0 && this.getCurrent() === null
   }
 
   private checkIfExists(videoUrl: string): boolean {
     const isQueued = this.queue.find((q) => q.videoUrl === videoUrl)
-    const isCurrent = this.currentPlaying && this.currentPlaying.videoUrl === videoUrl
+    const isCurrent = this.getCurrent() && this.getCurrent()!.videoUrl === videoUrl
     return !!isQueued || !!isCurrent
   }
 
   public async add(
     input: z.infer<typeof songRequestInputSchema>,
     metadata?: SongMetadata,
-  ): Promise<QueueTrackedItem> {
+  ): Promise<QueuedItem> {
     const validatedInput = songRequestInputSchema.parse(input)
 
     let title = 'Unknown Title'
@@ -102,21 +79,20 @@ export class SongQueue {
     }
 
     if (this.checkIfExists(validatedInput.videoUrl)) {
-      throw new Error('ALREADY_EXISTS')
+      throw new QueueError('ALREADY_EXISTS')
     }
 
     if (this.queue.length >= this.maxQueueLength) {
-      throw new Error('QUEUE_FULL')
+      throw new QueueError('QUEUE_FULL')
     }
 
     if (duration < MIN_VIDEO_DURATION_SECONDS) {
-      throw new Error('TOO_SHORT')
+      throw new QueueError('TOO_SHORT')
     }
     if (duration > MAX_VIDEO_DURATION_SECONDS) {
-      throw new Error('TOO_LONG')
+      throw new QueueError('TOO_LONG')
     }
 
-    const timeUntilPlay = this.getDurationBeforePlayingCurrent()
     const position = this.queue.length + 1
 
     const newItem: QueuedItem = {
@@ -127,49 +103,42 @@ export class SongQueue {
       title: title,
       thumbnail: thumbnail,
       requestedAt: new Date(),
+      position: position,
     }
 
-    const trackedItem: QueueTrackedItem = {
-      ...newItem,
-      position: this.currentPlaying === newItem ? 0 : position,
-      timeUntilPlay: this.currentPlaying === newItem ? 0 : timeUntilPlay,
-      formattedTimeUntilPlay:
-        this.currentPlaying === newItem ? 'Now Playing' : formatDuration(timeUntilPlay),
-    }
+    this.queue.push(newItem)
+    this.emit('song-queued', newItem)
+    return newItem
+  }
 
-    logger.info(`[QUEUE] [PLAYING-FROM-YT] [${newItem.title}]`)
-    if (!this.currentPlaying) {
-      this.currentPlaying = newItem
-
-      this.playbackManager?.setSong(newItem.id, newItem.duration)
-      this.playbackManager?.play()
-      this.queue.push(newItem)
-    } else {
-      this.queue.push(newItem)
-    }
-
-    return trackedItem
+  public getCurrentSongId(): string | null {
+    const current = this.getCurrent()
+    return current ? current.id : null
   }
 
   public removeCurrent() {
-    this.playbackManager?.pause()
-    const currentItem = this.currentPlaying
-    const currentId = this.currentPlaying ? this.currentPlaying.id : ''
+    const currentItem = this.getCurrent()
 
-    if (currentItem) {
-      this.historyQueue.push(currentItem)
+    if (!currentItem) {
+      return null
     }
-    this.voteManager?.reset()
-    this.queue = this.queue.filter((item) => item.id !== currentId)
 
-    if (this.queue.length === 0) {
-      this.currentPlaying = null
-      return currentItem
-    }
-    this.currentPlaying = this.queue[0]
-    this.playbackManager?.setSong(this.currentPlaying.id, this.currentPlaying.duration)
-    this.playbackManager?.play()
+    this.queue = this.queue.filter((item) => item.id !== currentItem.id)
+    this.emit('song-remove-current', currentItem)
+
     return currentItem
+  }
+
+  public removeById(songId: string) {
+    const itemToRemove = this.queue.find((item) => item.id === songId)
+
+    if (!itemToRemove) {
+      return null
+    }
+
+    this.queue = this.queue.filter((item) => item.id !== songId)
+
+    return itemToRemove
   }
 
   public peekNext(): QueuedItem | null {
@@ -177,25 +146,5 @@ export class SongQueue {
       return null
     }
     return this.queue[1]
-  }
-
-  public next(): QueuedItem | null {
-    this.removeCurrent()
-    return this.currentPlaying
-  }
-
-  public removeSongById(id: string): boolean {
-    const initialLength = this.queue.length
-
-    if (this.currentPlaying && this.currentPlaying.id === id) {
-      this.removeCurrent()
-      return true
-    }
-    const foundElement = this.queue.find((item) => item.id === id)
-    if (foundElement) {
-      this.historyQueue.push(foundElement)
-    }
-    this.queue = this.queue.filter((item) => item.id !== id)
-    return this.queue.length < initialLength
   }
 }

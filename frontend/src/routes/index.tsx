@@ -17,7 +17,7 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const { isLoading, data: queueData } = useQueue()
-  const { isPlaying, playTime, volume } = usePlayerData()
+  const { isPlaying, playTime, volume, songId } = usePlayerData()
   const [isReady, setIsReady] = useState(true)
   const playerRef = useRef<HTMLVideoElement>(null)
 
@@ -54,7 +54,7 @@ function App() {
         {isLoading || queueData?.length === 0 ? null : <Queue />}
       </AnimatePresence>
 
-      {currentSong && (
+      {currentSong && songId === currentSong.id && (
         <PlayerYT
           isReady={isReady}
           volume={volume}

@@ -1,8 +1,22 @@
+import { EventEmitter } from 'node:events'
+
 import { getBunServer } from '@/helpers/init-ws'
 import { logger } from '@/helpers/logger'
-import type { ISongQueue } from '@/types/core-interfaces'
+import { playbackStatusWSSchema } from '@/types/playback-status-ws'
 
-export class PlaybackManager {
+export interface IPlaybackManager extends EventEmitter {
+  play(): void
+  pause(): void
+  stop(): void
+  setSong(songId: string | null, duration: number): void
+  getPlayTime(): number
+  getVolume(): number
+  setVolume(volume: number): void
+
+  on(event: 'song-ended', listener: () => void): this
+}
+
+export class PlaybackManager extends EventEmitter implements IPlaybackManager {
   private isPlaying: boolean = false
   private volume: number = 20
   private playTime: number = 0
@@ -10,156 +24,95 @@ export class PlaybackManager {
   private intervalId: NodeJS.Timeout | null = null
   private songId: string | null = null
   private currentSongDuration: number = 0
-  private songQueue: ISongQueue | null = null
 
-  public setSongQueue(queue: ISongQueue) {
-    this.songQueue = queue
+  constructor() {
+    super()
+    this.startHeartbeat()
   }
 
-  public setSong(songId: string, duration: number) {
+  private broadcastStatus() {
+    const bunInstance = getBunServer()
+    if (!bunInstance) return
+
+    const currentPlayTime = this.getPlayTime()
+
+    if (
+      this.isPlaying &&
+      this.currentSongDuration > 0 &&
+      currentPlayTime >= this.currentSongDuration
+    ) {
+      this.emit('song-ended')
+      return
+    }
+
+    const playbackStatus = {
+      isPlaying: this.isPlaying,
+      volume: this.volume,
+      songId: this.songId,
+      playTime: this.isPlaying ? currentPlayTime : this.playTime,
+      startedAt: this.startedAt,
+      serverTime: Date.now(),
+    }
+
+    const parsedStatus = playbackStatusWSSchema.safeParse(playbackStatus)
+
+    if (!parsedStatus.success) {
+      logger.error('[PLAYBACK] Invalid playback status')
+      return
+    }
+
+    bunInstance.publish('playback-status', JSON.stringify(parsedStatus.data))
+  }
+
+  private startHeartbeat() {
+    if (this.intervalId) clearInterval(this.intervalId)
+    this.intervalId = setInterval(() => this.broadcastStatus(), 1000)
+  }
+
+  public setSong(songId: string | null, duration: number) {
     this.songId = songId
     this.currentSongDuration = duration
     this.playTime = 0
-    this.startedAt = Date.now() - this.playTime * 1000
+    if (this.isPlaying) {
+      this.startedAt = Date.now()
+    }
   }
 
-  public getCurrentSongId() {
-    return this.songId
-  }
-
-  public getVolume() {
-    return this.volume
-  }
-
-  getPlayTime() {
+  public getPlayTime() {
     if (!this.isPlaying || this.startedAt === null) return this.playTime
     return Math.floor((Date.now() - this.startedAt) / 1000)
   }
 
-  play() {
+  public play() {
     if (this.isPlaying) return
 
     this.isPlaying = true
     this.startedAt = Date.now() - this.playTime * 1000
-
-    if (this.intervalId) {
-      clearInterval(this.intervalId)
-      this.intervalId = null
-    }
-
-    this.intervalId = setInterval(async () => {
-      const currentPlayTime = this.getPlayTime()
-
-      if (this.currentSongDuration > 0 && currentPlayTime >= this.currentSongDuration) {
-        this.handleSongEnd()
-        return
-      }
-
-      const bunInstance = getBunServer()
-      if (!bunInstance) return
-
-      bunInstance.publish(
-        'playback-status',
-        JSON.stringify({
-          isPlaying: this.isPlaying,
-          volume: this.volume,
-          songId: this.songId,
-          playTime: currentPlayTime,
-          startedAt: this.startedAt,
-          serverTime: Date.now(),
-        }),
-      )
-    }, 1000)
+    this.broadcastStatus()
   }
-  pause() {
-    if (this.isPlaying && this.startedAt !== null) {
-      this.playTime = this.getPlayTime()
-    }
 
+  public pause() {
+    if (!this.isPlaying) return
+
+    this.playTime = this.getPlayTime()
     this.isPlaying = false
-
-    if (this.intervalId !== null) {
-      clearInterval(this.intervalId)
-      this.intervalId = null
-    }
-
-    this.intervalId = setInterval(async () => {
-      const currentPlayTime = this.getPlayTime()
-
-      if (
-        this.currentSongDuration > 0 &&
-        currentPlayTime >= this.currentSongDuration &&
-        this.songQueue &&
-        this.songQueue.length > 0
-      ) {
-        this.handleSongEnd()
-        return
-      }
-
-      const bunInstance = getBunServer()
-      if (!bunInstance) return
-
-      bunInstance.publish(
-        'playback-status',
-        JSON.stringify({
-          isPlaying: this.isPlaying,
-          volume: this.volume,
-          songId: this.songId,
-          playTime: this.playTime,
-          startedAt: null,
-          serverTime: Date.now(),
-        }),
-      )
-    }, 1000)
-
     this.startedAt = null
+    this.broadcastStatus()
   }
 
-  setVolume(volume: number) {
-    if (volume < 0 || volume > 100) {
-      throw new Error('Volume must be between 0 and 100')
-    }
-    this.volume = volume
+  public getVolume(): number {
+    return this.volume
   }
 
-  getStatus() {
-    return {
-      isPlaying: this.isPlaying,
-      volume: this.volume,
-      playTime: this.playTime,
-    }
+  public setVolume(volume: number) {
+    this.volume = Math.min(Math.max(volume, 0), 100)
   }
 
-  handleSongEnd() {
-    logger.info('[PLAYBACK] Current song finished playing.')
-
-    const nextSong = this.songQueue?.next()
-    const bunInstance = getBunServer()
-
-    if (nextSong) {
-      logger.info(`[PLAYBACK] Next song starting: ${nextSong.title}`)
-
-      if (bunInstance) {
-        bunInstance.publish(
-          'playback-status',
-          JSON.stringify({
-            isPlaying: true,
-            volume: this.volume,
-            songId: nextSong.id,
-            playTime: 0,
-            startedAt: Date.now(),
-            serverTime: Date.now(),
-          }),
-        )
-      }
-      return
-    }
-
-    logger.info('[PLAYBACK] Queue is empty. Stopping playback.')
-    this.pause()
-
-    if (bunInstance) {
-      bunInstance.publish('playback-status', JSON.stringify({ isPlaying: false, songId: null }))
-    }
+  public stop() {
+    this.isPlaying = false
+    this.playTime = 0
+    this.startedAt = null
+    this.songId = null
+    this.broadcastStatus()
   }
 }

@@ -1,31 +1,29 @@
 import { useEffect, type RefObject } from 'react'
 
+const MAX_ALLOWED_DRIFT = 0.8
+
 export const usePlayState = (
-  playerRef: RefObject<HTMLVideoElement | null>,
-  playTime: number,
+  playerRef: RefObject<HTMLAudioElement | HTMLVideoElement | null>,
+  serverPlayTime: number,
   isPlaying: boolean,
 ) => {
   useEffect(() => {
-    const videoElement = playerRef.current
+    const media = playerRef.current
+    if (!media) return
 
-    if (!videoElement) {
-      return
+    if (isPlaying && media.paused) {
+      media.play().catch((e) => {
+        console.warn('[Playback] Playback postponed (user interaction required):', e)
+      })
+    } else if (!isPlaying && !media.paused) {
+      media.pause()
     }
 
-    if (isPlaying) {
-      if (videoElement.paused) {
-        videoElement.play().catch((e) => console.error('Auto-play blocked:', e))
-      }
-    } else {
-      videoElement.pause()
-    }
+    const localTime = media.currentTime
+    const drift = Math.abs(serverPlayTime - localTime)
 
-    const localPlayTime = videoElement.currentTime || 0
-    const drift = Math.abs(playTime - localPlayTime)
-    const MAX_DRIFT = 0.5
-
-    if (drift > MAX_DRIFT) {
-      videoElement.currentTime = playTime
+    if (drift > MAX_ALLOWED_DRIFT) {
+      media.currentTime = serverPlayTime
     }
-  }, [playTime, isPlaying, playerRef])
+  }, [serverPlayTime, isPlaying, playerRef])
 }
