@@ -43,11 +43,15 @@ export class SongRequestEngine {
       try {
         logger.info(`[QUEUE] [REMOVED] [${item.title}] by [${item.username}]`)
         const nextSong = this.songQueue.getCurrent()
+        const isPlaying = this.playbackManager.getIsPlaying()
         this.voteManager.reset()
 
         if (nextSong) {
           this.playbackManager.setSong(nextSong.id, nextSong.duration)
-          this.playbackManager.play()
+
+          if (isPlaying) {
+            this.playbackManager.play()
+          }
           return
         }
 
