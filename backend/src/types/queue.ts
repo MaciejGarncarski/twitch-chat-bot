@@ -2,7 +2,6 @@ import z from 'zod'
 
 export const songRequestInputSchema = z.object({
   username: z.string().min(1),
-  videoUrl: z.string(),
   videoId: z.string(),
 })
 

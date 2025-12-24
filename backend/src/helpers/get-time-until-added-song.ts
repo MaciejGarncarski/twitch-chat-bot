@@ -13,5 +13,5 @@ export function getTimeUntilAddedSong(queueItems: QueuedItem[], playTime: number
     .slice(0, -1)
     .reduce((total, item) => total + item.duration, 0)
 
-  return combinedDurationWithoutLast - playTime
+  return Math.max(0, combinedDurationWithoutLast - playTime)
 }

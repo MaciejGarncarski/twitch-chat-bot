@@ -32,12 +32,10 @@ export const app = new Elysia()
     if (env.NODE_ENV === 'development') {
       // await songRequestEngine.getSongQueue().add({
       //   username: 'maciej_ga',
-      //   videoUrl: 'https://www.youtube.com/watch?v=xuP4g7IDgDM',
       //   videoId: 'xuP4g7IDgDM',
       // })
       // await songRequestEngine.getSongQueue().add({
       //   username: 'maciej_ga',
-      //   videoUrl: 'https://www.youtube.com/watch?v=E8gmARGvPlI',
       //   videoId: 'E8gmARGvPlI',
       // })
     }

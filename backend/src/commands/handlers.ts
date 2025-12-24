@@ -1,9 +1,12 @@
+import { ClearAllCommandHandler } from '@/commands/clear-all-command-handler'
 import { CurrentSongCommandHandler } from '@/commands/current-song-command-handler'
+import { FillCommandHandler } from '@/commands/fill-command-handler'
 import { GithubCommandHandler } from '@/commands/github-commang-handler'
 import { HelpCommandHandler } from '@/commands/help-command-handler'
 import { NextInfoCommandHandler } from '@/commands/next-info-command-handler'
 import { PauseCommandHandler } from '@/commands/pause-command-handler'
 import { PlayCommandHandler } from '@/commands/play-command-handler'
+import { PlaylistCommandHandler } from '@/commands/playlist-command-handler'
 import { QueueCommandHandler } from '@/commands/queue-command-handler'
 import { SkipCommandHandler } from '@/commands/skip-command-handler'
 import { YoutubeSrHandler } from '@/commands/sr-command-handler'
@@ -23,5 +26,8 @@ export const commandHandlers = [
   new PauseCommandHandler(),
   new VoteSkipCommandHandler(),
   new NextInfoCommandHandler(),
+  new PlaylistCommandHandler(),
+  new FillCommandHandler(),
+  new ClearAllCommandHandler(),
   new HelpCommandHandler(),
 ]

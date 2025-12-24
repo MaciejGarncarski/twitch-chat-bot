@@ -4,6 +4,7 @@ import z from 'zod'
 
 import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from '@/config/video'
 import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
+import { getVideoUrl } from '@/helpers/get-video-url'
 import { QueuedItem, songRequestInputSchema } from '@/types/queue'
 import { QueueError } from '@/types/queue-errors'
 
@@ -18,8 +19,11 @@ export interface ISongQueue extends EventEmitter {
   removeCurrent(): QueuedItem | null
   removeById(songId: string): QueuedItem | null
   peekNext(): QueuedItem | null
+  getAvailableSlots(): number
+  clearAll(): void
 
   on(event: 'song-queued', listener: (item: QueuedItem) => void): this
+  on(event: 'clear-queue', listener: () => void): this
   on(event: 'song-remove-current', listener: (item: QueuedItem) => void): this
 }
 
@@ -78,7 +82,9 @@ export class SongQueue extends EventEmitter implements ISongQueue {
       duration = fetchedMetadata.duration
     }
 
-    if (this.checkIfExists(validatedInput.videoUrl)) {
+    const videoUrl = getVideoUrl(validatedInput.videoId)
+
+    if (this.checkIfExists(videoUrl)) {
       throw new QueueError('ALREADY_EXISTS')
     }
 
@@ -98,7 +104,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
     const newItem: QueuedItem = {
       id: validatedInput.videoId,
       username: validatedInput.username,
-      videoUrl: validatedInput.videoUrl,
+      videoUrl: videoUrl,
       duration: duration,
       title: title,
       thumbnail: thumbnail,
@@ -146,5 +152,14 @@ export class SongQueue extends EventEmitter implements ISongQueue {
       return null
     }
     return this.queue[1]
+  }
+
+  public getAvailableSlots(): number {
+    return this.maxQueueLength - this.queue.length
+  }
+
+  public clearAll(): void {
+    this.queue = []
+    this.emit('clear-queue')
   }
 }
