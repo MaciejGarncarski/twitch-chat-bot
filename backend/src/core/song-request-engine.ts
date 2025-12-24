@@ -61,6 +61,12 @@ export class SongRequestEngine {
       }
     })
 
+    this.songQueue.on('clear-queue', () => {
+      logger.info('[QUEUE] Queue cleared')
+      this.voteManager.reset()
+      this.playbackManager.stop()
+    })
+
     this.playbackManager.on('song-ended', () => {
       const removed = this.songQueue.removeCurrent()
       if (removed) {

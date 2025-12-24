@@ -6,6 +6,7 @@ import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
 import { innertube } from '@/data/innertube'
 import { formatDuration } from '@/helpers/format-duration'
 import { getTimeUntilAddedSong } from '@/helpers/get-time-until-added-song'
+import { getVideoUrl } from '@/helpers/get-video-url'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { QueueError } from '@/types/queue-errors'
 
@@ -69,11 +70,9 @@ export class YoutubeSrHandler extends CommandHandler {
         videoId = searchResult.videoId
         metadata = searchResult.metadata
       }
-      const videoLink = `https://www.youtube.com/watch?v=${videoId}`
 
       const newSongInput = {
         username: user,
-        videoUrl: videoLink,
         videoId: videoId,
       }
 
@@ -93,7 +92,7 @@ export class YoutubeSrHandler extends CommandHandler {
     } catch (error) {
       const title = metadata?.title || 'Nieznany'
       const duration = metadata ? formatDuration(metadata.duration) : 'Nieznana'
-      const link = videoId ? `https://www.youtube.com/watch?v=${videoId}` : 'Brak'
+      const link = videoId ? getVideoUrl(videoId) : 'Brak'
 
       let message = `FootYellow Nie udało się dodać do kolejki. Tytuł: ${title}, Długość: ${duration}, Link: ${link}`
 
