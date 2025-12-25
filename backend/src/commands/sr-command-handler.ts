@@ -27,20 +27,20 @@ export class YoutubeSrHandler extends CommandHandler {
   async execute({
     deps: { logger, songQueue, sendChatMessage, playbackManager },
     payload,
+    sanitizedMessage,
     messageId,
     username,
   }: ExecuteParams) {
-    const messageText = payload.event?.message?.text
-    const messageMatch = messageText?.match(this.regex)
+    const messageMatch = sanitizedMessage?.match(this.regex)
 
-    if (!messageMatch || !messageText) {
+    if (!messageMatch || !sanitizedMessage) {
       throw new Error('Message does not match SR command.')
     }
 
     const userInput = messageMatch[1]
     const isYoutubeLink = this.ytLinkRegex.test(userInput)
 
-    logger.info(`[COMMAND] [SR] ${messageText}`)
+    logger.info(`[COMMAND] [SR] ${sanitizedMessage} by ${username}`)
 
     let videoId = ''
     let metadata: SongMetadata | undefined = undefined

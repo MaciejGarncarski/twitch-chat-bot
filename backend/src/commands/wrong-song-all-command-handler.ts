@@ -39,9 +39,7 @@ export class WrongSongAllCommandHandler extends CommandHandler {
     songQueue.removeBatchByIds(userSongs.map((s) => s.id))
 
     logger.info(
-      `[COMMAND] [WRONGSONG] Removed songs: ${userSongs.map((s) => s.title).join(', ')} for user ${
-        payload.event?.chatter_user_login
-      }.`,
+      `[COMMAND] [WRONGSONG] Removed songs: ${userSongs.map((s) => s.title).join(', ')} for user ${username}.`,
     )
     await sendChatMessage(
       `Usunięto ${userSongs.length} ${userSongs.length === 1 ? 'utwór' : 'utworów'} z kolejki.`,
