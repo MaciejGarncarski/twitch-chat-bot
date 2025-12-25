@@ -101,6 +101,7 @@ class CommandProcessor {
           payload: parsed.payload,
           deps,
           sanitizedMessage,
+          username: normalizedUser,
           messageId,
           isMod,
         })

@@ -28,6 +28,7 @@ export class YoutubeSrHandler extends CommandHandler {
     deps: { logger, songQueue, sendChatMessage, playbackManager },
     payload,
     messageId,
+    username,
   }: ExecuteParams) {
     const messageText = payload.event?.message?.text
     const messageMatch = messageText?.match(this.regex)
@@ -38,11 +39,6 @@ export class YoutubeSrHandler extends CommandHandler {
 
     const userInput = messageMatch[1]
     const isYoutubeLink = this.ytLinkRegex.test(userInput)
-    const user = payload.event?.chatter_user_name
-
-    if (!user) {
-      throw new Error('Not matching SR command or missing user/messageId.')
-    }
 
     logger.info(`[COMMAND] [SR] ${messageText}`)
 
@@ -72,7 +68,7 @@ export class YoutubeSrHandler extends CommandHandler {
       }
 
       const newSongInput = {
-        username: user,
+        username: username,
         videoId: videoId,
       }
 
@@ -86,7 +82,7 @@ export class YoutubeSrHandler extends CommandHandler {
       const durationText = durationUntilPlay === '0:00' ? 'teraz' : `za około ${durationUntilPlay}`
 
       await sendChatMessage(
-        `Dodano do kolejki ${metadata?.title} przez @${user} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie ${durationText}.`,
+        `Dodano do kolejki ${metadata?.title} przez @${username} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie ${durationText}.`,
         messageId,
       )
     } catch (error) {

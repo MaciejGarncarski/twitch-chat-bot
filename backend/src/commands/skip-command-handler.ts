@@ -16,7 +16,7 @@ export class SkipCommandHandler extends CommandHandler {
 
   async execute({
     deps: { logger, songQueue, sendChatMessage },
-    payload,
+    username,
     messageId,
     isMod,
   }: ExecuteParams) {
@@ -26,25 +26,17 @@ export class SkipCommandHandler extends CommandHandler {
       return
     }
 
-    if (!payload.event) {
-      throw new CommandError(CommandErrorCode.EVENT_NOT_FOUND)
-    }
-
-    const isAddedByRequestingUser =
-      songQueue.getCurrent()?.username === payload.event.chatter_user_name
+    const isAddedByRequestingUser = songQueue.getCurrent()?.username.toLowerCase() === username
 
     if (!isAddedByRequestingUser && !isMod) {
       throw new CommandError(CommandErrorCode.CANNOT_SKIP_SONG)
     }
 
-    const user = payload.event?.chatter_user_name
-
-    if (!user) {
+    if (!username) {
       throw new Error('Missing user information.')
     }
 
-    logger.info(`[COMMAND] [SKIP] Requested by ${user}`)
-
+    logger.info(`[COMMAND] [SKIP] Requested by ${username}`)
     const skippedSong = songQueue.removeCurrent()
 
     if (skippedSong) {

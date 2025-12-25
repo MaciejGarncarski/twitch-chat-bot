@@ -17,6 +17,7 @@ export class WrongSongAllCommandHandler extends CommandHandler {
   async execute({
     deps: { logger, songQueue, sendChatMessage },
     payload,
+    username,
     messageId,
   }: ExecuteParams) {
     if (!payload.event) {
@@ -27,13 +28,11 @@ export class WrongSongAllCommandHandler extends CommandHandler {
     }
 
     const userSongs = songQueue.getQueue().filter((item) => {
-      return item.username === payload.event?.chatter_user_name && item.position !== 1
+      return item.username === username && item.position !== 1
     })
 
     if (userSongs.length === 0) {
-      logger.info(
-        `[COMMAND] [WRONGSONG] No song found for user ${payload.event?.chatter_user_login}.`,
-      )
+      logger.info(`[COMMAND] [WRONGSONG] No song found for user ${username}.`)
       return
     }
 

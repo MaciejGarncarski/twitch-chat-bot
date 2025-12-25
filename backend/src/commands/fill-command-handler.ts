@@ -12,17 +12,18 @@ export class FillCommandHandler extends CommandHandler {
     return this.regex.test(messageText)
   }
 
-  public async execute(data: ExecuteParams): Promise<void> {
-    const match = data.sanitizedMessage.match(this.regex)
+  public async execute({
+    sanitizedMessage,
+    deps,
+    messageId,
+    username,
+  }: ExecuteParams): Promise<void> {
+    const match = sanitizedMessage.match(this.regex)
     if (!match) return
 
-    const queueSlotsAvailable = data.deps.songQueue.getAvailableSlots()
-
+    const queueSlotsAvailable = deps.songQueue.getAvailableSlots()
     if (queueSlotsAvailable <= 0) {
-      await data.deps.sendChatMessage(
-        `Kolejka jest pełna! Nie można dodać więcej piosenek.`,
-        data.messageId,
-      )
+      await deps.sendChatMessage(`Kolejka jest pełna! Nie można dodać więcej piosenek.`, messageId)
       return
     }
 
@@ -39,32 +40,30 @@ export class FillCommandHandler extends CommandHandler {
     const songsToAdd = shuffledSongs.slice(0, queueSlotsAvailable)
 
     if (songsToAdd.length === 0) {
-      await data.deps.sendChatMessage(`Nie znaleziono pasujących utworów.`, data.messageId)
+      await deps.sendChatMessage(`Nie znaleziono pasujących utworów.`, messageId)
       return
     }
-
-    const username = data.payload.event?.chatter_user_name || 'fill_command'
 
     let addedCount = 0
     let errorCount = 0
 
     for (const song of songsToAdd) {
       try {
-        await data.deps.songQueue.add({ username: username, videoId: song.videoId }, song.metadata)
+        await deps.songQueue.add({ username: username, videoId: song.videoId }, song.metadata)
         addedCount++
       } catch (error) {
         errorCount++
-        data.deps.logger.error(error, `[COMMAND] [FILL] Failed to add song ${song.videoId}`)
+        deps.logger.error(error, `[COMMAND] [FILL] Failed to add song ${song.videoId}`)
       }
     }
 
-    data.deps.logger.info(
+    deps.logger.info(
       `[COMMAND] [FILL] Added ${addedCount}/${songsToAdd.length} songs for query: ${query}`,
     )
 
-    await data.deps.sendChatMessage(
+    await deps.sendChatMessage(
       `Dodano ${addedCount} piosenek do kolejki dla: ${query}${errorCount > 0 ? ` (${errorCount} nie udało się dodać)` : ''}`,
-      data.messageId,
+      messageId,
     )
   }
 

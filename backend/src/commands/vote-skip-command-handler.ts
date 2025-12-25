@@ -15,16 +15,12 @@ export class VoteSkipCommandHandler extends CommandHandler {
 
   async execute({
     deps: { logger, songQueue, sendChatMessage, voteManager },
-    payload,
+    messageId,
+    username,
   }: ExecuteParams) {
-    const username = payload.event?.chatter_user_name
-    if (!username) {
-      throw new Error('Missing user information.')
-    }
-
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [VOTESKIP] Queue is empty, skipping not possible.`)
-      await sendChatMessage(`Kolejka jest pusta.`, payload.event?.message_id)
+      await sendChatMessage(`Kolejka jest pusta.`, messageId)
       return
     }
 
@@ -43,7 +39,7 @@ export class VoteSkipCommandHandler extends CommandHandler {
     if (votesLeft > 0) {
       await sendChatMessage(
         `[VOTESKIP] [${votesCount}/${voteManager.getVotesNeeded()}] @${username} zagłosował za pominięciem utworu.`,
-        payload.event?.message_id,
+        messageId,
       )
       return
     }
@@ -59,11 +55,11 @@ export class VoteSkipCommandHandler extends CommandHandler {
         `[VOTESKIP] [${votesMessage}] Pominięto utwór ${
           skippedSong.title
         } (dodany przez @${skippedSong.username}).`,
-        payload.event?.message_id,
+        messageId,
       )
       return
     }
 
-    await sendChatMessage(`Kolejka jest pusta.`, payload.event?.message_id)
+    await sendChatMessage(`Kolejka jest pusta.`, messageId)
   }
 }

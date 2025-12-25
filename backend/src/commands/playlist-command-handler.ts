@@ -17,7 +17,7 @@ export class PlaylistCommandHandler extends CommandHandler {
     deps,
     sanitizedMessage,
     messageId,
-    payload,
+    username,
   }: ExecuteParams): Promise<void> {
     const match = sanitizedMessage.match(this.regex)
     if (!match) return
@@ -47,13 +47,11 @@ export class PlaylistCommandHandler extends CommandHandler {
       return
     }
 
-    const username = payload.event?.chatter_user_name || 'playlist_command'
-
     const results = { added: 0, failed: 0, errors: [] as string[] }
 
     for (const video of videos) {
       try {
-        await deps.songQueue.add({ username, videoId: video.videoId }, video.metadata)
+        await deps.songQueue.add({ username: username, videoId: video.videoId }, video.metadata)
         results.added++
       } catch (error) {
         results.failed++
