@@ -32,10 +32,6 @@ export class SkipCommandHandler extends CommandHandler {
       throw new CommandError(CommandErrorCode.CANNOT_SKIP_SONG)
     }
 
-    if (!username) {
-      throw new Error('Missing user information.')
-    }
-
     logger.info(`[COMMAND] [SKIP] Requested by ${username}`)
     const skippedSong = songQueue.removeCurrent()
 
