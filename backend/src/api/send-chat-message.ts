@@ -1,5 +1,6 @@
 import { env } from '@/config/env'
 import { twitchAuth } from '@/core/twitch-auth-manager'
+import { logger } from '@/helpers/logger'
 
 export const sendChatMessage = async (message: string, replyChatId?: string) => {
   await twitchAuth.fetch('https://api.twitch.tv/helix/chat/messages', {
@@ -14,4 +15,6 @@ export const sendChatMessage = async (message: string, replyChatId?: string) => 
       reply_parent_message_id: replyChatId ? replyChatId : undefined,
     }),
   })
+
+  logger.info(`[CHAT] Sent message: ${message}`)
 }

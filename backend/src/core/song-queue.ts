@@ -18,6 +18,7 @@ export interface ISongQueue extends EventEmitter {
   getCurrentSongId(): string | null
   removeCurrent(): QueuedItem | null
   removeById(songId: string): QueuedItem | null
+  removeBatchByIds(songIds: string[]): void
   peekNext(): QueuedItem | null
   getAvailableSlots(): number
   clearAll(): void
@@ -145,6 +146,10 @@ export class SongQueue extends EventEmitter implements ISongQueue {
     this.queue = this.queue.filter((item) => item.id !== songId)
 
     return itemToRemove
+  }
+
+  public removeBatchByIds(songIds: string[]): void {
+    this.queue = this.queue.filter((item) => !songIds.includes(item.id))
   }
 
   public peekNext(): QueuedItem | null {

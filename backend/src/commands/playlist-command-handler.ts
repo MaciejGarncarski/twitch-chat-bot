@@ -17,7 +17,7 @@ export class PlaylistCommandHandler extends CommandHandler {
     deps,
     sanitizedMessage,
     messageId,
-    payload,
+    username,
   }: ExecuteParams): Promise<void> {
     const match = sanitizedMessage.match(this.regex)
     if (!match) return
@@ -47,13 +47,11 @@ export class PlaylistCommandHandler extends CommandHandler {
       return
     }
 
-    const username = payload.event?.chatter_user_name || 'playlist_command'
-
     const results = { added: 0, failed: 0, errors: [] as string[] }
 
     for (const video of videos) {
       try {
-        await deps.songQueue.add({ username, videoId: video.videoId }, video.metadata)
+        await deps.songQueue.add({ username: username, videoId: video.videoId }, video.metadata)
         results.added++
       } catch (error) {
         results.failed++
@@ -82,44 +80,55 @@ export class PlaylistCommandHandler extends CommandHandler {
 
   private async resolvePlaylistId(query: string): Promise<string | null> {
     const urlMatch = query.match(this.urlRegex)
-
-    if (urlMatch && urlMatch[1]) {
-      return urlMatch[1]
-    }
+    if (urlMatch && urlMatch[1]) return urlMatch[1]
 
     const searchResult = await innertube.search(query, { type: 'playlist' })
 
+    const playlistIds: string[] = []
+
     for (const item of searchResult.results || []) {
       if (item.is(YTNodes.GridPlaylist, YTNodes.Playlist, YTNodes.CompactPlaylist)) {
-        return item.id
+        playlistIds.push(item.id)
+        continue
       }
 
       if (item.is(YTNodes.LockupView) && item.content_type === 'PLAYLIST') {
         const lockupItem = item as unknown as { content_id: string | null }
-        return typeof lockupItem.content_id === 'string' ? lockupItem.content_id : null
+        if (lockupItem.content_id) playlistIds.push(lockupItem.content_id)
       }
     }
+
+    if (playlistIds.length > 0) {
+      const randomIndex = Math.floor(Math.random() * playlistIds.length)
+      return playlistIds[randomIndex]
+    }
+
     return null
   }
 
   private async fetchPlaylistVideos(playlistId: string, limit: number): Promise<PlaylistSong[]> {
     const playlist = await innertube.getPlaylist(playlistId)
 
-    return playlist.items
+    const validVideos = playlist.items
       .filter((item): item is YTNodes.PlaylistVideo => item.type === 'PlaylistVideo')
       .filter((video) => {
         const duration = video.duration?.seconds
         return video.id && duration && duration <= MAX_VIDEO_DURATION_SECONDS
       })
-      .slice(0, limit)
-      .map((video) => ({
-        videoId: video.id,
-        metadata: {
-          title: video.title.toString(),
-          thumbnail: video.thumbnails[0]?.url || null,
-          duration: video.duration.seconds,
-        },
-      }))
+
+    for (let i = validVideos.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[validVideos[i], validVideos[j]] = [validVideos[j], validVideos[i]]
+    }
+
+    return validVideos.slice(0, limit).map((video) => ({
+      videoId: video.id,
+      metadata: {
+        title: video.title.toString(),
+        thumbnail: video.thumbnails[0]?.url || null,
+        duration: video.duration.seconds,
+      },
+    }))
   }
 }
 

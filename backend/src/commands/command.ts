@@ -19,6 +19,7 @@ export type ExecuteParams = {
   payload: TwitchMessagePayload
   deps: Deps
   messageId: string | undefined
+  username: string
   sanitizedMessage: string
   isMod: boolean
 }

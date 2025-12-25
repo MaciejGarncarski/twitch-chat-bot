@@ -12,6 +12,7 @@ import { SkipCommandHandler } from '@/commands/skip-command-handler'
 import { YoutubeSrHandler } from '@/commands/sr-command-handler'
 import { VolumeCommandHandler } from '@/commands/volume-command-handler'
 import { VoteSkipCommandHandler } from '@/commands/vote-skip-command-handler'
+import { WrongSongAllCommandHandler } from '@/commands/wrong-song-all-command-handler'
 import { WrongSongCommandHandler } from '@/commands/wrong-song-command-handler'
 
 export const commandHandlers = [
@@ -21,6 +22,7 @@ export const commandHandlers = [
   new QueueCommandHandler(),
   new VolumeCommandHandler(),
   new WrongSongCommandHandler(),
+  new WrongSongAllCommandHandler(),
   new GithubCommandHandler(),
   new PlayCommandHandler(),
   new PauseCommandHandler(),

@@ -11,6 +11,13 @@ const userResponseSchema = z.object({
   expires_in: z.number(),
 })
 
+const refreshResponseSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string(),
+  scope: z.array(z.string()).optional(),
+  token_type: z.string().optional(),
+})
+
 export class TwitchAuthManager {
   public accessToken: string | null = null
   public refreshToken: string
@@ -35,11 +42,20 @@ export class TwitchAuthManager {
       }),
     })
 
-    const data = await response.json()
-    if (!response.ok) throw new Error(`Refresh failed: ${JSON.stringify(data)}`)
+    const data = await response.json().catch(() => ({}))
 
-    this.accessToken = data.access_token
-    this.refreshToken = data.refresh_token
+    if (!response.ok) {
+      throw new Error(`Refresh failed: ${JSON.stringify(data)}`)
+    }
+
+    const parsed = refreshResponseSchema.safeParse(data)
+
+    if (!parsed.success) {
+      throw new Error(`Unexpected response structure: ${JSON.stringify(parsed.error)}`)
+    }
+
+    this.accessToken = parsed.data.access_token
+    this.refreshToken = parsed.data.refresh_token
 
     return this.accessToken
   }
@@ -53,7 +69,7 @@ export class TwitchAuthManager {
     })
 
     if (!response.ok) {
-      const error = await response.json()
+      const error = await response.json().catch(() => ({}))
       throw new Error(`Invalid token: ${error.message}`)
     }
 
@@ -67,9 +83,9 @@ export class TwitchAuthManager {
     this.userId = parsed.data.user_id
 
     return {
-      userId: data.user_id,
-      username: data.login,
-      scopes: data.scopes,
+      userId: parsed.data.user_id,
+      username: parsed.data.login,
+      scopes: parsed.data.scopes,
     }
   }
 
@@ -91,6 +107,12 @@ export class TwitchAuthManager {
     if (res.status === 401) {
       await this.refresh()
       res = await execute()
+    }
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}))
+      logger.error({ url, status: res.status, error }, '[TWITCH AUTH] Twitch API request failed')
+      throw new Error(`Twitch API request failed: ${JSON.stringify(error)}`)
     }
 
     return res

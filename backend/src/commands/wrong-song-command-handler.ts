@@ -16,35 +16,27 @@ export class WrongSongCommandHandler extends CommandHandler {
   async execute({
     deps: { logger, songQueue, sendChatMessage },
     payload,
+    username,
     messageId,
   }: ExecuteParams) {
-    const foundSoung = songQueue
-      .getQueue()
-      .findLast((item) => item.username === payload.event?.chatter_user_name)
+    const foundSong = songQueue.getQueue().findLast((item) => item.username === username)
 
-    if (!foundSoung) {
-      logger.info(
-        `[COMMAND] [WRONGSONG] No song found for user ${payload.event?.chatter_user_login}.`,
-      )
+    if (!foundSong) {
+      logger.info(`[COMMAND] [WRONGSONG] No song found for user ${username}.`)
       return
     }
 
-    if (songQueue.getCurrentSongId() === foundSoung.id) {
+    if (songQueue.getCurrentSongId() === foundSong.id) {
       logger.info(
-        `[COMMAND] [WRONGSONG] User ${payload.event?.chatter_user_login} tried to skip currently playing song, which is not allowed.`,
+        `[COMMAND] [WRONGSONG] User ${username} tried to skip currently playing song, which is not allowed.`,
       )
-      await sendChatMessage(
-        `@${payload.event?.chatter_user_login} Nie możesz pominąć odtwarzanego utworu.`,
-        messageId,
-      )
+      await sendChatMessage(`@${username} Nie możesz pominąć odtwarzanego utworu.`, messageId)
 
       return
     }
 
-    songQueue.removeById(foundSoung.id)
-    logger.info(
-      `[COMMAND] [WRONGSONG] Removed song with ID ${foundSoung.id} for user ${payload.event?.chatter_user_login}.`,
-    )
+    songQueue.removeById(foundSong.id)
+    logger.info(`[COMMAND] [WRONGSONG] Removed song with ID ${foundSong.id} for user ${username}.`)
     await sendChatMessage(`Usunięto z kolejki.`, messageId)
   }
 }
