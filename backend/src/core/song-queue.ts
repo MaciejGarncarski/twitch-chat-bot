@@ -144,10 +144,10 @@ export class SongQueue extends EventEmitter implements ISongQueue {
   }
 
   public getAtPosition(position: number): QueuedItem | null {
-    if (position < 1 || position > this.queue.length) {
+    if (position < 0 || position >= this.queue.length) {
       return null
     }
-    return this.queue[position - 1]
+    return this.queue[position]
   }
 
   public removeById(songId: string) {

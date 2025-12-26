@@ -19,8 +19,8 @@ export class RemoveCommandHandler extends CommandHandler {
     }
 
     const position = parseInt(positionMatch[1], 10) - 1
-
     const songToRemove = deps.songQueue.getAtPosition(position)
+
     if (!songToRemove) {
       await deps.sendChatMessage(`Nie ma utworu na pozycji ${position + 1}.`)
       return
