@@ -28,7 +28,6 @@ export class WrongSongAllCommandHandler extends CommandHandler {
     }
 
     const queue = songQueue.getQueue()
-    console.log(queue)
 
     const userSongs = queue.filter((item, idx) => {
       return item.username === username && idx !== 0

@@ -2,7 +2,7 @@ import { CommandHandler, ExecuteParams } from '@/commands/command'
 import { CommandError, CommandErrorCode } from '@/types/errors'
 
 export class SeekCommandHandler extends CommandHandler {
-  private readonly regex = /^!seek\s+(?:(\d{1,2}):)?(\d{1,3})$/
+  private readonly regex = /^!seek\s+(?:(\d{1,2}):([0-5]?\d)|(\d{1,3}))$/
 
   public canHandle(command: string): boolean {
     return this.regex.test(command)
@@ -27,19 +27,20 @@ export class SeekCommandHandler extends CommandHandler {
 
     let totalSeekSeconds = 0
     const minutesGroup = match[1]
-    const secondsGroup = match[2]
+    const secondsWithMinutes = match[2]
+    const secondsOnly = match[3]
 
-    if (minutesGroup !== undefined) {
-      totalSeekSeconds = parseInt(minutesGroup, 10) * 60 + parseInt(secondsGroup, 10)
+    if (minutesGroup !== undefined && secondsWithMinutes !== undefined) {
+      totalSeekSeconds = parseInt(minutesGroup, 10) * 60 + parseInt(secondsWithMinutes, 10)
     } else {
-      totalSeekSeconds = parseInt(secondsGroup, 10)
+      totalSeekSeconds = parseInt(secondsOnly, 10)
     }
 
     const currentSong = songQueue.getCurrent()
 
     if (!currentSong) return
 
-    if (totalSeekSeconds > currentSong.duration) {
+    if (totalSeekSeconds >= currentSong.duration) {
       await sendChatMessage(
         `Nie można przewinąć do ${totalSeekSeconds}s, ponieważ utwór trwa tylko ${currentSong.duration}s.`,
         messageId,
