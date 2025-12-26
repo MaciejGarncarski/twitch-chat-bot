@@ -20,7 +20,6 @@ export type QueueTrackedItem = {
   title: string
   requestedAt: Date
   thumbnail: string | null
-  position: number
   timeUntilPlay: number
   formattedTimeUntilPlay: string
 }

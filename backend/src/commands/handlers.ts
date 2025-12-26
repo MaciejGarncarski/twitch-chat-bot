@@ -8,6 +8,9 @@ import { PauseCommandHandler } from '@/commands/pause-command-handler'
 import { PlayCommandHandler } from '@/commands/play-command-handler'
 import { PlaylistCommandHandler } from '@/commands/playlist-command-handler'
 import { QueueCommandHandler } from '@/commands/queue-command-handler'
+import { RemoveCommandHandler } from '@/commands/remove-command-handler'
+import { SeekCommandHandler } from '@/commands/seek-command-handler'
+import { ShuffleCommandHandler } from '@/commands/shuffle-command-handler'
 import { SkipCommandHandler } from '@/commands/skip-command-handler'
 import { YoutubeSrHandler } from '@/commands/sr-command-handler'
 import { VolumeCommandHandler } from '@/commands/volume-command-handler'
@@ -26,6 +29,9 @@ export const commandHandlers = [
   new GithubCommandHandler(),
   new PlayCommandHandler(),
   new PauseCommandHandler(),
+  new SeekCommandHandler(),
+  new ShuffleCommandHandler(),
+  new RemoveCommandHandler(),
   new VoteSkipCommandHandler(),
   new NextInfoCommandHandler(),
   new PlaylistCommandHandler(),

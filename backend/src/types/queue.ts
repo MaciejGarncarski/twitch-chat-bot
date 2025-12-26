@@ -13,5 +13,4 @@ export type QueuedItem = {
   title: string
   requestedAt: Date
   thumbnail: string | null
-  position: number
 }

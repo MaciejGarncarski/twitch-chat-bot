@@ -22,6 +22,9 @@ export interface ISongQueue extends EventEmitter {
   peekNext(): QueuedItem | null
   getAvailableSlots(): number
   clearAll(): void
+  findPositionInQueue(songId: string): number | null
+  getAtPosition(position: number): QueuedItem | null
+  shuffle(): void
 
   on(event: 'song-queued', listener: (item: QueuedItem) => void): this
   on(event: 'clear-queue', listener: () => void): this
@@ -100,8 +103,6 @@ export class SongQueue extends EventEmitter implements ISongQueue {
       throw new QueueError('TOO_LONG')
     }
 
-    const position = this.queue.length + 1
-
     const newItem: QueuedItem = {
       id: validatedInput.videoId,
       username: validatedInput.username,
@@ -110,7 +111,6 @@ export class SongQueue extends EventEmitter implements ISongQueue {
       title: title,
       thumbnail: thumbnail,
       requestedAt: new Date(),
-      position: position,
     }
 
     this.queue.push(newItem)
@@ -134,6 +134,20 @@ export class SongQueue extends EventEmitter implements ISongQueue {
     this.emit('song-remove-current', currentItem)
 
     return currentItem
+  }
+
+  public shuffle(): void {
+    for (let i = this.queue.length - 1; i > 1; i--) {
+      const j = Math.floor(Math.random() * i) + 1
+      ;[this.queue[i], this.queue[j]] = [this.queue[j], this.queue[i]]
+    }
+  }
+
+  public getAtPosition(position: number): QueuedItem | null {
+    if (position < 1 || position > this.queue.length) {
+      return null
+    }
+    return this.queue[position - 1]
   }
 
   public removeById(songId: string) {
@@ -161,6 +175,11 @@ export class SongQueue extends EventEmitter implements ISongQueue {
 
   public getAvailableSlots(): number {
     return this.maxQueueLength - this.queue.length
+  }
+
+  public findPositionInQueue(songId: string): number | null {
+    const index = this.queue.findIndex((item) => item.id === songId)
+    return index !== -1 ? index + 1 : null
   }
 
   public clearAll(): void {

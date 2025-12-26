@@ -73,16 +73,15 @@ export class YoutubeSrHandler extends CommandHandler {
       }
 
       const added = await songQueue.add(newSongInput, metadata)
-
+      const position = songQueue.findPositionInQueue(added.id)
       const durationFormatted = formatDuration(added.duration)
       const durationUntilPlay = formatDuration(
         getTimeUntilAddedSong(songQueue.getQueue(), playbackManager.getPlayTime()),
       )
-
       const durationText = durationUntilPlay === '0:00' ? 'teraz' : `za około ${durationUntilPlay}`
 
       await sendChatMessage(
-        `Dodano do kolejki ${metadata?.title} przez @${username} (długość: ${durationFormatted}). Pozycja w kolejce ${added.position}. Odtwarzanie ${durationText}.`,
+        `Dodano do kolejki ${metadata?.title} przez @${username} (długość: ${durationFormatted}). Pozycja w kolejce ${position}. Odtwarzanie ${durationText}.`,
         messageId,
       )
     } catch (error) {

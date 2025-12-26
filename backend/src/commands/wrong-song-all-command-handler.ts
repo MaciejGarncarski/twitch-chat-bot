@@ -27,8 +27,10 @@ export class WrongSongAllCommandHandler extends CommandHandler {
       )
     }
 
-    const userSongs = songQueue.getQueue().filter((item) => {
-      return item.username === username && item.position !== 1
+    const queue = songQueue.getQueue()
+
+    const userSongs = queue.filter((item, idx) => {
+      return item.username === username && idx !== 0
     })
 
     if (userSongs.length === 0) {

@@ -12,6 +12,7 @@ export interface IPlaybackManager extends EventEmitter {
   getPlayTime(): number
   getVolume(): number
   setVolume(volume: number): void
+  seek(seekSeconds: number): void
   getIsPlaying(): boolean
 
   on(event: 'song-ended', listener: () => void): this
@@ -98,6 +99,14 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
     this.playTime = this.getPlayTime()
     this.isPlaying = false
     this.startedAt = null
+    this.broadcastStatus()
+  }
+
+  public seek(seekSeconds: number) {
+    this.playTime = seekSeconds
+    if (this.isPlaying) {
+      this.startedAt = Date.now() - this.playTime * 1000
+    }
     this.broadcastStatus()
   }
 

@@ -109,6 +109,10 @@ class CommandProcessor {
       } catch (error) {
         if (error instanceof CommandError) {
           switch (error.code) {
+            case CommandErrorCode.INVALID_COMMAND_FORMAT:
+              await sendChatMessage('Niepoprawny format komendy.', messageId)
+              break
+
             case CommandErrorCode.CANNOT_SKIP_SONG:
               await sendChatMessage('Nie możesz pominąć tego utworu.', messageId)
               break
