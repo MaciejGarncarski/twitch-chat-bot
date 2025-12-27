@@ -12,13 +12,30 @@ Before starting, ensure you have a registered application on Twitch.
 
 - Confidential Client: Ensure your "Client Type" is set to Confidential in the console.
 
-- Redirect URI: Add https://twitchtokengenerator.com (for setup) and http://localhost:3302 (3302 is default port).
+- Set Redirect URI:
+
+  - http://host:port/api/auth/callback (default http://localhost:3302/api/auth/callback)
+  - https://twitchtokengenerator.com (optional, for manual setup).
+
+- Save client id and client secret for later.
 
 ## Configuration & Tokens
 
 ### Generate OAuth Tokens
 
-1. Go to [Twitch Token Generator.](https://twitchtokengenerator.com/)
+#### Automatically (recommended)
+
+1.  Set `TWITCH_CLIENT_ID` and `TWITCH_CLIENT_SECRET` in [env](#backend)
+
+2.  In /backend run `bun setup-auth`
+
+3.  Open link from terminal `GO TO: _link_` in browser
+
+4.  Copy `REFRESH_TOKEN` and paste it to `TWITCH_REFRESH_TOKEN` [env](#backend)
+
+#### Manually
+
+1. Go to [Twitch Token Generator.](https://twitchtokengenerator.com/?scope=chat%3Aread+chat%3Aedit+moderator%3Amanage%3Abanned_users+user%3Abot+user%3Aread%3Achat+user%3Awrite%3Achat)
 
 2. Select "Use My Client Secret and Client ID".
 
@@ -26,37 +43,38 @@ Before starting, ensure you have a registered application on Twitch.
 
 4. In "Use My Client Secret and Client ID" section
 
-   - Input your client id and client secret
-   - Select those scopes: chat:read
-     - chat:read
-     - chat:edit
-     - user:bot
-     - user:read:chat
-     - user:write:chat
-   - Copy generated tokens to your .env
+- Input your client id and client secret
+- Select those scopes: chat:read
+  - chat:read
+  - chat:edit
+  - user:bot
+  - user:read:chat
+  - user:write:chat
+  - moderator:manage:banned_users
+- Copy generated tokens to your .env
 
 5. Click Generate and keep the tab open.
 
 ### Environment Setup
 
-Frontend
+#### Frontend
 
 ```
 VITE_WS_URL=ws://localhost:3302/api/ws
 VITE_API_URL=http://localhost:3302/
 ```
 
-Backend
+#### Backend
 
 ```
 APP_ORIGINS=http://localhost:3301,http://192.168.0.1:3301
 API_URL=http://localhost:3302
 PORT=3302
+REDIRECT_URI=http://localhost:3302/api/auth/callback
 
 # Twitch Auth
 TWITCH_CLIENT_ID=twitch_dev_client_id
 TWITCH_CLIENT_SECRET=twitch_dev_client_secret
-TWITCH_ACCESS_TOKEN=generated_access_token
 TWITCH_REFRESH_TOKEN=generated_refresh_token
 TWITCH_BROADCASTER_ID=user_id_where_bot_works
 

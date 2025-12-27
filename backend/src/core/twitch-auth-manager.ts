@@ -18,14 +18,26 @@ const refreshResponseSchema = z.object({
   token_type: z.string().optional(),
 })
 
+const tokenResponseSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string(),
+  expires_in: z.number(),
+  scope: z.array(z.string()),
+  token_type: z.string(),
+})
+
 export class TwitchAuthManager {
   public accessToken: string | null = null
   public refreshToken: string
+  public readonly scopes =
+    'chat:read chat:edit user:bot user:read:chat user:write:chat moderator:manage:banned_users'
+
+  public authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${env.TWITCH_CLIENT_ID}&redirect_uri=${env.REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(this.scopes)}`
+
   public userId: string = ''
 
   constructor() {
     this.refreshToken = env.TWITCH_REFRESH_TOKEN
-    this.accessToken = env.TWITCH_ACCESS_TOKEN
   }
 
   async refresh() {
@@ -116,6 +128,36 @@ export class TwitchAuthManager {
     }
 
     return res
+  }
+
+  async handleCallback(req: Request): Promise<string> {
+    const url = new URL(req.url)
+    const code = url.searchParams.get('code')
+
+    if (!code) {
+      throw new Error('No code provided in callback URL')
+    }
+
+    const response = await fetch('https://id.twitch.tv/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: env.TWITCH_CLIENT_ID,
+        client_secret: env.TWITCH_CLIENT_SECRET,
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: env.REDIRECT_URI,
+      }),
+    })
+
+    const jsonData = await response.json().catch(() => ({}))
+
+    if (!response.ok) {
+      throw new Error(`Token exchange failed: ${JSON.stringify(jsonData)}`)
+    }
+
+    const tokensData = tokenResponseSchema.parse(jsonData)
+    return tokensData.refresh_token
   }
 }
 

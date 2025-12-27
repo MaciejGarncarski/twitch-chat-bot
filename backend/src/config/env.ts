@@ -10,11 +10,11 @@ const envSchema = z.object({
     .transform((str) => str.split(',').map((s) => s.trim()))
     .pipe(z.array(z.url()).min(1)),
   PORT: z.string().length(4),
-  TWITCH_CLIENT_ID: z.string(),
-  TWITCH_CLIENT_SECRET: z.string(),
-  TWITCH_REFRESH_TOKEN: z.string(),
-  TWITCH_ACCESS_TOKEN: z.string(),
-  TWITCH_BROADCASTER_ID: z.string(),
+  TWITCH_CLIENT_ID: z.string().default('CHECK_README_FOR_INFO'),
+  TWITCH_CLIENT_SECRET: z.string().default('CHECK_README_FOR_INFO'),
+  TWITCH_BROADCASTER_ID: z.string().default('CHECK_README_FOR_INFO'),
+  TWITCH_REFRESH_TOKEN: z.string().default('CHECK_README_FOR_INFO'),
+  REDIRECT_URI: z.url().default('http://localhost:3302/api/auth/callback'),
   YT_COOKIE: z.string().optional(),
 })
 

@@ -1,6 +1,7 @@
 import { Logger } from 'pino'
 
 import { sendChatMessage } from '@/api/send-chat-message'
+import { timeoutUser } from '@/api/timeout-user'
 import { IPlaybackManager } from '@/core/playback-manager'
 import { ISongQueue } from '@/core/song-queue'
 import { IVoteManager } from '@/core/vote-manager'
@@ -12,6 +13,7 @@ export type Deps = {
   voteManager: IVoteManager
   logger: Logger
   playbackManager: IPlaybackManager
+  timeoutUser: typeof timeoutUser
   sendChatMessage: typeof sendChatMessage
 }
 
@@ -19,6 +21,7 @@ export type ExecuteParams = {
   payload: TwitchMessagePayload
   deps: Deps
   messageId: string | undefined
+  userId: string | undefined
   username: string
   sanitizedMessage: string
   isMod: boolean

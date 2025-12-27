@@ -2,7 +2,7 @@ import { CommandHandler, ExecuteParams } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class HelpCommandHandler extends CommandHandler {
-  private readonly regex = /^![^!]/i
+  private readonly regex = /^!help$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 60000,

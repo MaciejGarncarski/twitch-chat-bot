@@ -55,6 +55,13 @@ export const app = new Elysia()
       .get('/', async () => {
         return 'hi'
       })
+      .get('/auth/tokens', async ({ redirect }) => {
+        return redirect(twitchAuth.authUrl)
+      })
+      .get('/auth/callback', async ({ request }) => {
+        const tokens = await twitchAuth.handleCallback(request)
+        return tokens
+      })
       .get('/queue', async () => {
         const data = songRequestEngine.getSongQueue().getQueue()
         return data

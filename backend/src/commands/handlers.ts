@@ -13,6 +13,7 @@ import { SeekCommandHandler } from '@/commands/seek-command-handler'
 import { ShuffleCommandHandler } from '@/commands/shuffle-command-handler'
 import { SkipCommandHandler } from '@/commands/skip-command-handler'
 import { YoutubeSrHandler } from '@/commands/sr-command-handler'
+import { VanishCommandHandler } from '@/commands/vanish-command-handler'
 import { VolumeCommandHandler } from '@/commands/volume-command-handler'
 import { VoteSkipCommandHandler } from '@/commands/vote-skip-command-handler'
 import { WrongSongAllCommandHandler } from '@/commands/wrong-song-all-command-handler'
@@ -31,6 +32,7 @@ export const commandHandlers = [
   new PauseCommandHandler(),
   new SeekCommandHandler(),
   new ShuffleCommandHandler(),
+  new VanishCommandHandler(),
   new RemoveCommandHandler(),
   new VoteSkipCommandHandler(),
   new NextInfoCommandHandler(),

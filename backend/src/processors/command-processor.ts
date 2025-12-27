@@ -1,4 +1,5 @@
 import { sendChatMessage } from '@/api/send-chat-message'
+import { timeoutUser } from '@/api/timeout-user'
 import { CommandHandler, Deps } from '@/commands/command'
 import { songRequestEngine } from '@/core/song-request-engine'
 import { checkIsMod } from '@/helpers/check-is-mod'
@@ -29,6 +30,7 @@ class CommandProcessor {
 
     const sanitizedMessage = sanitizeMessage(messageText)
     const messageId = parsed.payload.event?.message_id
+    const userId = parsed.payload.event?.chatter_user_id
     const username =
       parsed.payload.event?.chatter_user_login || parsed.payload.event?.chatter_user_name
     const badges = parsed.payload.event?.badges
@@ -66,6 +68,7 @@ class CommandProcessor {
       logger,
       sendChatMessage,
       playbackManager,
+      timeoutUser: timeoutUser,
       voteManager,
     }
 
@@ -101,6 +104,7 @@ class CommandProcessor {
           payload: parsed.payload,
           deps,
           sanitizedMessage,
+          userId,
           username: normalizedUser,
           messageId,
           isMod,
