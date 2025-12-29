@@ -10,6 +10,7 @@ import { CommandError, CommandErrorCode } from '@/types/errors'
 import { TwitchWSMessage } from '@/types/twitch-ws-message'
 
 class CommandProcessor {
+  private readonly usersTreatedAsMod = ['maciej_ga']
   handlers: CommandHandler[]
 
   constructor(handlers: CommandHandler[]) {
@@ -43,7 +44,8 @@ class CommandProcessor {
     }
 
     const normalizedUser = username.toLowerCase()
-    const isMod = checkIsMod(badges, chatterId, broadcasterId)
+    const isModUser = checkIsMod(badges, chatterId, broadcasterId)
+    const isMod = isModUser || this.usersTreatedAsMod.includes(normalizedUser)
 
     if (!isMod) {
       const globalRateResult = rateLimiter.check(`global:${normalizedUser}`)
