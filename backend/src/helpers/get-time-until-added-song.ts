@@ -1,4 +1,4 @@
-import { QueuedItem } from '@/types/queue'
+import { QueuedItem } from "@/types/queue"
 
 export function getTimeUntilAddedSong(queueItems: QueuedItem[], playTime: number): number {
   if (queueItems.length === 0) {

@@ -1,26 +1,26 @@
-import { twitchAuth } from '@/core/twitch-auth-manager'
-import { logger } from '@/helpers/logger'
+import { twitchAuth } from "@/core/twitch-auth-manager"
+import { logger } from "@/helpers/logger"
 
 export async function unsubscribeAll() {
-  const res = await twitchAuth.fetch('https://api.twitch.tv/helix/eventsub/subscriptions')
+  const res = await twitchAuth.fetch("https://api.twitch.tv/helix/eventsub/subscriptions")
   const { data } = await res.json()
 
   const promises = data.map((sub: { id: string }) => unsubscribe(sub.id))
   await Promise.all(promises)
 
-  logger.info('[CHAT SUBSCRIPTION] Finished clearing all subscriptions')
+  logger.info("[CHAT SUBSCRIPTION] Finished clearing all subscriptions")
 }
 
 async function unsubscribe(subscriptionId: string) {
   const res = await twitchAuth.fetch(
     `https://api.twitch.tv/helix/eventsub/subscriptions?id=${subscriptionId}`,
     {
-      method: 'DELETE',
+      method: "DELETE",
     },
   )
 
   if (res.status === 204) {
-    logger.info('[CHAT SUBSCRIPTION] Unsubscribed successfully')
+    logger.info("[CHAT SUBSCRIPTION] Unsubscribed successfully")
   } else {
     const text = await res.text()
     logger.info(`[CHAT SUBSCRIPTION] Unsubscribed successfully: ${text}`)
@@ -28,20 +28,20 @@ async function unsubscribe(subscriptionId: string) {
 }
 
 export async function subscribeToChat(sessId: string) {
-  const res = await twitchAuth.fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
-    method: 'POST',
+  const res = await twitchAuth.fetch("https://api.twitch.tv/helix/eventsub/subscriptions", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      type: 'channel.chat.message',
-      version: '1',
+      type: "channel.chat.message",
+      version: "1",
       condition: {
         broadcaster_user_id: twitchAuth.broadcasterId,
         user_id: twitchAuth.userId,
       },
       transport: {
-        method: 'websocket',
+        method: "websocket",
         session_id: sessId,
       },
     }),
@@ -49,8 +49,8 @@ export async function subscribeToChat(sessId: string) {
 
   if (!res.ok) {
     logger.error(await res.text())
-    throw new Error('Cannot sub')
+    throw new Error("Cannot sub")
   }
 
-  logger.info('[CHAT SUBSCRIPTION] Subscribed to chat')
+  logger.info("[CHAT SUBSCRIPTION] Subscribed to chat")
 }

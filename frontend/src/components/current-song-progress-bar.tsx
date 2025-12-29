@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { motion } from "motion/react"
 
 export function CurrentSongProgressBar({
   duration,
@@ -19,9 +19,9 @@ export function CurrentSongProgressBar({
         }}
         transition={{
           duration: 1,
-          ease: 'linear',
+          ease: "linear",
         }}
-        style={{ width: '100%' }}
+        style={{ width: "100%" }}
       />
     </div>
   )

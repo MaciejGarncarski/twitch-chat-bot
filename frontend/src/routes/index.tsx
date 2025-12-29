@@ -1,17 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useRef, useState } from 'react'
-import { useVolume } from '@/hooks/use-volume'
-import { usePlayState } from '@/hooks/use-play-state'
-import { AnimatePresence } from 'motion/react'
-import { CurrentSong } from '@/components/current-song'
-import { Queue } from '@/components/queue'
-import { PlayerYT } from '@/components/player-yt'
-import { usePlayerData } from '@/hooks/use-player-data'
-import { useQueue } from '@/hooks/use-queue'
-import { QueueEmptyMessage } from '@/components/queue-empty-message'
-import { QueueLoadingMessage } from '@/components/queue-loading-message'
+import { createFileRoute } from "@tanstack/react-router"
+import { useRef, useState } from "react"
+import { useVolume } from "@/hooks/use-volume"
+import { usePlayState } from "@/hooks/use-play-state"
+import { AnimatePresence } from "motion/react"
+import { CurrentSong } from "@/components/current-song"
+import { Queue } from "@/components/queue"
+import { PlayerYT } from "@/components/player-yt"
+import { usePlayerData } from "@/hooks/use-player-data"
+import { useQueue } from "@/hooks/use-queue"
+import { QueueEmptyMessage } from "@/components/queue-empty-message"
+import { QueueLoadingMessage } from "@/components/queue-loading-message"
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: App,
 })
 

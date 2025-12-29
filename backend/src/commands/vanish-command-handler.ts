@@ -1,5 +1,5 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class VanishCommandHandler extends CommandHandler {
   private readonly regex = /^!vanish$/i
@@ -23,14 +23,14 @@ export class VanishCommandHandler extends CommandHandler {
       return
     }
     if (isMod) {
-      logger.info('[COMMAND] [VANISH] Mod attempted to use !vanish command. Ignoring.')
+      logger.info("[COMMAND] [VANISH] Mod attempted to use !vanish command. Ignoring.")
       return
     }
 
     await timeoutUser({
       durationInSeconds: this.durationInSeconds,
       userIdToTimeout: userId,
-      reason: '!vanish',
+      reason: "!vanish",
     })
     return
   }

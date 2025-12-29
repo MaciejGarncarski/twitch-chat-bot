@@ -1,20 +1,20 @@
-import { commandHandlers } from '@/commands/handlers'
-import { subscribeToChat, unsubscribeAll } from '@/connectors/chat-subscription'
-import { logger } from '@/helpers/logger'
-import CommandProcessor from '@/processors/command-processor'
-import { twitchMessageSchema } from '@/types/twitch-ws-message'
+import { commandHandlers } from "@/commands/handlers"
+import { subscribeToChat, unsubscribeAll } from "@/connectors/chat-subscription"
+import { logger } from "@/helpers/logger"
+import CommandProcessor from "@/processors/command-processor"
+import { twitchMessageSchema } from "@/types/twitch-ws-message"
 
 await unsubscribeAll()
 const processor = new CommandProcessor(commandHandlers)
 
 export class ChatWebSocket {
   private ws?: WebSocket
-  private sessionId = ''
+  private sessionId = ""
   private missedMessageTimer?: NodeJS.Timeout
 
   private isTransferring = false
 
-  private readonly DEFAULT_WS_URL = 'wss://eventsub.wss.twitch.tv/ws'
+  private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws"
   private keepaliveTimeoutSeconds = 30_000
 
   constructor() {
@@ -27,28 +27,28 @@ export class ChatWebSocket {
     const ws = new WebSocket(url)
     this.ws = ws
 
-    ws.addEventListener('message', async ({ data }) => {
+    ws.addEventListener("message", async ({ data }) => {
       this.resetKeepaliveTimer()
       await this.handleMessage(data.toString(), ws)
     })
 
-    ws.addEventListener('close', () => {
+    ws.addEventListener("close", () => {
       this.stopKeepaliveTimer()
 
       if (this.isTransferring) {
-        logger.info('[CHAT WS] Old connection closed successfully (Transfer complete).')
+        logger.info("[CHAT WS] Old connection closed successfully (Transfer complete).")
         return
       }
 
-      logger.info('[CHAT WS] Connection lost. Retrying in 3s...')
+      logger.info("[CHAT WS] Connection lost. Retrying in 3s...")
 
       this.isTransferring = false
 
       setTimeout(() => this.connect(), 3000)
     })
 
-    ws.addEventListener('error', (err) => {
-      logger.error(err, '[CHAT WS] WebSocket error')
+    ws.addEventListener("error", (err) => {
+      logger.error(err, "[CHAT WS] WebSocket error")
       ws.close()
     })
   }
@@ -58,7 +58,7 @@ export class ChatWebSocket {
     const { message_type } = parsed.metadata
 
     switch (message_type) {
-      case 'session_welcome': {
+      case "session_welcome": {
         const timeoutSeconds = parsed.payload.session?.keepalive_timeout_seconds
 
         if (timeoutSeconds) {
@@ -76,33 +76,33 @@ export class ChatWebSocket {
         this.resetKeepaliveTimer()
 
         if (this.isTransferring) {
-          logger.info('[CHAT WS] Session transferred. Subscriptions preserved.')
+          logger.info("[CHAT WS] Session transferred. Subscriptions preserved.")
           this.isTransferring = false
         } else {
-          logger.info('[CHAT WS] Fresh session. Subscribing to events...')
+          logger.info("[CHAT WS] Fresh session. Subscribing to events...")
           await subscribeToChat(newSessionId)
         }
 
         break
       }
 
-      case 'session_reconnect': {
+      case "session_reconnect": {
         const reconnectUrl = parsed.payload.session?.reconnect_url
         if (!reconnectUrl) return
 
-        logger.info('[CHAT WS] Twitch requested reconnect (Migration).')
+        logger.info("[CHAT WS] Twitch requested reconnect (Migration).")
 
         this.isTransferring = true
         this.connect(reconnectUrl)
         break
       }
 
-      case 'notification': {
+      case "notification": {
         await processor.process(parsed)
         break
       }
 
-      case 'session_keepalive':
+      case "session_keepalive":
         break
     }
   }
@@ -111,7 +111,7 @@ export class ChatWebSocket {
     this.stopKeepaliveTimer()
 
     this.missedMessageTimer = setTimeout(() => {
-      logger.warn('[CHAT WS] No keepalive received. Connection ghosted.')
+      logger.warn("[CHAT WS] No keepalive received. Connection ghosted.")
 
       this.ws?.close()
     }, this.keepaliveTimeoutSeconds + 2000)

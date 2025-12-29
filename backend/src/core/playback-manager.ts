@@ -1,8 +1,8 @@
-import { EventEmitter } from 'node:events'
+import { EventEmitter } from "node:events"
 
-import { getBunServer } from '@/helpers/init-ws'
-import { logger } from '@/helpers/logger'
-import { playbackStatusWSSchema } from '@/types/playback-status-ws'
+import { getBunServer } from "@/helpers/init-ws"
+import { logger } from "@/helpers/logger"
+import { playbackStatusWSSchema } from "@/types/playback-status-ws"
 
 export interface IPlaybackManager extends EventEmitter {
   play(): void
@@ -15,7 +15,7 @@ export interface IPlaybackManager extends EventEmitter {
   seek(seekSeconds: number): void
   getIsPlaying(): boolean
 
-  on(event: 'song-ended', listener: () => void): this
+  on(event: "song-ended", listener: () => void): this
 }
 
 export class PlaybackManager extends EventEmitter implements IPlaybackManager {
@@ -43,7 +43,7 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
       this.currentSongDuration > 0 &&
       currentPlayTime >= this.currentSongDuration
     ) {
-      this.emit('song-ended')
+      this.emit("song-ended")
       return
     }
 
@@ -59,11 +59,11 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
     const parsedStatus = playbackStatusWSSchema.safeParse(playbackStatus)
 
     if (!parsedStatus.success) {
-      logger.error('[PLAYBACK] Invalid playback status')
+      logger.error("[PLAYBACK] Invalid playback status")
       return
     }
 
-    bunInstance.publish('playback-status', JSON.stringify(parsedStatus.data))
+    bunInstance.publish("playback-status", JSON.stringify(parsedStatus.data))
   }
 
   private startHeartbeat() {

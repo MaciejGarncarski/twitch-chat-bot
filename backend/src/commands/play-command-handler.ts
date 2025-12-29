@@ -1,6 +1,6 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
-import { CommandError, CommandErrorCode } from '@/types/errors'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
+import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class PlayCommandHandler extends CommandHandler {
   private readonly regex = /^!play\s*$/i

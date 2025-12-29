@@ -1,4 +1,4 @@
-import { Volume, Volume1, Volume2, VolumeX } from 'lucide-react'
+import { Volume, Volume1, Volume2, VolumeX } from "lucide-react"
 
 export function VolumeIndicator({ volume }: { volume: number }) {
   return (

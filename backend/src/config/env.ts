@@ -1,20 +1,20 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 const envSchema = z.object({
   NODE_ENV: z
-    .union([z.literal('development'), z.literal('production'), z.literal('test')])
-    .default('development'),
+    .union([z.literal("development"), z.literal("production"), z.literal("test")])
+    .default("development"),
   API_URL: z.string(),
   APP_ORIGINS: z
     .string()
-    .transform((str) => str.split(',').map((s) => s.trim()))
+    .transform((str) => str.split(",").map((s) => s.trim()))
     .pipe(z.array(z.url()).min(1)),
   PORT: z.string().length(4),
-  TWITCH_CLIENT_ID: z.string().default('CHECK_README_FOR_INFO'),
-  TWITCH_CLIENT_SECRET: z.string().default('CHECK_README_FOR_INFO'),
-  TWITCH_BROADCASTER_NAME: z.string().default('CHECK_README_FOR_INFO'),
-  TWITCH_REFRESH_TOKEN: z.string().default('CHECK_README_FOR_INFO'),
-  REDIRECT_URI: z.url().default('http://localhost:3302/api/auth/callback'),
+  TWITCH_CLIENT_ID: z.string().default("CHECK_README_FOR_INFO"),
+  TWITCH_CLIENT_SECRET: z.string().default("CHECK_README_FOR_INFO"),
+  TWITCH_BROADCASTER_NAME: z.string().default("CHECK_README_FOR_INFO"),
+  TWITCH_REFRESH_TOKEN: z.string().default("CHECK_README_FOR_INFO"),
+  REDIRECT_URI: z.url().default("http://localhost:3302/api/auth/callback"),
   YT_COOKIE: z.string().optional(),
 })
 

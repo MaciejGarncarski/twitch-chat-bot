@@ -1,10 +1,10 @@
-import { playbackStatusWSSchema } from '@/schemas/playback-status-ws'
-import { useMemo } from 'react'
-import useWebSocket from 'react-use-websocket'
+import { playbackStatusWSSchema } from "@/schemas/playback-status-ws"
+import { useMemo } from "react"
+import useWebSocket from "react-use-websocket"
 
 export function usePlayerData() {
   const { lastJsonMessage } = useWebSocket(
-    import.meta.env.VITE_WS_URL || 'ws://localhost:3001/ws',
+    import.meta.env.VITE_WS_URL || "ws://localhost:3001/ws",
     {
       shouldReconnect: () => true,
       reconnectAttempts: 10,

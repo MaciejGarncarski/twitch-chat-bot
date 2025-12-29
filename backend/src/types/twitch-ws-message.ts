@@ -1,7 +1,7 @@
-import z from 'zod'
+import z from "zod"
 
 const mentionFragment = z.object({
-  type: z.literal('mention'),
+  type: z.literal("mention"),
   text: z.string(),
   cheermote: z.object().nullable(),
   emote: z.null(),
@@ -13,7 +13,7 @@ const mentionFragment = z.object({
 })
 
 const textFragment = z.object({
-  type: z.literal('text'),
+  type: z.literal("text"),
   text: z.string(),
   cheermote: z.object().nullable(),
   mention: z.object().nullable(),
@@ -21,7 +21,7 @@ const textFragment = z.object({
 })
 
 const emoteFragment = z.object({
-  type: z.literal('emote'),
+  type: z.literal("emote"),
   text: z.string(),
   cheermote: z.object().nullable(),
   emote: z

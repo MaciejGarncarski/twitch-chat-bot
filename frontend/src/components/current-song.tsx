@@ -1,13 +1,13 @@
-import { CurrentSongProgressBar } from '@/components/current-song-progress-bar'
-import { CurrentSongTitle } from '@/components/current-song-title'
-import { DurationIndicator } from '@/components/duration-indicator'
-import { buttonVariants } from '@/components/ui/button'
-import { VolumeIndicator } from '@/components/volume-indicator'
-import { useSetPlayState } from '@/hooks/use-set-play-state'
-import { cn } from '@/lib/utils'
-import { LoaderIcon, Pause, Play, UserIcon } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState, type RefObject } from 'react'
+import { CurrentSongProgressBar } from "@/components/current-song-progress-bar"
+import { CurrentSongTitle } from "@/components/current-song-title"
+import { DurationIndicator } from "@/components/duration-indicator"
+import { buttonVariants } from "@/components/ui/button"
+import { VolumeIndicator } from "@/components/volume-indicator"
+import { useSetPlayState } from "@/hooks/use-set-play-state"
+import { cn } from "@/lib/utils"
+import { LoaderIcon, Pause, Play, UserIcon } from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
+import { useState, type RefObject } from "react"
 
 type CurrentSongProps = {
   playerRef: RefObject<HTMLVideoElement | null>
@@ -66,7 +66,7 @@ export const CurrentSong = ({
               className="absolute cursor-pointer top-0 z-10 bg-neutral-900/40 h-full w-full flex items-center justify-center rounded"
             >
               <span
-                className={cn('cursor-pointer', buttonVariants({ size: 'sm', variant: 'default' }))}
+                className={cn("cursor-pointer", buttonVariants({ size: "sm", variant: "default" }))}
               >
                 {isPending ? (
                   <>
@@ -76,7 +76,7 @@ export const CurrentSong = ({
                 ) : (
                   <>
                     {isPlaying ? <Pause size={10} /> : <Play size={10} />}
-                    {isPlaying ? 'Pauzuj' : 'Odtwórz'}
+                    {isPlaying ? "Pauzuj" : "Odtwórz"}
                   </>
                 )}
               </span>

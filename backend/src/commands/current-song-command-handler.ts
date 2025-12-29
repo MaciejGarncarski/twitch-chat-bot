@@ -1,6 +1,6 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { formatDuration } from '@/helpers/format-duration'
-import { RateLimitConfig } from '@/helpers/rate-limit'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { formatDuration } from "@/helpers/format-duration"
+import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class CurrentSongCommandHandler extends CommandHandler {
   private readonly regex = /^!song\s*$/i

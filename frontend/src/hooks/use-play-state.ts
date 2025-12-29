@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from 'react'
+import { useEffect, type RefObject } from "react"
 
 const MAX_ALLOWED_DRIFT = 0.8
 
@@ -13,7 +13,7 @@ export const usePlayState = (
 
     if (isPlaying && media.paused) {
       media.play().catch((e) => {
-        console.warn('[Playback] Playback postponed (user interaction required):', e)
+        console.warn("[Playback] Playback postponed (user interaction required):", e)
       })
     } else if (!isPlaying && !media.paused) {
       media.pause()

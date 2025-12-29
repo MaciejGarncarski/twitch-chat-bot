@@ -1,18 +1,18 @@
 {
   "name": "@ttv-song-request/eden-rpc",
   "version": "1.0.50",
+  "module": "src/index.js",
+  "exports": {
+    ".": "./index.ts"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
-  },
-  "exports": {
-    ".": "./index.ts"
   },
   "dependencies": {
     "elysia": "latest"
   },
   "devDependencies": {
     "bun-types": "latest"
-  },
-  "module": "src/index.js"
+  }
 }

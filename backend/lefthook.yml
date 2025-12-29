@@ -1,0 +1,7 @@
+pre-commit:
+  jobs:
+    - name: Backend lint and format
+      root: backend/
+      stage_fixed: true
+      glob: "*.{js,ts}"
+      run: bun lint:check && bun format:check

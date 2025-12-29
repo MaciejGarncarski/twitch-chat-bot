@@ -1,6 +1,6 @@
-import type { QueueTrackedItem } from '@/hooks/use-queue'
-import { useEffect, useRef, useState, type RefObject } from 'react'
-import ReactPlayer from 'react-player'
+import type { QueueTrackedItem } from "@/hooks/use-queue"
+import { useEffect, useRef, useState, type RefObject } from "react"
+import ReactPlayer from "react-player"
 
 const MAX_RETRIES = 5
 const RETRY_BASE_DELAY_MS = 5000

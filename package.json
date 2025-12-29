@@ -1,19 +1,21 @@
 {
   "name": "ttv-song-request",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
   "workspaces": [
     "backend",
     "frontend",
     "packages/*"
   ],
+  "type": "module",
+  "module": "index.ts",
   "scripts": {
-    "lint-format": "bun --filter=backend lint-format && bun --filter=frontend lint-format"
-  },
-  "catalog": {
-    "oxfmt": "^0.21.0",
-    "oxlint": "^1.36.0"
+    "lint-format": "bun --filter=backend lint-format && bun --filter=frontend lint-format",
+    "lint": "bun --filter=frontend lint && bun --filter=backend lint",
+    "lint:frontend": "bun --filter=frontend lint",
+    "lint:backend": "bun --filter=backend lint",
+    "format": "bun --filter=frontend format && bun --filter=backend format",
+    "format:frontend": "bun --filter=frontend format",
+    "format:backend": "bun --filter=backend format"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -21,5 +23,9 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "catalog": {
+    "oxfmt": "^0.21.0",
+    "oxlint": "^1.36.0"
   }
 }

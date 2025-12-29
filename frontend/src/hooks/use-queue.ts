@@ -1,9 +1,9 @@
-import { api } from '@/api/api-treaty'
-import { useQuery } from '@tanstack/react-query'
+import { api } from "@/api/api-treaty"
+import { useQuery } from "@tanstack/react-query"
 
 export function useQueue() {
   return useQuery({
-    queryKey: ['queue'],
+    queryKey: ["queue"],
     queryFn: async () => {
       const data = (await api.api.queue.get()) as { data: QueueTrackedItem[] }
       return data.data

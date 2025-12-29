@@ -1,5 +1,5 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class HelpCommandHandler extends CommandHandler {
   private readonly regex = /^!help$/i

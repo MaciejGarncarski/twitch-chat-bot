@@ -1,6 +1,6 @@
-import { api } from '@/api/api-treaty'
-import { useMutation } from '@tanstack/react-query'
-import type { RefObject } from 'react'
+import { api } from "@/api/api-treaty"
+import { useMutation } from "@tanstack/react-query"
+import type { RefObject } from "react"
 
 type Props = {
   isPlaying: boolean

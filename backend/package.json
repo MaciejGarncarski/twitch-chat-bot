@@ -2,12 +2,15 @@
   "name": "backend",
   "version": "1.0.50",
   "type": "module",
+  "module": "src/index.js",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "serve": "NODE_ENV=production bun src/index.ts",
     "setup-auth": "bun src/auth.ts",
-    "lint": "oxlint --fix .",
-    "lint-format": "oxlint --fix . && oxfmt --write \"**/*.{ts,js,json,md}\""
+    "lint:check": "oxlint .",
+    "format:check": "oxfmt --check .",
+    "format": "oxfmt --write .",
+    "lint-format": "oxlint --fix . && oxfmt --write ."
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
@@ -26,6 +29,5 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript-eslint": "^8.50.0"
-  },
-  "module": "src/index.js"
+  }
 }

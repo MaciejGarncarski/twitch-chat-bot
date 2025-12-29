@@ -1,10 +1,10 @@
-import { YTNodes } from 'youtubei.js/agnostic'
+import { YTNodes } from "youtubei.js/agnostic"
 
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from '@/config/video'
-import { SongMetadata } from '@/data/get-video-metadata'
-import { innertube } from '@/data/innertube'
-import { RateLimitConfig } from '@/helpers/rate-limit'
+import { CommandContext, CommandHandler } from "@/commands/command"
+import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config/video"
+import { SongMetadata } from "@/data/get-video-metadata"
+import { innertube } from "@/data/innertube"
+import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class FillCommandHandler extends CommandHandler {
   private readonly regex = /^!fill\s+(.+)$/i
@@ -68,18 +68,18 @@ export class FillCommandHandler extends CommandHandler {
     )
 
     await deps.sendChatMessage(
-      `Dodano ${addedCount} piosenek do kolejki dla: ${query}${errorCount > 0 ? ` (${errorCount} nie udało się dodać)` : ''}`,
+      `Dodano ${addedCount} piosenek do kolejki dla: ${query}${errorCount > 0 ? ` (${errorCount} nie udało się dodać)` : ""}`,
       messageId,
     )
   }
 
   private async searchSongsByKeywords(query: string): Promise<FillSong[]> {
     const results = await innertube.search(query, {
-      type: 'video',
+      type: "video",
     })
 
     return results.videos
-      .filter((video): video is YTNodes.Video => video.type === 'Video')
+      .filter((video): video is YTNodes.Video => video.type === "Video")
       .filter((video) => {
         const duration = video.duration?.seconds
         return (

@@ -1,6 +1,6 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
-import { CommandError, CommandErrorCode } from '@/types/errors'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
+import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class SeekCommandHandler extends CommandHandler {
   private readonly regex = /^!seek\s+(?:(\d{1,2}):([0-5]?\d)|(\d{1,3}))$/

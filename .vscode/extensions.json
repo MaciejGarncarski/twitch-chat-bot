@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    // OXC (Linting & Formatting)
+    "oxc.oxc-vscode"
+  ]
+}

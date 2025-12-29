@@ -1,5 +1,5 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class QueueCommandHandler extends CommandHandler {
   private readonly regex = /^!queue\s*$/i
@@ -24,7 +24,7 @@ export class QueueCommandHandler extends CommandHandler {
 
     const formattedQueue = queueItems
       .map((item, index) => `${index + 1}. ${item.title} (dodany przez @${item.username})`)
-      .join('\n')
+      .join("\n")
 
     logger.info(`[COMMAND] [QUEUE] Sending current queue.`)
     await sendChatMessage(`Aktualna kolejka:\n${formattedQueue}`, messageId)

@@ -1,11 +1,11 @@
-import { twitchAuth } from '@/core/twitch-auth-manager'
-import { logger } from '@/helpers/logger'
+import { twitchAuth } from "@/core/twitch-auth-manager"
+import { logger } from "@/helpers/logger"
 
 export const sendChatMessage = async (message: string, replyChatId?: string) => {
-  await twitchAuth.fetch('https://api.twitch.tv/helix/chat/messages', {
-    method: 'POST',
+  await twitchAuth.fetch("https://api.twitch.tv/helix/chat/messages", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       broadcaster_id: twitchAuth.broadcasterId,

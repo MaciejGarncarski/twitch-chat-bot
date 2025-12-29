@@ -1,12 +1,12 @@
-import { EventEmitter } from 'node:events'
+import { EventEmitter } from "node:events"
 
-import z from 'zod'
+import z from "zod"
 
-import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from '@/config/video'
-import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
-import { getVideoUrl } from '@/helpers/get-video-url'
-import { QueuedItem, songRequestInputSchema } from '@/types/queue'
-import { QueueError } from '@/types/queue-errors'
+import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config/video"
+import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata"
+import { getVideoUrl } from "@/helpers/get-video-url"
+import { QueuedItem, songRequestInputSchema } from "@/types/queue"
+import { QueueError } from "@/types/queue-errors"
 
 export interface ISongQueue extends EventEmitter {
   getCurrent(): QueuedItem | null
@@ -26,9 +26,9 @@ export interface ISongQueue extends EventEmitter {
   getAtPosition(position: number): QueuedItem | null
   shuffle(): void
 
-  on(event: 'song-queued', listener: (item: QueuedItem) => void): this
-  on(event: 'clear-queue', listener: () => void): this
-  on(event: 'song-remove-current', listener: (item: QueuedItem) => void): this
+  on(event: "song-queued", listener: (item: QueuedItem) => void): this
+  on(event: "clear-queue", listener: () => void): this
+  on(event: "song-remove-current", listener: (item: QueuedItem) => void): this
 }
 
 export class SongQueue extends EventEmitter implements ISongQueue {
@@ -71,7 +71,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
   ): Promise<QueuedItem> {
     const validatedInput = songRequestInputSchema.parse(input)
 
-    let title = 'Unknown Title'
+    let title = "Unknown Title"
     let thumbnail: string | null = null
     let duration = 0
 
@@ -89,18 +89,18 @@ export class SongQueue extends EventEmitter implements ISongQueue {
     const videoUrl = getVideoUrl(validatedInput.videoId)
 
     if (this.checkIfExists(videoUrl)) {
-      throw new QueueError('ALREADY_EXISTS')
+      throw new QueueError("ALREADY_EXISTS")
     }
 
     if (this.queue.length >= this.maxQueueLength) {
-      throw new QueueError('QUEUE_FULL')
+      throw new QueueError("QUEUE_FULL")
     }
 
     if (duration < MIN_VIDEO_DURATION_SECONDS) {
-      throw new QueueError('TOO_SHORT')
+      throw new QueueError("TOO_SHORT")
     }
     if (duration > MAX_VIDEO_DURATION_SECONDS) {
-      throw new QueueError('TOO_LONG')
+      throw new QueueError("TOO_LONG")
     }
 
     const newItem: QueuedItem = {
@@ -114,7 +114,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
     }
 
     this.queue.push(newItem)
-    this.emit('song-queued', newItem)
+    this.emit("song-queued", newItem)
     return newItem
   }
 
@@ -131,7 +131,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
     }
 
     this.queue = this.queue.filter((item) => item.id !== currentItem.id)
-    this.emit('song-remove-current', currentItem)
+    this.emit("song-remove-current", currentItem)
 
     return currentItem
   }
@@ -184,6 +184,6 @@ export class SongQueue extends EventEmitter implements ISongQueue {
 
   public clearAll(): void {
     this.queue = []
-    this.emit('clear-queue')
+    this.emit("clear-queue")
   }
 }

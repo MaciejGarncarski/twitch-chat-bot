@@ -1,5 +1,3 @@
-pre-commit:
-  jobs:
-    - run: bunx oxlint --fix {staged_files} && bunx oxfmt --write {staged_files}
-      stage_fixed: true
-      glob: "*.{js,ts,jsx,tsx}"
+extends:
+  - frontend/lefthook.yml
+  - backend/lefthook.yml

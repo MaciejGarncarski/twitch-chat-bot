@@ -11,7 +11,7 @@ export function checkIsMod(
 ): boolean {
   if (!badges) return false
 
-  const isModerator = badges.some((badge) => badge.set_id === 'moderator')
+  const isModerator = badges.some((badge) => badge.set_id === "moderator")
 
   const isBroadcaster =
     chatterId !== undefined && broadcasterId !== undefined && chatterId === broadcasterId

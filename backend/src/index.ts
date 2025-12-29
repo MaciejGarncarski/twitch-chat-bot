@@ -1,13 +1,13 @@
-import { cors } from '@elysiajs/cors'
-import { Elysia } from 'elysia'
+import { cors } from "@elysiajs/cors"
+import { Elysia } from "elysia"
 
-import { sendChatMessage } from '@/api/send-chat-message'
-import { env } from '@/config/env'
-import { ChatWebSocket } from '@/connectors/chat-ws'
-import { songRequestEngine } from '@/core/song-request-engine'
-import { twitchAuth } from '@/core/twitch-auth-manager'
-import { setBunServer } from '@/helpers/init-ws'
-import { logger } from '@/helpers/logger'
+import { sendChatMessage } from "@/api/send-chat-message"
+import { env } from "@/config/env"
+import { ChatWebSocket } from "@/connectors/chat-ws"
+import { songRequestEngine } from "@/core/song-request-engine"
+import { twitchAuth } from "@/core/twitch-auth-manager"
+import { setBunServer } from "@/helpers/init-ws"
+import { logger } from "@/helpers/logger"
 
 async function init() {
   await Promise.all([twitchAuth.fetchUserId(), twitchAuth.fetchBroadcasterId()])
@@ -26,10 +26,10 @@ export const app = new Elysia()
   )
   .onStart(async ({ server }) => {
     logger.info(`[SERVER] [UP] listening on ${env.API_URL}`)
-    await sendChatMessage(`Bot uruchomiony${env.NODE_ENV === 'development' ? ' (dev)' : ''}`)
+    await sendChatMessage(`Bot uruchomiony${env.NODE_ENV === "development" ? " (dev)" : ""}`)
     setBunServer(server)
 
-    if (env.NODE_ENV === 'development') {
+    if (env.NODE_ENV === "development") {
       // await songRequestEngine.getSongQueue().add({
       //   username: 'maciej_ga',
       //   videoId: 'xuP4g7IDgDM',
@@ -41,53 +41,53 @@ export const app = new Elysia()
     }
   })
   .onStop(async () => {
-    await sendChatMessage('Bot wyłączony StinkyGlitch')
+    await sendChatMessage("Bot wyłączony StinkyGlitch")
   })
   .onError(async ({ code, status }) => {
-    if (code === 'NOT_FOUND') {
+    if (code === "NOT_FOUND") {
       return status(404, {
-        status: 'Endpoint not found',
+        status: "Endpoint not found",
       })
     }
   })
-  .group('/api', (app) => {
+  .group("/api", (app) => {
     return app
-      .get('/', async () => {
-        return 'hi'
+      .get("/", async () => {
+        return "hi"
       })
-      .get('/auth/tokens', async ({ redirect }) => {
+      .get("/auth/tokens", async ({ redirect }) => {
         return redirect(twitchAuth.authUrl)
       })
-      .get('/auth/callback', async ({ request }) => {
+      .get("/auth/callback", async ({ request }) => {
         const tokens = await twitchAuth.handleCallback(request)
         return tokens
       })
-      .get('/queue', async () => {
+      .get("/queue", async () => {
         const data = songRequestEngine.getSongQueue().getQueue()
         return data
       })
-      .post('/pause', async () => {
+      .post("/pause", async () => {
         songRequestEngine.getPlaybackManager().pause()
         return {
-          status: 'ok',
+          status: "ok",
         }
       })
-      .post('/play', async () => {
+      .post("/play", async () => {
         songRequestEngine.getPlaybackManager().play()
         return {
-          status: 'ok',
+          status: "ok",
         }
       })
-      .ws('/ws', {
+      .ws("/ws", {
         open(ws) {
-          ws.subscribe('playback-status')
+          ws.subscribe("playback-status")
         },
       })
   })
   .listen({ port: env.PORT || 3001 })
 
-process.on('SIGINT', () => {
-  logger.info('[SERVER] Received SIGINT. Stopping server...')
+process.on("SIGINT", () => {
+  logger.info("[SERVER] Received SIGINT. Stopping server...")
   app.stop().then(() => {
     logger.info(`[SERVER] [DOWN] Stopped`)
     process.exit(0)

@@ -1,5 +1,5 @@
-import { twitchAuth } from '@/core/twitch-auth-manager'
-import { logger } from '@/helpers/logger'
+import { twitchAuth } from "@/core/twitch-auth-manager"
+import { logger } from "@/helpers/logger"
 
 export const timeoutUser = async ({
   userIdToTimeout,
@@ -14,15 +14,15 @@ export const timeoutUser = async ({
     const response = await twitchAuth.fetch(
       `https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${twitchAuth.broadcasterId}&moderator_id=${twitchAuth.userId}`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           data: {
             user_id: userIdToTimeout,
             duration: durationInSeconds,
-            reason: reason || 'Bot timeout',
+            reason: reason || "Bot timeout",
           },
         }),
       },
@@ -30,7 +30,7 @@ export const timeoutUser = async ({
 
     if (!response.ok) {
       const errorData = await response.json()
-      throw new Error(errorData.message || 'Failed to timeout user')
+      throw new Error(errorData.message || "Failed to timeout user")
     }
 
     logger.info(`[MOD] Timed out user ${userIdToTimeout} for ${durationInSeconds}s`)

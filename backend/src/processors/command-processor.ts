@@ -1,16 +1,16 @@
-import { sendChatMessage } from '@/api/send-chat-message'
-import { timeoutUser } from '@/api/timeout-user'
-import { CommandHandler, ContextDeps } from '@/commands/command'
-import { songRequestEngine } from '@/core/song-request-engine'
-import { checkIsMod } from '@/helpers/check-is-mod'
-import { logger } from '@/helpers/logger'
-import { rateLimiter } from '@/helpers/rate-limit'
-import { sanitizeMessage } from '@/helpers/sanitize-message'
-import { CommandError, CommandErrorCode } from '@/types/errors'
-import { TwitchWSMessage } from '@/types/twitch-ws-message'
+import { sendChatMessage } from "@/api/send-chat-message"
+import { timeoutUser } from "@/api/timeout-user"
+import { CommandHandler, ContextDeps } from "@/commands/command"
+import { songRequestEngine } from "@/core/song-request-engine"
+import { checkIsMod } from "@/helpers/check-is-mod"
+import { logger } from "@/helpers/logger"
+import { rateLimiter } from "@/helpers/rate-limit"
+import { sanitizeMessage } from "@/helpers/sanitize-message"
+import { CommandError, CommandErrorCode } from "@/types/errors"
+import { TwitchWSMessage } from "@/types/twitch-ws-message"
 
 class CommandProcessor {
-  private readonly usersTreatedAsMod = ['maciej_ga']
+  private readonly usersTreatedAsMod = ["maciej_ga"]
   handlers: CommandHandler[]
 
   constructor(handlers: CommandHandler[]) {
@@ -18,14 +18,14 @@ class CommandProcessor {
   }
 
   async process(parsed: TwitchWSMessage) {
-    if (parsed.metadata.message_type !== 'notification') {
+    if (parsed.metadata.message_type !== "notification") {
       return
     }
 
     const messageText = parsed.payload.event?.message?.text.trim()
 
     if (!messageText) {
-      logger.warn('[COMMAND] Received message without text.')
+      logger.warn("[COMMAND] Received message without text.")
       return
     }
 
@@ -39,7 +39,7 @@ class CommandProcessor {
     const broadcasterId = parsed.payload.event?.broadcaster_user_id
 
     if (!username) {
-      logger.warn('[COMMAND] Received message without username.')
+      logger.warn("[COMMAND] Received message without username.")
       return
     }
 
@@ -113,15 +113,15 @@ class CommandProcessor {
         if (error instanceof CommandError) {
           switch (error.code) {
             case CommandErrorCode.INVALID_COMMAND_FORMAT:
-              await sendChatMessage('Niepoprawny format komendy.', messageId)
+              await sendChatMessage("Niepoprawny format komendy.", messageId)
               break
 
             case CommandErrorCode.CANNOT_SKIP_SONG:
-              await sendChatMessage('Nie możesz pominąć tego utworu.', messageId)
+              await sendChatMessage("Nie możesz pominąć tego utworu.", messageId)
               break
 
             case CommandErrorCode.NOT_A_MOD:
-              await sendChatMessage('Tylko moderatorzy mogą używać tej komendy.', messageId)
+              await sendChatMessage("Tylko moderatorzy mogą używać tej komendy.", messageId)
               break
 
             case CommandErrorCode.EVENT_NOT_FOUND:

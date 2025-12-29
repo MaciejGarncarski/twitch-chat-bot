@@ -1,6 +1,6 @@
-import { CommandContext, CommandHandler } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
-import { CommandError, CommandErrorCode } from '@/types/errors'
+import { CommandContext, CommandHandler } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
+import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class ClearAllCommandHandler extends CommandHandler {
   private readonly regex = /^!clearall\s*$/i

@@ -1,6 +1,6 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
-import { CommandError, CommandErrorCode } from '@/types/errors'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
+import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class VolumeCommandHandler extends CommandHandler {
   private readonly regex = /^!volume(?:\s+(100|[1-9]?\d))?\s*$/
@@ -39,7 +39,7 @@ export class VolumeCommandHandler extends CommandHandler {
     }
 
     if (!match || !messageId) {
-      throw new Error('Not matching VOLUME command or missing messageId.')
+      throw new Error("Not matching VOLUME command or missing messageId.")
     }
 
     const volume = parseInt(match[1])

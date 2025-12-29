@@ -1,8 +1,8 @@
-import { useQueue } from '@/hooks/use-queue'
-import { cn } from '@/lib/utils'
-import { formatDuration } from '@/utils/format-duration'
-import { Clock3, UserIcon } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { useQueue } from "@/hooks/use-queue"
+import { cn } from "@/lib/utils"
+import { formatDuration } from "@/utils/format-duration"
+import { Clock3, UserIcon } from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
 
 export const Queue = () => {
   const { data: queueData } = useQueue()
@@ -12,7 +12,7 @@ export const Queue = () => {
 
   return (
     <motion.div
-      className={cn('flex flex-col bg-neutral-900/95 rounded-md px-4 py-4 mx-4 gap-1 border pb-10')}
+      className={cn("flex flex-col bg-neutral-900/95 rounded-md px-4 py-4 mx-4 gap-1 border pb-10")}
       animate={{ opacity: 1, transition: { duration: 0.5 } }}
       initial={{ opacity: 0, transition: { duration: 0.5 } }}
       exit={{ opacity: 0, transition: { duration: 0.7 } }}
@@ -20,8 +20,8 @@ export const Queue = () => {
       <h2 className="mr-auto ml-1 pb-2 text-xl font-semibold text-neutral-300">Kolejka</h2>
       <ul
         className={cn(
-          'border rounded-lg min-h-26 overflow-hidden',
-          queuedCount === 0 && 'border-transparent',
+          "border rounded-lg min-h-26 overflow-hidden",
+          queuedCount === 0 && "border-transparent",
         )}
       >
         <AnimatePresence mode="popLayout">
@@ -66,8 +66,8 @@ export const Queue = () => {
                 transition: { duration: 0.3 },
               }}
               className={cn(
-                'p-4 border-b flex gap-6 items-center bg-neutral-800',
-                idx === filteredCurrent?.length - 1 && 'border-b-0',
+                "p-4 border-b flex gap-6 items-center bg-neutral-800",
+                idx === filteredCurrent?.length - 1 && "border-b-0",
               )}
             >
               {item.thumbnail && (

@@ -1,6 +1,6 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
-import { RateLimitConfig } from '@/helpers/rate-limit'
-import { CommandError, CommandErrorCode } from '@/types/errors'
+import { CommandHandler, CommandContext } from "@/commands/command"
+import { RateLimitConfig } from "@/helpers/rate-limit"
+import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class WrongSongAllCommandHandler extends CommandHandler {
   private readonly regexp = /^!wrongsongall\b/i
@@ -23,7 +23,7 @@ export class WrongSongAllCommandHandler extends CommandHandler {
     if (!payload.event) {
       throw new CommandError(
         CommandErrorCode.EVENT_NOT_FOUND,
-        'Event data is required to execute this command.',
+        "Event data is required to execute this command.",
       )
     }
 
@@ -41,10 +41,10 @@ export class WrongSongAllCommandHandler extends CommandHandler {
     songQueue.removeBatchByIds(userSongs.map((s) => s.id))
 
     logger.info(
-      `[COMMAND] [WRONGSONG] Removed songs: ${userSongs.map((s) => s.title).join(', ')} for user ${username}.`,
+      `[COMMAND] [WRONGSONG] Removed songs: ${userSongs.map((s) => s.title).join(", ")} for user ${username}.`,
     )
     await sendChatMessage(
-      `Usunięto ${userSongs.length} ${userSongs.length === 1 ? 'utwór' : 'utworów'} z kolejki.`,
+      `Usunięto ${userSongs.length} ${userSongs.length === 1 ? "utwór" : "utworów"} z kolejki.`,
       messageId,
     )
   }

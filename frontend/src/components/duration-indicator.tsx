@@ -1,5 +1,5 @@
-import { formatDuration } from '@/utils/format-duration'
-import { Clock3 } from 'lucide-react'
+import { formatDuration } from "@/utils/format-duration"
+import { Clock3 } from "lucide-react"
 
 export function DurationIndicator({ playTime, duration }: { playTime: number; duration: number }) {
   return (

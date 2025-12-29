@@ -8,8 +8,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "oxlint --fix .",
-    "format": "oxfmt --write \"**/*.{ts,js,json,md}\"",
-    "lint-format": "oxlint --fix . && oxfmt --write \"**/*.{ts,js,json,md}\""
+    "lint:check": "oxlint .",
+    "format:check": "oxfmt --check .",
+    "format": "oxfmt --write .",
+    "lint-format": "oxlint --fix . && oxfmt --write ."
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -49,10 +51,10 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^27.0.0",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.50.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.50.0",
     "vite": "^7.1.7",
     "vitest": "^3.0.5",
     "web-vitals": "^5.1.0"

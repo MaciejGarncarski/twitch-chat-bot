@@ -1,6 +1,6 @@
-import z from 'zod'
+import z from "zod"
 
-import { innertube } from '@/data/innertube'
+import { innertube } from "@/data/innertube"
 
 export const getVideoMetadata = async (videoId: string): Promise<SongMetadata> => {
   const info = await innertube.getBasicInfo(videoId)

@@ -13,7 +13,6 @@ Before starting, ensure you have a registered application on Twitch.
 - Confidential Client: Ensure your "Client Type" is set to Confidential in the console.
 
 - Set Redirect URI:
-
   - http://host:port/api/auth/callback (default http://localhost:3302/api/auth/callback)
   - https://twitchtokengenerator.com (optional, for manual setup).
 
