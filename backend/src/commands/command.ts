@@ -30,11 +30,11 @@ export type CommandContext = {
 export abstract class CommandHandler {
   rateLimit?: RateLimitConfig
 
-  canHandle(messageText: string): boolean {
+  canHandle(_messageText: string): boolean {
     throw new Error('Method canHandle has not been implemented.')
   }
 
-  async execute(ctx: CommandContext): Promise<void> {
+  async execute(_ctx: CommandContext): Promise<void> {
     throw new Error('Method execute has not been implemented.')
   }
 }

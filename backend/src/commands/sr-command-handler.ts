@@ -1,7 +1,7 @@
 import { YTNodes } from 'youtubei.js/agnostic'
 import z from 'zod'
 
-import { CommandHandler, CommandContext } from '@/commands/command'
+import { CommandContext, CommandHandler } from '@/commands/command'
 import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
 import { innertube } from '@/data/innertube'
 import { formatDuration } from '@/helpers/format-duration'
@@ -26,7 +26,6 @@ export class YoutubeSrHandler extends CommandHandler {
 
   async execute({
     deps: { logger, songQueue, sendChatMessage, playbackManager },
-    payload,
     sanitizedMessage,
     messageId,
     username,

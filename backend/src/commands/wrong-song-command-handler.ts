@@ -1,4 +1,4 @@
-import { CommandHandler, CommandContext } from '@/commands/command'
+import { CommandContext, CommandHandler } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class WrongSongCommandHandler extends CommandHandler {
@@ -15,7 +15,6 @@ export class WrongSongCommandHandler extends CommandHandler {
 
   async execute({
     deps: { logger, songQueue, sendChatMessage },
-    payload,
     username,
     messageId,
   }: CommandContext) {

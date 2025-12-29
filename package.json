@@ -11,8 +11,13 @@
   "scripts": {
     "lint-format": "bun --filter=backend lint-format && bun --filter=frontend lint-format"
   },
+  "catalog": {
+    "oxfmt": "^0.21.0",
+    "oxlint": "^1.36.0"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "lefthook": "^2.0.13"
   },
   "peerDependencies": {
     "typescript": "^5"

@@ -7,10 +7,9 @@
     "build": "bunx --bun vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "lint": "eslint",
-    "format": "prettier",
-    "check": "prettier --write . && eslint --fix",
-    "lint-format": "eslint --fix . && prettier --write --cache \"**/*.{ts,js,json,md}\""
+    "lint": "oxlint --fix .",
+    "format": "oxfmt --write \"**/*.{ts,js,json,md}\"",
+    "lint-format": "oxlint --fix . && oxfmt --write \"**/*.{ts,js,json,md}\""
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -47,13 +46,13 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
-    "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^27.0.0",
-    "prettier": "^3.5.3",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.50.0",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "vite": "^7.1.7",
     "vitest": "^3.0.5",
     "web-vitals": "^5.1.0"

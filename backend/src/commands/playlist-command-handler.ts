@@ -8,7 +8,7 @@ import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class PlaylistCommandHandler extends CommandHandler {
   private readonly regex = /^!playlist\s+(.+)$/i
-  private readonly urlRegex = /[?&]list=([^#\&\?]+)/
+  private readonly urlRegex = /[?&]list=([^#&?]+)/
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,

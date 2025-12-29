@@ -6,7 +6,8 @@
     "dev": "bun run --watch src/index.ts",
     "serve": "NODE_ENV=production bun src/index.ts",
     "setup-auth": "bun src/auth.ts",
-    "lint-format": "eslint --fix . && prettier --write --cache \"**/*.{ts,js,json,md}\""
+    "lint": "oxlint --fix .",
+    "lint-format": "oxlint --fix . && oxfmt --write \"**/*.{ts,js,json,md}\""
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
@@ -20,10 +21,10 @@
   "devDependencies": {
     "bun-types": "latest",
     "dpdm": "^3.14.0",
-    "eslint": "^9.39.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.3.0",
-    "prettier": "^3.7.4",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript-eslint": "^8.50.0"
   },
   "module": "src/index.js"
