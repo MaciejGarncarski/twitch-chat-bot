@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { CommandError, CommandErrorCode } from '@/types/errors'
 
@@ -14,7 +14,7 @@ export class ClearAllCommandHandler extends CommandHandler {
     return this.regex.test(messageText)
   }
 
-  public async execute({ deps, isMod, messageId }: ExecuteParams): Promise<void> {
+  public async execute({ deps, isMod, messageId }: CommandContext): Promise<void> {
     if (!isMod) {
       throw new CommandError(CommandErrorCode.NOT_A_MOD)
     }

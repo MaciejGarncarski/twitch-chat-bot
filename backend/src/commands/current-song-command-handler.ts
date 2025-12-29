@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { formatDuration } from '@/helpers/format-duration'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 
@@ -17,7 +17,7 @@ export class CurrentSongCommandHandler extends CommandHandler {
   async execute({
     deps: { songQueue, logger, sendChatMessage, playbackManager },
     messageId,
-  }: ExecuteParams) {
+  }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [SKIP] Queue is empty, skipping not possible.`)
       await sendChatMessage(`Kolejka jest pusta.`, messageId)

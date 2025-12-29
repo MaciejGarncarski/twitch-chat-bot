@@ -8,7 +8,7 @@ import { IVoteManager } from '@/core/vote-manager'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { TwitchMessagePayload } from '@/types/twitch-ws-message'
 
-export type Deps = {
+export type ContextDeps = {
   songQueue: ISongQueue
   voteManager: IVoteManager
   logger: Logger
@@ -17,9 +17,9 @@ export type Deps = {
   sendChatMessage: typeof sendChatMessage
 }
 
-export type ExecuteParams = {
+export type CommandContext = {
   payload: TwitchMessagePayload
-  deps: Deps
+  deps: ContextDeps
   messageId: string | undefined
   userId: string | undefined
   username: string
@@ -34,7 +34,7 @@ export abstract class CommandHandler {
     throw new Error('Method canHandle has not been implemented.')
   }
 
-  async execute(data: ExecuteParams): Promise<void> {
+  async execute(ctx: CommandContext): Promise<void> {
     throw new Error('Method execute has not been implemented.')
   }
 }

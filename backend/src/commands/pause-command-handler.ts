@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { CommandError, CommandErrorCode } from '@/types/errors'
 
@@ -14,7 +14,7 @@ export class PauseCommandHandler extends CommandHandler {
     return this.regex.test(messageText)
   }
 
-  async execute({ deps: { logger, playbackManager }, payload, isMod }: ExecuteParams) {
+  async execute({ deps: { logger, playbackManager }, payload, isMod }: CommandContext) {
     if (!payload.event) {
       throw new CommandError(CommandErrorCode.EVENT_NOT_FOUND)
     }

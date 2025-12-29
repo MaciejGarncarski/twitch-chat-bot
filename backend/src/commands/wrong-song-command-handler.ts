@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class WrongSongCommandHandler extends CommandHandler {
@@ -18,7 +18,7 @@ export class WrongSongCommandHandler extends CommandHandler {
     payload,
     username,
     messageId,
-  }: ExecuteParams) {
+  }: CommandContext) {
     const foundSong = songQueue.getQueue().findLast((item) => item.username === username)
 
     if (!foundSong) {

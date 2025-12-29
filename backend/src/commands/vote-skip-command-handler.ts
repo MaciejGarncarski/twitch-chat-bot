@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class VoteSkipCommandHandler extends CommandHandler {
@@ -17,7 +17,7 @@ export class VoteSkipCommandHandler extends CommandHandler {
     deps: { logger, songQueue, sendChatMessage, voteManager },
     messageId,
     username,
-  }: ExecuteParams) {
+  }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [VOTESKIP] Queue is empty, skipping not possible.`)
       await sendChatMessage(`Kolejka jest pusta.`, messageId)

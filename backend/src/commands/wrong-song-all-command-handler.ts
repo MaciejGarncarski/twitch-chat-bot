@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { CommandError, CommandErrorCode } from '@/types/errors'
 
@@ -19,7 +19,7 @@ export class WrongSongAllCommandHandler extends CommandHandler {
     payload,
     username,
     messageId,
-  }: ExecuteParams) {
+  }: CommandContext) {
     if (!payload.event) {
       throw new CommandError(
         CommandErrorCode.EVENT_NOT_FOUND,

@@ -1,7 +1,7 @@
 import { YTNodes } from 'youtubei.js/agnostic'
 import z from 'zod'
 
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { getVideoMetadata, SongMetadata } from '@/data/get-video-metadata'
 import { innertube } from '@/data/innertube'
 import { formatDuration } from '@/helpers/format-duration'
@@ -30,7 +30,7 @@ export class YoutubeSrHandler extends CommandHandler {
     sanitizedMessage,
     messageId,
     username,
-  }: ExecuteParams) {
+  }: CommandContext) {
     const messageMatch = sanitizedMessage?.match(this.regex)
 
     if (!messageMatch || !sanitizedMessage) {

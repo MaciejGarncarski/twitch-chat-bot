@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { CommandError, CommandErrorCode } from '@/types/errors'
 
@@ -19,7 +19,7 @@ export class SkipCommandHandler extends CommandHandler {
     username,
     messageId,
     isMod,
-  }: ExecuteParams) {
+  }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [SKIP] Queue is empty, skipping not possible.`)
       await sendChatMessage(`Kolejka jest pusta.`, messageId)

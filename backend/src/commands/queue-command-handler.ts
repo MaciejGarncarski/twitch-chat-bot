@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class QueueCommandHandler extends CommandHandler {
@@ -13,7 +13,7 @@ export class QueueCommandHandler extends CommandHandler {
     return this.regex.test(messageText)
   }
 
-  async execute({ deps: { logger, songQueue, sendChatMessage }, messageId }: ExecuteParams) {
+  async execute({ deps: { logger, songQueue, sendChatMessage }, messageId }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [QUEUE] Queue is empty.`)
       await sendChatMessage(`Kolejka jest pusta.`, messageId)

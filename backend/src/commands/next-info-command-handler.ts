@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { formatDuration } from '@/helpers/format-duration'
 import { getTimeUntilNextSong } from '@/helpers/get-time-until-next-song'
 import { RateLimitConfig } from '@/helpers/rate-limit'
@@ -18,7 +18,7 @@ export class NextInfoCommandHandler extends CommandHandler {
   async execute({
     deps: { songQueue, sendChatMessage, logger, playbackManager },
     messageId,
-  }: ExecuteParams) {
+  }: CommandContext) {
     const nextSong = songQueue.peekNext()
     const current = songQueue.getCurrent()
 

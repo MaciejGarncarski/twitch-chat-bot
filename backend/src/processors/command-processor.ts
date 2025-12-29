@@ -1,6 +1,6 @@
 import { sendChatMessage } from '@/api/send-chat-message'
 import { timeoutUser } from '@/api/timeout-user'
-import { CommandHandler, Deps } from '@/commands/command'
+import { CommandHandler, ContextDeps } from '@/commands/command'
 import { songRequestEngine } from '@/core/song-request-engine'
 import { checkIsMod } from '@/helpers/check-is-mod'
 import { logger } from '@/helpers/logger'
@@ -59,21 +59,18 @@ class CommandProcessor {
       }
     }
 
-    const songQueue = songRequestEngine.getSongQueue()
-    const playbackManager = songRequestEngine.getPlaybackManager()
-    const voteManager = songRequestEngine.getVoteManager()
-
-    const deps: Deps = {
-      songQueue,
+    const deps: ContextDeps = {
+      songQueue: songRequestEngine.getSongQueue(),
+      playbackManager: songRequestEngine.getPlaybackManager(),
+      voteManager: songRequestEngine.getVoteManager(),
       logger,
       sendChatMessage,
-      playbackManager,
       timeoutUser: timeoutUser,
-      voteManager,
     }
 
     for (const handler of this.handlers) {
       const canHandle = handler.canHandle(sanitizedMessage)
+
       if (!canHandle) {
         continue
       }

@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 import { CommandError, CommandErrorCode } from '@/types/errors'
 
@@ -20,7 +20,7 @@ export class SeekCommandHandler extends CommandHandler {
     messageId,
     sanitizedMessage,
     username,
-  }: ExecuteParams): Promise<void> {
+  }: CommandContext): Promise<void> {
     if (!isMod) {
       throw new CommandError(CommandErrorCode.NOT_A_MOD)
     }

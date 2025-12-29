@@ -1,4 +1,4 @@
-import { CommandHandler, ExecuteParams } from '@/commands/command'
+import { CommandHandler, CommandContext } from '@/commands/command'
 import { RateLimitConfig } from '@/helpers/rate-limit'
 
 export class VanishCommandHandler extends CommandHandler {
@@ -18,7 +18,7 @@ export class VanishCommandHandler extends CommandHandler {
     userId,
     isMod,
     deps: { logger, timeoutUser },
-  }: ExecuteParams): Promise<void> {
+  }: CommandContext): Promise<void> {
     if (!userId) {
       return
     }
