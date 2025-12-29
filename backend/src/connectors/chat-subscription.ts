@@ -3,12 +3,12 @@ import { logger } from '@/helpers/logger'
 
 export async function unsubscribeAll() {
   const res = await twitchAuth.fetch('https://api.twitch.tv/helix/eventsub/subscriptions')
+  const { data } = await res.json()
 
-  const data = await res.json()
+  const promises = data.map((sub: { id: string }) => unsubscribe(sub.id))
+  await Promise.all(promises)
 
-  for (const sub of data.data) {
-    await unsubscribe(sub.id)
-  }
+  logger.info('[CHAT SUBSCRIPTION] Finished clearing all subscriptions')
 }
 
 async function unsubscribe(subscriptionId: string) {
