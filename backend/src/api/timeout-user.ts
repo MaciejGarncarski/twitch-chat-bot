@@ -1,4 +1,3 @@
-import { env } from '@/config/env'
 import { twitchAuth } from '@/core/twitch-auth-manager'
 import { logger } from '@/helpers/logger'
 
@@ -13,7 +12,7 @@ export const timeoutUser = async ({
 }) => {
   try {
     const response = await twitchAuth.fetch(
-      `https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${env.TWITCH_BROADCASTER_ID}&moderator_id=${twitchAuth.userId}`,
+      `https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${twitchAuth.broadcasterId}&moderator_id=${twitchAuth.userId}`,
       {
         method: 'POST',
         headers: {

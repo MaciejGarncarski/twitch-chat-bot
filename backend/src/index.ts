@@ -10,7 +10,7 @@ import { setBunServer } from '@/helpers/init-ws'
 import { logger } from '@/helpers/logger'
 
 async function init() {
-  await twitchAuth.fetchUserId()
+  await Promise.all([twitchAuth.fetchUserId(), twitchAuth.fetchBroadcasterId()])
   await twitchAuth.refresh()
   songRequestEngine.setupEventListeners()
   new ChatWebSocket()

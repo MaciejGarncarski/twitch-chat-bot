@@ -76,7 +76,7 @@ REDIRECT_URI=http://localhost:3302/api/auth/callback
 TWITCH_CLIENT_ID=twitch_dev_client_id
 TWITCH_CLIENT_SECRET=twitch_dev_client_secret
 TWITCH_REFRESH_TOKEN=generated_refresh_token
-TWITCH_BROADCASTER_ID=user_id_where_bot_works
+TWITCH_BROADCASTER_NAME=channel_name_where_bot_works
 
 # Optional: YouTube Authentication
 YT_COOKIE="OPTIONAL BUT RECOMMENDED https://ytjs.dev/guide/authentication.html#cookies"

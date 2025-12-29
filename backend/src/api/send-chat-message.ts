@@ -1,4 +1,3 @@
-import { env } from '@/config/env'
 import { twitchAuth } from '@/core/twitch-auth-manager'
 import { logger } from '@/helpers/logger'
 
@@ -9,7 +8,7 @@ export const sendChatMessage = async (message: string, replyChatId?: string) => 
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      broadcaster_id: env.TWITCH_BROADCASTER_ID,
+      broadcaster_id: twitchAuth.broadcasterId,
       sender_id: twitchAuth.userId,
       message: message,
       reply_parent_message_id: replyChatId ? replyChatId : undefined,

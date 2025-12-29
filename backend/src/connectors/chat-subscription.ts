@@ -1,4 +1,3 @@
-import { env } from '@/config/env'
 import { twitchAuth } from '@/core/twitch-auth-manager'
 import { logger } from '@/helpers/logger'
 
@@ -38,7 +37,7 @@ export async function subscribeToChat(sessId: string) {
       type: 'channel.chat.message',
       version: '1',
       condition: {
-        broadcaster_user_id: env.TWITCH_BROADCASTER_ID,
+        broadcaster_user_id: twitchAuth.broadcasterId,
         user_id: twitchAuth.userId,
       },
       transport: {

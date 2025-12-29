@@ -33,7 +33,7 @@ export class TwitchAuthManager {
     'chat:read chat:edit user:bot user:read:chat user:write:chat moderator:manage:banned_users'
 
   public authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${env.TWITCH_CLIENT_ID}&redirect_uri=${env.REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(this.scopes)}`
-
+  public broadcasterId: string = ''
   public userId: string = ''
 
   constructor() {
@@ -70,6 +70,32 @@ export class TwitchAuthManager {
     this.refreshToken = parsed.data.refresh_token
 
     return this.accessToken
+  }
+
+  async fetchBroadcasterId() {
+    const response = await fetch(
+      `https://api.twitch.tv/helix/users?login=${encodeURIComponent(env.TWITCH_BROADCASTER_NAME)}`,
+      {
+        method: 'GET',
+        headers: {
+          'Client-ID': env.TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      },
+    )
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(`Failed to fetch broadcaster ID: ${error.message}`)
+    }
+
+    const data = await response.json()
+    if (!data.data || data.data.length === 0) {
+      throw new Error(`No user found with login: ${env.TWITCH_BROADCASTER_NAME}`)
+    }
+
+    this.broadcasterId = data.data[0].id
+    return this.broadcasterId
   }
 
   async fetchUserId() {
