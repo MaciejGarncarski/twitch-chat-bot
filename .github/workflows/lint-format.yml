@@ -7,10 +7,9 @@ on:
     branches: [main]
 
 jobs:
-  lint:
-    name: OxLint
+  check:
+    name: Code Quality
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,8 +22,12 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Run OxLint on frontend
-        run: bun lint-format:frontend
+      - name: Run Lint
+        run: |
+          bun lint:frontend
+          bun lint:backend
 
-      - name: Run OxLint on backend
-        run: bun lint-format:backend
+      - name: Run Format Check
+        run: |
+          bun format:frontend
+          bun format:backend
