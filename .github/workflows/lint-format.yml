@@ -1,4 +1,4 @@
-name: Lint
+name: Lint and Format
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         run: bun install
 
       - name: Run OxLint on frontend
-        run: bunx oxlint frontend/src --deny-warnings
+        run: bun lint-format:frontend
 
       - name: Run OxLint on backend
-        run: bunx oxlint backend/src --deny-warnings
+        run: bun lint-format:backend
