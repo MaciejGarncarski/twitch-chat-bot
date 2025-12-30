@@ -1,5 +1,6 @@
 import { QueuedItem } from "@/types/queue"
 
+// Calculates the time until the last song in the queue is added to playback
 export function getTimeUntilAddedSong(queueItems: QueuedItem[], playTime: number): number {
   if (queueItems.length === 0) {
     return 0

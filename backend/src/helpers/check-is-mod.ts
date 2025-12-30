@@ -1,4 +1,4 @@
-type ChatBadge = {
+export type ChatBadge = {
   set_id: string
   id: string
   info?: string
