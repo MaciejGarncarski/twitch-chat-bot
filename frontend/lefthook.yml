@@ -2,6 +2,6 @@ pre-commit:
   jobs:
     - name: Frontend lint and format
       root: frontend/
-      stage_fixed: true
       glob: "*.{js,ts,jsx,tsx}"
-      run: bun lint:check && bun format:check
+      run: bun lint && bun format
+      stage_fixed: true
