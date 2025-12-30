@@ -1,15 +1,23 @@
 import { z } from "zod"
 
+const isTest = process.env.NODE_ENV === "test"
+
 const envSchema = z.object({
   NODE_ENV: z
     .union([z.literal("development"), z.literal("production"), z.literal("test")])
     .default("development"),
-  API_URL: z.string(),
-  APP_ORIGINS: z
-    .string()
-    .transform((str) => str.split(",").map((s) => s.trim()))
-    .pipe(z.array(z.url()).min(1)),
-  PORT: z.string().length(4),
+  API_URL: isTest ? z.string().default("http://localhost:3302") : z.string(),
+  APP_ORIGINS: isTest
+    ? z
+        .string()
+        .default("http://localhost:3300")
+        .transform((str) => str.split(",").map((s) => s.trim()))
+        .pipe(z.array(z.url()).min(1))
+    : z
+        .string()
+        .transform((str) => str.split(",").map((s) => s.trim()))
+        .pipe(z.array(z.url()).min(1)),
+  PORT: isTest ? z.string().length(4).default("3302") : z.string().length(4),
   TWITCH_CLIENT_ID: z.string().default("CHECK_README_FOR_INFO"),
   TWITCH_CLIENT_SECRET: z.string().default("CHECK_README_FOR_INFO"),
   TWITCH_BROADCASTER_NAME: z.string().default("CHECK_README_FOR_INFO"),
