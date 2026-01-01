@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class RemoveCommandHandler extends CommandHandler {
-  private readonly regex = /^!remove\s([1-9][0-9]?)$/
+  private readonly regex = /^!remove\s([1-9][0-9]?)$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
