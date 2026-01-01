@@ -12,6 +12,7 @@
     "format:check": "oxfmt --check .",
     "format": "oxfmt --write .",
     "lint-format": "oxlint --fix . && oxfmt --write .",
+    "test": "bun test",
     "test:cov": "bun test --coverage"
   },
   "dependencies": {

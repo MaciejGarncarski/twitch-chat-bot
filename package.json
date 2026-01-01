@@ -17,7 +17,8 @@
     "format:frontend": "bun --filter=frontend format",
     "format:backend": "bun --filter=backend format",
     "lint-format:frontend": "bun --filter=frontend lint-format",
-    "lint-format:backend": "bun --filter=backend lint-format"
+    "lint-format:backend": "bun --filter=backend lint-format",
+    "test:backend": "bun --filter=backend test"
   },
   "devDependencies": {
     "@types/bun": "latest",
