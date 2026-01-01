@@ -1,0 +1,15 @@
+{
+  "Bun Test Boilerplate": {
+    "prefix": "btest",
+    "body": [
+      "import { describe, test, expect, mock } from \"bun:test\";",
+      "",
+      "describe(\"${1:Service Name}\", () => {",
+      "\ttest(\"${2:should perform task}\", () => {",
+      "\t\t$0",
+      "\t});",
+      "});"
+    ],
+    "description": "Import bun:test and create a describe/test block"
+  }
+}

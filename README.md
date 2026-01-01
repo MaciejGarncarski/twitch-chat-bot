@@ -101,6 +101,13 @@ cd backend
 bun dev
 ```
 
+## Testing
+
+```bash
+cd backend
+bun test
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue to report bugs and suggest new features. Ensure your code follows the existing style and include a brief description of your changes.

@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class VolumeCommandHandler extends CommandHandler {
-  private readonly regex = /^!volume(?:\s+(100|[1-9]?\d))?\s*$/
+  private readonly regex = /^!volume(?:\s+(100|[1-9]?\d))?\s*$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,

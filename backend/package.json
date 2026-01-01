@@ -11,7 +11,9 @@
     "lint:check": "oxlint .",
     "format:check": "oxfmt --check .",
     "format": "oxfmt --write .",
-    "lint-format": "oxlint --fix . && oxfmt --write ."
+    "lint-format": "oxlint --fix . && oxfmt --write .",
+    "test": "bun test",
+    "test:cov": "bun test --coverage"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",

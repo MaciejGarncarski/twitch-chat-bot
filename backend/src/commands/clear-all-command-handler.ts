@@ -22,6 +22,6 @@ export class ClearAllCommandHandler extends CommandHandler {
     deps.songQueue.clearAll()
     deps.logger.info(`[COMMAND] [CLEARALL] Cleared the song queue.`)
 
-    await deps.sendChatMessage(`Kolejka piosenek została wyczyszczona.`, messageId)
+    await deps.sendChatMessage(`Kolejka została wyczyszczona.`, messageId)
   }
 }
