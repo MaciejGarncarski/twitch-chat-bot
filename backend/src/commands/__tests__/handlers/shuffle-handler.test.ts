@@ -11,12 +11,13 @@ describe("ShuffleCommandHandler", () => {
   const handler = new ShuffleCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !shuffle", () => {
+    test("matches !shuffle (case insensitive)", () => {
       expect(handler.canHandle("!shuffle")).toBe(true)
+      expect(handler.canHandle("!SHUFFLE")).toBe(true)
+      expect(handler.canHandle("!Shuffle")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!SHUFFLE")).toBe(false) // regex doesn't have 'i' flag
       expect(handler.canHandle("!shuffl")).toBe(false)
       expect(handler.canHandle("shuffle")).toBe(false)
       expect(handler.canHandle("!shuffle now")).toBe(false)

@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class ShuffleCommandHandler extends CommandHandler {
-  private readonly regex = /^!shuffle$/
+  private readonly regex = /^!shuffle$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,

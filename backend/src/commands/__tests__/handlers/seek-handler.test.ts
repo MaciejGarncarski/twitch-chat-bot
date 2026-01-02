@@ -13,15 +13,17 @@ describe("SeekCommandHandler", () => {
   const handler = new SeekCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !seek with seconds", () => {
+    test("matches !seek with seconds (case insensitive)", () => {
       expect(handler.canHandle("!seek 30")).toBe(true)
-      expect(handler.canHandle("!seek 0")).toBe(true)
+      expect(handler.canHandle("!SEEK 30")).toBe(true)
+      expect(handler.canHandle("!Seek 0")).toBe(true)
       expect(handler.canHandle("!seek 120")).toBe(true)
     })
 
-    test("matches !seek with mm:ss format", () => {
+    test("matches !seek with mm:ss format (case insensitive)", () => {
       expect(handler.canHandle("!seek 1:30")).toBe(true)
-      expect(handler.canHandle("!seek 0:00")).toBe(true)
+      expect(handler.canHandle("!SEEK 1:30")).toBe(true)
+      expect(handler.canHandle("!Seek 0:00")).toBe(true)
       expect(handler.canHandle("!seek 10:45")).toBe(true)
     })
 
