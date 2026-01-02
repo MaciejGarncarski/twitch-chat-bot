@@ -5,6 +5,8 @@ import { SkipCommandHandler } from "@/commands/skip-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
+const COMMAND = "!skip"
+
 describe("SkipCommandHandler", () => {
   const handler = new SkipCommandHandler()
 
@@ -30,7 +32,7 @@ describe("SkipCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!skip",
+        message: COMMAND,
         deps: { songQueue: queue },
       })
 
@@ -49,7 +51,7 @@ describe("SkipCommandHandler", () => {
       const ctx = createMockContext({
         isMod: false,
         username: "test_chatter",
-        message: "!skip",
+        message: COMMAND,
         deps: { songQueue: queue },
       })
 

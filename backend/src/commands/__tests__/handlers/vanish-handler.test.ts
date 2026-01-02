@@ -3,6 +3,8 @@ import { describe, test, expect } from "bun:test"
 import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
 import { VanishCommandHandler } from "@/commands/vanish-command-handler"
 
+const COMMAND = "!vanish"
+
 describe("VanishCommandHandler", () => {
   const handler = new VanishCommandHandler()
 
@@ -25,7 +27,7 @@ describe("VanishCommandHandler", () => {
       const ctx = createMockContext({
         isMod: false,
         userId: "12345",
-        message: "!vanish",
+        message: COMMAND,
       })
 
       await handler.execute(ctx)
@@ -42,7 +44,7 @@ describe("VanishCommandHandler", () => {
       const ctx = createMockContext({
         isMod: true,
         userId: "12345",
-        message: "!vanish",
+        message: COMMAND,
       })
 
       await handler.execute(ctx)
@@ -54,7 +56,7 @@ describe("VanishCommandHandler", () => {
       const ctx = createMockContext({
         isMod: false,
         userId: "",
-        message: "!vanish",
+        message: COMMAND,
       })
 
       await handler.execute(ctx)

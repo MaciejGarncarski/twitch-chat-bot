@@ -4,6 +4,8 @@ import { createMockContext } from "@/commands/__tests__/helpers/create-mock-cont
 import { QueueCommandHandler } from "@/commands/queue-command-handler"
 import { SongQueue } from "@/core/song-queue"
 
+const COMMAND = "!queue"
+
 describe("QueueCommandHandler", () => {
   const handler = new QueueCommandHandler()
 
@@ -28,7 +30,7 @@ describe("QueueCommandHandler", () => {
       await queue.add({ username: "user2", videoId: "sk3rpYkiHe8" })
 
       const ctx = createMockContext({
-        message: "!queue",
+        message: COMMAND,
         deps: { songQueue: queue },
       })
 
@@ -46,7 +48,7 @@ describe("QueueCommandHandler", () => {
       const queue = new SongQueue()
 
       const ctx = createMockContext({
-        message: "!queue",
+        message: COMMAND,
         deps: { songQueue: queue },
       })
 

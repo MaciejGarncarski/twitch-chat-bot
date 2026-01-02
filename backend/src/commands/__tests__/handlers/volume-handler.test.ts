@@ -5,6 +5,9 @@ import { VolumeCommandHandler } from "@/commands/volume-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { CommandErrorCode } from "@/types/errors"
 
+const COMMAND_BASE = "!volume"
+const COMMAND = `${COMMAND_BASE} 50`
+
 describe("VolumeCommandHandler", () => {
   const handler = new VolumeCommandHandler()
 
@@ -32,7 +35,7 @@ describe("VolumeCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!volume 50",
+        message: COMMAND,
         deps: {
           playbackManager: playbackManager,
         },
@@ -52,7 +55,7 @@ describe("VolumeCommandHandler", () => {
   test("execute throws error if user is not a mod", async () => {
     const ctx = createMockContext({
       isMod: false,
-      message: "!volume 30",
+      message: `${COMMAND_BASE} 30`,
     })
 
     expect(handler.execute(ctx)).rejects.toThrow(CommandErrorCode.NOT_A_MOD)

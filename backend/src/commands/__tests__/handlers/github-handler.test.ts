@@ -3,6 +3,8 @@ import { describe, test, expect } from "bun:test"
 import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
 import { GithubCommandHandler } from "@/commands/github-commang-handler"
 
+const COMMAND = "!github"
+
 describe("GitHubCommandHandler", () => {
   const handler = new GithubCommandHandler()
 

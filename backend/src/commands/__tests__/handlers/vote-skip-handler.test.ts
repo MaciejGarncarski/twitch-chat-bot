@@ -5,6 +5,8 @@ import { VoteSkipCommandHandler } from "@/commands/vote-skip-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { VoteManager } from "@/core/vote-manager"
 
+const COMMAND = "!voteskip"
+
 describe("VoteSkipCommandHandler", () => {
   const handler = new VoteSkipCommandHandler()
 
@@ -47,7 +49,7 @@ describe("VoteSkipCommandHandler", () => {
 
       const ctx = createMockContext({
         username: "voter1",
-        message: "!voteskip",
+        message: COMMAND,
         deps: { songQueue: queue, voteManager },
       })
 
@@ -65,13 +67,13 @@ describe("VoteSkipCommandHandler", () => {
 
       const ctx1 = createMockContext({
         username: "voter1",
-        message: "!voteskip",
+        message: COMMAND,
         deps: { songQueue: queue, voteManager },
       })
 
       const ctx2 = createMockContext({
         username: "voter2",
-        message: "!voteskip",
+        message: COMMAND,
         deps: { songQueue: queue, voteManager },
       })
 
@@ -88,7 +90,7 @@ describe("VoteSkipCommandHandler", () => {
       const voteManager = new VoteManager()
 
       const ctx = createMockContext({
-        message: "!voteskip",
+        message: COMMAND,
         deps: { songQueue: queue, voteManager },
       })
 

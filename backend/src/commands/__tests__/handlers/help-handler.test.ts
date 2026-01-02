@@ -3,6 +3,8 @@ import { describe, test, expect } from "bun:test"
 import { HelpCommandHandler } from "@/commands/help-command-handler"
 import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
 
+const COMMAND = "!help"
+
 describe("HelpCommandHandler", () => {
   const handler = new HelpCommandHandler()
 

@@ -6,6 +6,9 @@ import { PlaybackManager } from "@/core/playback-manager"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
+const COMMAND_SECONDS = "!seek 30"
+const COMMAND_TIME = "!seek 1:30"
+
 describe("SeekCommandHandler", () => {
   const handler = new SeekCommandHandler()
 
@@ -38,7 +41,7 @@ describe("SeekCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!seek 30",
+        message: COMMAND_SECONDS,
         deps: { playbackManager, songQueue: queue },
       })
 
@@ -54,7 +57,7 @@ describe("SeekCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!seek 1:30",
+        message: COMMAND_TIME,
         deps: { playbackManager, songQueue: queue },
       })
 
@@ -66,7 +69,7 @@ describe("SeekCommandHandler", () => {
     test("throws error if user is not a mod", async () => {
       const ctx = createMockContext({
         isMod: false,
-        message: "!seek 30",
+        message: COMMAND_SECONDS,
       })
 
       expect(handler.execute(ctx)).rejects.toThrow(CommandErrorCode.NOT_A_MOD)

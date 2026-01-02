@@ -5,6 +5,8 @@ import { PauseCommandHandler } from "@/commands/pause-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { CommandErrorCode } from "@/types/errors"
 
+const COMMAND = "!pause"
+
 describe("PauseCommandHandler", () => {
   const handler = new PauseCommandHandler()
 
@@ -28,7 +30,7 @@ describe("PauseCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!pause",
+        message: COMMAND,
         deps: { playbackManager },
       })
 
@@ -40,7 +42,7 @@ describe("PauseCommandHandler", () => {
     test("throws error if user is not a mod", async () => {
       const ctx = createMockContext({
         isMod: false,
-        message: "!pause",
+        message: COMMAND,
       })
 
       expect(handler.execute(ctx)).rejects.toThrow(CommandErrorCode.NOT_A_MOD)

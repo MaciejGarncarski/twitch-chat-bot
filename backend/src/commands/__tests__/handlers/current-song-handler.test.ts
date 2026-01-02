@@ -4,6 +4,8 @@ import { createMockContext } from "@/commands/__tests__/helpers/create-mock-cont
 import { SongQueue } from "@/core/song-queue"
 import { CurrentSongCommandHandler } from "@/commands/current-song-command-handler"
 
+const COMMAND = "!currentsong"
+
 describe("CurrentSongCommandHandler", () => {
   const handler = new CurrentSongCommandHandler()
 
@@ -31,7 +33,7 @@ describe("CurrentSongCommandHandler", () => {
         deps: {
           songQueue: queue,
         },
-        message: "!currentsong",
+        message: COMMAND,
       })
 
       await handler.execute(ctx)

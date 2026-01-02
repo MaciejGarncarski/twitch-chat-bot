@@ -10,9 +10,9 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "elysia": "catalog:"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "catalog:"
   }
 }

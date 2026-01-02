@@ -4,6 +4,8 @@ import { createMockContext } from "@/commands/__tests__/helpers/create-mock-cont
 import { WrongSongCommandHandler } from "@/commands/wrong-song-command-handler"
 import { SongQueue } from "@/core/song-queue"
 
+const COMMAND = "!wrongsong"
+
 describe("WrongSongCommandHandler", () => {
   const handler = new WrongSongCommandHandler()
 
@@ -47,7 +49,7 @@ describe("WrongSongCommandHandler", () => {
 
       const ctx = createMockContext({
         username: "test_chatter",
-        message: "!wrongsong",
+        message: COMMAND,
         deps: { songQueue: queue },
       })
 
@@ -63,7 +65,7 @@ describe("WrongSongCommandHandler", () => {
 
       const ctx = createMockContext({
         username: "test_chatter",
-        message: "!wrongsong",
+        message: COMMAND,
         deps: { songQueue: queue },
       })
 

@@ -5,6 +5,8 @@ import { ShuffleCommandHandler } from "@/commands/shuffle-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
+const COMMAND = "!shuffle"
+
 describe("ShuffleCommandHandler", () => {
   const handler = new ShuffleCommandHandler()
 
@@ -30,7 +32,7 @@ describe("ShuffleCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!shuffle",
+        message: COMMAND,
         deps: { songQueue: queue },
       })
 
@@ -45,7 +47,7 @@ describe("ShuffleCommandHandler", () => {
     test("throws error if user is not a mod", async () => {
       const ctx = createMockContext({
         isMod: false,
-        message: "!shuffle",
+        message: COMMAND,
       })
 
       expect(handler.execute(ctx)).rejects.toThrow(CommandErrorCode.NOT_A_MOD)

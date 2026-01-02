@@ -6,6 +6,9 @@ import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 import { RemoveCommandHandler } from "@/commands/remove-command-handler"
 
+const COMMAND_BASE = "!remove"
+const COMMAND = `${COMMAND_BASE} 1`
+
 describe("RemoveCommandHandler", () => {
   const handler = new RemoveCommandHandler()
 
@@ -39,7 +42,7 @@ describe("RemoveCommandHandler", () => {
           songQueue: queue,
         },
         isMod: true,
-        message: "!remove 1",
+        message: COMMAND,
       })
 
       await handler.execute(ctx)
@@ -59,7 +62,7 @@ describe("RemoveCommandHandler", () => {
           songQueue: queue,
         },
         isMod: true,
-        message: "!remove 5",
+        message: `${COMMAND_BASE} 5`,
       })
 
       await handler.execute(ctx)
@@ -71,7 +74,7 @@ describe("RemoveCommandHandler", () => {
     test("execute throws error if user is not a mod", async () => {
       const ctx = createMockContext({
         isMod: false,
-        message: "!remove 1",
+        message: COMMAND,
       })
 
       expect(handler.execute(ctx)).rejects.toThrow(CommandErrorCode.NOT_A_MOD)

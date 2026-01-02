@@ -5,6 +5,8 @@ import { ClearAllCommandHandler } from "@/commands/clear-all-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
+const COMMAND = "!clearall"
+
 describe("ClearAllCommandHandler", () => {
   const handler = new ClearAllCommandHandler()
 
@@ -36,7 +38,7 @@ describe("ClearAllCommandHandler", () => {
           songQueue: queue,
         },
         isMod: true,
-        message: "!clearall",
+        message: COMMAND,
       })
 
       await handler.execute(ctx)
@@ -51,7 +53,7 @@ describe("ClearAllCommandHandler", () => {
     test("execute throws error if user is not a mod", async () => {
       const ctx = createMockContext({
         isMod: false,
-        message: "!clearall",
+        message: COMMAND,
       })
 
       expect(handler.execute(ctx)).rejects.toThrow(CommandErrorCode.NOT_A_MOD)

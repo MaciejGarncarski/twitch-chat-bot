@@ -5,6 +5,8 @@ import { PlayCommandHandler } from "@/commands/play-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { CommandErrorCode } from "@/types/errors"
 
+const COMMAND = "!play"
+
 describe("PlayCommandHandler", () => {
   const handler = new PlayCommandHandler()
 
@@ -28,7 +30,7 @@ describe("PlayCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!play",
+        message: COMMAND,
         deps: { playbackManager },
       })
 
@@ -40,7 +42,7 @@ describe("PlayCommandHandler", () => {
     test("throws error if user is not a mod", async () => {
       const ctx = createMockContext({
         isMod: false,
-        message: "!play",
+        message: COMMAND,
       })
 
       expect(handler.execute(ctx)).rejects.toThrow(CommandErrorCode.NOT_A_MOD)

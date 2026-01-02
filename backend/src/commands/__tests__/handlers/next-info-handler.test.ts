@@ -5,6 +5,8 @@ import { NextInfoCommandHandler } from "@/commands/next-info-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { SongQueue } from "@/core/song-queue"
 
+const COMMAND = "!next"
+
 describe("NextInfoCommandHandler", () => {
   const handler = new NextInfoCommandHandler()
 
@@ -30,7 +32,7 @@ describe("NextInfoCommandHandler", () => {
       await queue.add({ username: "user2", videoId: "sk3rpYkiHe8" })
 
       const ctx = createMockContext({
-        message: "!next",
+        message: COMMAND,
         deps: { songQueue: queue, playbackManager },
       })
 
@@ -47,7 +49,7 @@ describe("NextInfoCommandHandler", () => {
       const playbackManager = new PlaybackManager()
 
       const ctx = createMockContext({
-        message: "!next",
+        message: COMMAND,
         deps: { songQueue: queue, playbackManager },
       })
 
@@ -65,7 +67,7 @@ describe("NextInfoCommandHandler", () => {
       await queue.add({ username: "user1", videoId: "dQw4w9WgXcQ" })
 
       const ctx = createMockContext({
-        message: "!next",
+        message: COMMAND,
         deps: { songQueue: queue, playbackManager },
       })
 
