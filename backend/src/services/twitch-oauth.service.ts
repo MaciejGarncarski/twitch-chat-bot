@@ -5,9 +5,16 @@ import z from "zod"
 
 const clientId = env.TWITCH_CLIENT_ID
 const redirectUri = env.APP_REDIRECT_URI
-const scopes = ["user:read:email", "user:read:moderated_channels"].join("+")
+const scopes = ["user:read:email", "user:read:moderated_channels"].join(" ")
 
-export const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes}`
+const authParams = new URLSearchParams({
+  client_id: clientId,
+  redirect_uri: redirectUri,
+  response_type: "code",
+  scope: scopes,
+})
+
+export const authUrl = `https://id.twitch.tv/oauth2/authorize?${authParams.toString()}`
 
 const twitchModChannelSchema = z.object({
   broadcaster_id: z.string(),
@@ -70,7 +77,6 @@ export async function handleAppAuthCallback(request: Request) {
 
   const isBroadcaster = user.id === twitchAuth.broadcasterId
   const isExtraMod = env.USERS_TREATED_AS_MODERATORS.includes(user.id)
-
   const isMod = isBroadcaster || isExtraMod
 
   if (isMod) {
@@ -81,33 +87,48 @@ export async function handleAppAuthCallback(request: Request) {
     }
   }
 
-  const modCheckResponse = await fetch(
-    `https://api.twitch.tv/helix/moderation/channels?user_id=${user.id}`,
-    {
+  let isModAfterCheck = false
+  let cursor: string | undefined
+
+  do {
+    const url = new URL(`https://api.twitch.tv/helix/moderation/channels`)
+    url.searchParams.set("user_id", user.id)
+    url.searchParams.set("first", "100")
+    if (cursor) {
+      url.searchParams.set("after", cursor)
+    }
+
+    const modCheckResponse = await fetch(url.toString(), {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Client-Id": env.TWITCH_CLIENT_ID,
       },
-    },
-  )
+    })
 
-  if (!modCheckResponse.ok) {
-    const error = await modCheckResponse.json().catch(() => ({}))
-    logger.error(error, "Twitch Moderated Channels Fetch Failed")
-    throw new Error("Failed to fetch moderated channels from Twitch")
-  }
+    if (!modCheckResponse.ok) {
+      const error = await modCheckResponse.json().catch(() => ({}))
+      logger.error(error, "Twitch Moderated Channels Fetch Failed")
+      throw new Error("Failed to fetch moderated channels from Twitch")
+    }
 
-  const rawData = await modCheckResponse.json()
-  const result = twitchModResponseSchema.safeParse(rawData)
+    const rawData = await modCheckResponse.json()
+    const result = twitchModResponseSchema.safeParse(rawData)
 
-  if (!result.success) {
-    logger.error(result.error, "Twitch API Response Validation Failed")
-    throw new Error("Invalid response structure from Twitch API")
-  }
+    if (!result.success) {
+      logger.error(result.error, "Twitch API Response Validation Failed")
+      throw new Error("Invalid response structure from Twitch API")
+    }
 
-  const isModAfterCheck = result.data.data.some(
-    (channel) => channel.broadcaster_id === twitchAuth.broadcasterId,
-  )
+    isModAfterCheck = result.data.data.some(
+      (channel) => channel.broadcaster_id === twitchAuth.broadcasterId,
+    )
+
+    if (isModAfterCheck) {
+      break
+    }
+
+    cursor = result.data.pagination?.cursor
+  } while (cursor)
 
   const data = {
     sub: user.id,
