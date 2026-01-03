@@ -1,18 +1,10 @@
 import { api } from "@/api/api-treaty"
 import { useMutation } from "@tanstack/react-query"
 
-type Props = {
-  isPlaying: boolean
-}
-
-export function useSetPlayState({ isPlaying }: Props) {
+export function useSkip() {
   return useMutation({
     mutationFn: async () => {
-      if (isPlaying) {
-        await api.api.player.pause.post()
-      } else {
-        await api.api.player.play.post()
-      }
+      await api.api.player.skip.post()
 
       return new Promise((resolve) => setTimeout(resolve, 200))
     },

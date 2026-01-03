@@ -32,7 +32,7 @@ export class TwitchAuthManager {
   public readonly scopes =
     "chat:read chat:edit user:bot user:read:chat user:write:chat moderator:manage:banned_users"
 
-  public authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${env.TWITCH_CLIENT_ID}&redirect_uri=${env.REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(this.scopes)}`
+  public authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${env.TWITCH_CLIENT_ID}&redirect_uri=${env.SETUP_REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(this.scopes)}`
   public broadcasterId: string = ""
   public userId: string = ""
 
@@ -172,7 +172,7 @@ export class TwitchAuthManager {
         client_secret: env.TWITCH_CLIENT_SECRET,
         code: code,
         grant_type: "authorization_code",
-        redirect_uri: env.REDIRECT_URI,
+        redirect_uri: env.SETUP_REDIRECT_URI,
       }),
     })
 

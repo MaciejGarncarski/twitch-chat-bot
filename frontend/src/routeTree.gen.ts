@@ -9,8 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PlayerOnlyRouteImport } from './routes/player-only'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PlayerOnlyRoute = PlayerOnlyRouteImport.update({
+  id: '/player-only',
+  path: '/player-only',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +25,39 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/player-only': typeof PlayerOnlyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/player-only': typeof PlayerOnlyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/player-only': typeof PlayerOnlyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/player-only'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/player-only'
+  id: '__root__' | '/' | '/player-only'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PlayerOnlyRoute: typeof PlayerOnlyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/player-only': {
+      id: '/player-only'
+      path: '/player-only'
+      fullPath: '/player-only'
+      preLoaderRoute: typeof PlayerOnlyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PlayerOnlyRoute: PlayerOnlyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

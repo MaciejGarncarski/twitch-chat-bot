@@ -3,7 +3,7 @@ export function CurrentSongTitle({ title }: { title: string }) {
 
   if (isLongTitle) {
     return (
-      <div className="overflow-hidden whitespace-nowrap max-w-[39ch] text-xl">
+      <div className="overflow-hidden whitespace-nowrap max-w-[33ch] text-xl">
         <div className="inline-block animate-marquee pl-[100%]">{title}</div>
       </div>
     )

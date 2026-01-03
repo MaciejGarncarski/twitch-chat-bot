@@ -13,7 +13,8 @@ Before starting, ensure you have a registered application on Twitch.
 - Confidential Client: Ensure your "Client Type" is set to Confidential in the console.
 
 - Set Redirect URI:
-  - http://host:port/api/auth/callback (default http://localhost:3302/api/auth/callback)
+  - http://localhost:3302/api/auth/callback/setup (default host and port)
+  - http://localhost:3302/api/auth/callback/app (default host and port)
   - https://twitchtokengenerator.com (optional, for manual setup).
 
 - Save client id and client secret for later.
@@ -21,6 +22,8 @@ Before starting, ensure you have a registered application on Twitch.
 ## Configuration & Tokens
 
 ### Generate OAuth Tokens
+
+Generate tokens for your bot account. The account sending the messages must be signed into Twitch via your browser.
 
 #### Automatically (recommended)
 
@@ -69,9 +72,11 @@ VITE_API_URL=http://localhost:3302/
 APP_ORIGINS=http://localhost:3301,http://192.168.0.1:3301
 API_URL=http://localhost:3302
 PORT=3302
-REDIRECT_URI=http://localhost:3302/api/auth/callback
-
-# Twitch Auth
+APP_REDIRECT_URI=http://localhost:3302/api/auth/callback/app
+SETUP_REDIRECT_URI=http://localhost:3302/api/auth/callback/setup
+JWT_SECRET=openssl rand -hex 32
+FRONTEND_URL=http://localhost:3301
+COOKIE_DOMAIN=localhost
 TWITCH_CLIENT_ID=twitch_dev_client_id
 TWITCH_CLIENT_SECRET=twitch_dev_client_secret
 TWITCH_REFRESH_TOKEN=generated_refresh_token

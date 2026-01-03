@@ -18,11 +18,15 @@ const envSchema = z.object({
         .transform((str) => str.split(",").map((s) => s.trim()))
         .pipe(z.array(z.url()).min(1)),
   PORT: isTest ? z.string().length(4).default("3302") : z.string().length(4),
+  JWT_SECRET: isTest ? z.string().default("test-secret") : z.string(),
+  FRONTEND_URL: z.string().default("http://localhost:3301"),
+  COOKIE_DOMAIN: z.string().default("localhost"),
   TWITCH_CLIENT_ID: z.string().default("CHECK_README_FOR_INFO"),
   TWITCH_CLIENT_SECRET: z.string().default("CHECK_README_FOR_INFO"),
   TWITCH_BROADCASTER_NAME: z.string().default("CHECK_README_FOR_INFO"),
   TWITCH_REFRESH_TOKEN: z.string().default("CHECK_README_FOR_INFO"),
-  REDIRECT_URI: z.url().default("http://localhost:3302/api/auth/callback"),
+  APP_REDIRECT_URI: z.url().default("http://localhost:3302/api/auth/callback/app"),
+  SETUP_REDIRECT_URI: z.url().default("http://localhost:3302/api/auth/callback/setup"),
   USERS_TREATED_AS_MODERATORS: z
     .string()
     .default("")

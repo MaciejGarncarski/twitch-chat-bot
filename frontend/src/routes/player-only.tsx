@@ -1,26 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { useRef, useState } from "react"
-import { useVolume } from "@/hooks/use-volume"
-import { usePlayState } from "@/hooks/use-play-state"
-import { AnimatePresence } from "motion/react"
 import { CurrentSong } from "@/components/current-song"
-import { Queue } from "@/components/queue"
 import { PlayerYT } from "@/components/player-yt"
-import { usePlayerData } from "@/hooks/use-player-data"
-import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
+import { Queue } from "@/components/queue"
 import { QueueEmptyMessage } from "@/components/queue-empty-message"
 import { QueueLoadingMessage } from "@/components/queue-loading-message"
-import { useAuth } from "@/hooks/use-auth"
-import { TwitchAuthButton } from "@/components/twitch-auth-button"
+import { usePlayState } from "@/hooks/use-play-state"
+import { usePlayerData } from "@/hooks/use-player-data"
+import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
+import { useVolume } from "@/hooks/use-volume"
+import { createFileRoute } from "@tanstack/react-router"
+import { AnimatePresence } from "motion/react"
+import { useRef, useState } from "react"
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/player-only")({
   loader: async ({ context }) => {
     context.queryClient.ensureQueryData(queueQueryOptions)
   },
-  component: App,
+  component: RouteComponent,
 })
 
-function App() {
+function RouteComponent() {
   const { isLoading, data: queueData } = useQueue()
   const { isPlaying, playTime, volume, songId } = usePlayerData()
   const [isReady, setIsReady] = useState(true)
@@ -30,12 +28,9 @@ function App() {
 
   usePlayState(playerRef, playTime, isPlaying)
   useVolume(playerRef, volume)
-  useAuth()
 
   return (
     <div className="text-center min-h-screen max-w-3xl mx-auto px-8 py-10 flex flex-col gap-4">
-      <TwitchAuthButton />
-
       <div className="flex flex-col gap-4 items-center px-4 min-h-40">
         <AnimatePresence mode="popLayout">
           {isLoading ? (

@@ -1,12 +1,17 @@
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/use-auth"
 import { useQueue } from "@/hooks/use-queue"
+import { useRemoveVideo } from "@/hooks/use-remove-video"
 import { cn } from "@/lib/utils"
 import { formatDuration } from "@/utils/format-duration"
-import { Clock3, UserIcon } from "lucide-react"
+import { Clock3, Trash2, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 export const Queue = () => {
   const { data: queueData } = useQueue()
-
+  const auth = useAuth()
+  const removeVideoMutation = useRemoveVideo()
+  const isMod = auth.data?.isMod || false
   const filteredCurrent = queueData?.filter((_, idx) => idx !== 0)
   const queuedCount = filteredCurrent?.length ?? 0
 
@@ -84,17 +89,30 @@ export const Queue = () => {
                   />
                 </a>
               )}
-              <div className="text-left flex flex-col gap-3">
+              <div className="text-left flex flex-col gap-3 w-full">
                 <h3 className="font-semibold text-lg max-w-[40ch] truncate">{item.title}</h3>
                 <div className="text-gray-400 text-base flex items-center gap-4">
                   <span className="flex items-center gap-2">
                     <Clock3 size={16} /> {formatDuration(item.duration)}
                   </span>
                   <span>|</span>
-                  <span className="flex items-center gap-2">
+                  <p className="flex items-center gap-2">
                     <UserIcon size={16} />
                     {item.username}
-                  </span>
+                  </p>
+
+                  {isMod && (
+                    <div className="ml-auto flex">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => removeVideoMutation.mutate(item.id)}
+                      >
+                        <Trash2 />
+                        Usuń
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.li>

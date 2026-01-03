@@ -34,4 +34,3 @@ process.on("SIGINT", () => {
     process.exit(0)
   })
 })
-export type App = typeof app

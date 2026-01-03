@@ -1,3 +1,3 @@
-import type { App as AppType } from "../../backend/src/index";
+import type { App as AppType } from "../../backend/src/index"
 
-export type App = AppType;
+export type App = AppType

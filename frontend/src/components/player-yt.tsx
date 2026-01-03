@@ -61,23 +61,24 @@ export function PlayerYT({
   if (!songSrc) return null
 
   return (
-    <ReactPlayer
-      key={`${songSrc}-${retryCount}`}
-      ref={playerRef}
-      src={songSrc}
-      volume={volume}
-      muted={isMuted}
-      playing={isPlaying && isReady}
-      onReady={handleReady}
-      onError={handleError}
-      className="absolute bottom-0"
-      config={{
-        youtube: {
-          disablekb: 1,
-          enablejsapi: 1,
-          iv_load_policy: 3,
-        },
-      }}
-    />
+    <div className="mx-4 w-20 h-20 opacity-50">
+      <ReactPlayer
+        key={`${songSrc}-${retryCount}`}
+        ref={playerRef}
+        src={songSrc}
+        volume={volume}
+        muted={isMuted}
+        playing={isPlaying && isReady}
+        onReady={handleReady}
+        onError={handleError}
+        config={{
+          youtube: {
+            disablekb: 1,
+            enablejsapi: 1,
+            iv_load_policy: 3,
+          },
+        }}
+      />
+    </div>
   )
 }
