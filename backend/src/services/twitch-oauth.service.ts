@@ -7,7 +7,7 @@ const clientId = env.TWITCH_CLIENT_ID
 const redirectUri = env.APP_REDIRECT_URI
 const scopes = ["user:read:email", "user:read:moderated_channels"].join("+")
 
-export const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}`
+export const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scopes}`
 
 const twitchModChannelSchema = z.object({
   broadcaster_id: z.string(),
@@ -27,6 +27,7 @@ const twitchModResponseSchema = z.object({
 export async function handleAppAuthCallback(request: Request) {
   const url = new URL(request.url)
   const code = url.searchParams.get("code")
+  logger.info(`EXCHANGING CODE FOR TOKEN, CODE: ${code}`)
 
   if (!code) throw new Error("No code provided")
 
