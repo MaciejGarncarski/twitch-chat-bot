@@ -68,7 +68,7 @@ export const CurrentSong = ({
               {username}
             </p>
           </div>
-          <CurrentSongProgressBar key={videoId} duration={duration} playTime={playTime} />
+          <CurrentSongProgressBar videoId={videoId} duration={duration} playTime={playTime} />
         </div>
       </div>
     </motion.div>

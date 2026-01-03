@@ -3,9 +3,11 @@ import { motion } from "motion/react"
 export function CurrentSongProgressBar({
   duration,
   playTime,
+  videoId,
 }: {
   duration: number
   playTime: number
+  videoId: string
 }) {
   const progress = duration ? playTime / duration : 0
 
@@ -14,11 +16,12 @@ export function CurrentSongProgressBar({
   return (
     <div className="h-2 rounded-sm w-full overflow-hidden border bg-neutral-800">
       <motion.div
+        key={videoId}
         className="bg-white h-full origin-left"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: progress }}
         transition={{
-          duration: isResetting ? 0 : 1,
+          duration: isResetting ? 0 : 1.15,
           ease: "linear",
         }}
         style={{ width: "100%" }}
