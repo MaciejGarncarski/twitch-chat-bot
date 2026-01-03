@@ -45,6 +45,7 @@ export async function handleAppAuthCallback(request: Request) {
 
   if (!tokenResponse.ok) {
     const error = await tokenResponse.json().catch(() => ({}))
+    logger.error(error, "Twitch Token Exchange Failed")
     throw new Error(`Failed to exchange code for token: ${JSON.stringify(error)}`)
   }
 
@@ -60,6 +61,7 @@ export async function handleAppAuthCallback(request: Request) {
 
   if (!userResponse.ok) {
     const error = await userResponse.json().catch(() => ({}))
+    logger.error(error, "Twitch User Fetch Failed")
     throw new Error(`Failed to fetch user data: ${JSON.stringify(error)}`)
   }
 
@@ -90,6 +92,8 @@ export async function handleAppAuthCallback(request: Request) {
   )
 
   if (!modCheckResponse.ok) {
+    const error = await modCheckResponse.json().catch(() => ({}))
+    logger.error(error, "Twitch Moderated Channels Fetch Failed")
     throw new Error("Failed to fetch moderated channels from Twitch")
   }
 
