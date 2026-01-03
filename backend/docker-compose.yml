@@ -28,7 +28,13 @@ services:
     volumes:
       - yt-cache:/app/yt-metadata-cache
     healthcheck:
-      test: ["CMD", "bun", "-e", "fetch('http://localhost:3302').then(() => process.exit(0)).catch(() => process.exit(1))"]
+      test:
+        [
+          "CMD",
+          "bun",
+          "-e",
+          "fetch('http://localhost:3302').then(() => process.exit(0)).catch(() => process.exit(1))",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3

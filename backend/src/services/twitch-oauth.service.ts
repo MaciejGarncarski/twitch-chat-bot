@@ -68,44 +68,46 @@ export async function handleAppAuthCallback(request: Request) {
   const isBroadcaster = user.id === twitchAuth.broadcasterId
   const isExtraMod = env.USERS_TREATED_AS_MODERATORS.includes(user.id)
 
-  let isActualMod = false
-  if (!isBroadcaster && !isExtraMod) {
-    const modCheckResponse = await fetch(
-      `https://api.twitch.tv/helix/moderation/channels?user_id=${user.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Client-Id": env.TWITCH_CLIENT_ID,
-        },
+  const isMod = isBroadcaster || isExtraMod
+
+  if (isMod) {
+    return {
+      sub: user.id,
+      login: user.login,
+      role: "MOD",
+    }
+  }
+
+  const modCheckResponse = await fetch(
+    `https://api.twitch.tv/helix/moderation/channels?user_id=${user.id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Client-Id": env.TWITCH_CLIENT_ID,
       },
-    )
+    },
+  )
 
-    if (!modCheckResponse.ok) {
-      throw new Error("Failed to fetch moderated channels from Twitch")
-    }
-
-    const rawData = await modCheckResponse.json()
-
-    const result = twitchModResponseSchema.safeParse(rawData)
-
-    if (!result.success) {
-      logger.error(result.error, "Twitch API Response Validation Failed")
-      throw new Error("Invalid response structure from Twitch API")
-    }
-
-    isActualMod = result.data.data.some((c) => c.broadcaster_id === twitchAuth.broadcasterId)
+  if (!modCheckResponse.ok) {
+    throw new Error("Failed to fetch moderated channels from Twitch")
   }
 
-  const isAuthorized = isBroadcaster || isExtraMod || isActualMod
+  const rawData = await modCheckResponse.json()
+  const result = twitchModResponseSchema.safeParse(rawData)
 
-  if (!isAuthorized) {
-    throw new Error("User is not authorized as broadcaster or moderator")
+  if (!result.success) {
+    logger.error(result.error, "Twitch API Response Validation Failed")
+    throw new Error("Invalid response structure from Twitch API")
   }
+
+  const isModAfterCheck = result.data.data.some(
+    (channel) => channel.broadcaster_id === twitchAuth.broadcasterId,
+  )
 
   const data = {
     sub: user.id,
     login: user.login,
-    role: "MOD",
+    role: isModAfterCheck ? "MOD" : "USER",
   }
 
   return data
