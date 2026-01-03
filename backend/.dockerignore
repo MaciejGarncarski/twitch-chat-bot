@@ -1,0 +1,17 @@
+node_modules
+.env
+.env.*
+!.env.example
+*.log
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+*.md
+.oxfmtrc.json
+.oxlintrc.json
+lefthook.yml
+**/__tests__
+**/*.test.ts
+coverage
+.turbo

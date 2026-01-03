@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    container_name: ttv-song-request-backend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3302}:3302"
+    environment:
+      - NODE_ENV=production
+      - PORT=3302
+      - APP_ORIGINS=${APP_ORIGINS}
+      - API_URL=${API_URL}
+      - APP_REDIRECT_URI=${APP_REDIRECT_URI}
+      - SETUP_REDIRECT_URI=${SETUP_REDIRECT_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - COOKIE_DOMAIN=${COOKIE_DOMAIN}
+      - TWITCH_CLIENT_ID=${TWITCH_CLIENT_ID}
+      - TWITCH_CLIENT_SECRET=${TWITCH_CLIENT_SECRET}
+      - TWITCH_REFRESH_TOKEN=${TWITCH_REFRESH_TOKEN}
+      - TWITCH_BROADCASTER_NAME=${TWITCH_BROADCASTER_NAME}
+      - USERS_TREATED_AS_MODERATORS=${USERS_TREATED_AS_MODERATORS:-}
+      - YT_COOKIE=${YT_COOKIE:-}
+    env_file:
+      - .env
+    volumes:
+      - yt-cache:/app/yt-metadata-cache
+    healthcheck:
+      test: ["CMD", "bun", "-e", "fetch('http://localhost:3302').then(() => process.exit(0)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  yt-cache:
