@@ -5,6 +5,7 @@ import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config
 import { SongMetadata } from "@/data/get-video-metadata"
 import { innertube } from "@/data/innertube"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { shuffle } from "@/helpers/shuffle"
 
 export class FillCommandHandler extends CommandHandler {
   private readonly regex = /^!fill\s+(.+)$/i
@@ -35,14 +36,7 @@ export class FillCommandHandler extends CommandHandler {
 
     const query = match[1]
     const songs = await this.searchSongsByKeywords(query)
-
-    const shuffledSongs = [...songs]
-
-    for (let i = shuffledSongs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffledSongs[i], shuffledSongs[j]] = [shuffledSongs[j], shuffledSongs[i]]
-    }
-
+    const shuffledSongs = shuffle([...songs])
     const songsToAdd = shuffledSongs.slice(0, queueSlotsAvailable)
 
     if (songsToAdd.length === 0) {

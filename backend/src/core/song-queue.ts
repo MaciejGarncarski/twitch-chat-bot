@@ -5,6 +5,7 @@ import z from "zod"
 import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config/video"
 import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata"
 import { getVideoUrl } from "@/helpers/get-video-url"
+import { shuffle } from "@/helpers/shuffle"
 import { QueuedItem, songRequestInputSchema } from "@/types/queue"
 import { QueueError } from "@/types/queue-errors"
 
@@ -31,9 +32,11 @@ export interface ISongQueue extends EventEmitter {
   on(event: "song-remove-current", listener: (item: QueuedItem) => void): this
 }
 
+const MAX_QUEUE_LENGTH = 10
+
 export class SongQueue extends EventEmitter implements ISongQueue {
   private queue: QueuedItem[] = []
-  private readonly maxQueueLength = 10
+  private readonly maxQueueLength = MAX_QUEUE_LENGTH
 
   constructor() {
     super()
@@ -137,10 +140,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
   }
 
   public shuffle(): void {
-    for (let i = this.queue.length - 1; i > 1; i--) {
-      const j = Math.floor(Math.random() * i) + 1
-      ;[this.queue[i], this.queue[j]] = [this.queue[j], this.queue[i]]
-    }
+    shuffle(this.queue, 1)
   }
 
   public getAtPosition(position: number): QueuedItem | null {

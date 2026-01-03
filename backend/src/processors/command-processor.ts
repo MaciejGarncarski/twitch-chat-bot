@@ -1,6 +1,7 @@
 import { sendChatMessage } from "@/api/send-chat-message"
 import { timeoutUser } from "@/api/timeout-user"
 import { CommandHandler, ContextDeps } from "@/commands/command"
+import { env } from "@/config/env"
 import { songRequestEngine } from "@/core/song-request-engine"
 import { checkIsMod } from "@/helpers/check-is-mod"
 import { logger } from "@/helpers/logger"
@@ -10,7 +11,6 @@ import { CommandError, CommandErrorCode } from "@/types/errors"
 import { TwitchWSMessage } from "@/types/twitch-ws-message"
 
 class CommandProcessor {
-  private readonly usersTreatedAsMod = ["maciej_ga"]
   handlers: CommandHandler[]
 
   constructor(handlers: CommandHandler[]) {
@@ -43,9 +43,10 @@ class CommandProcessor {
       return
     }
 
+    const usersTreatedAsMods = env.USERS_TREATED_AS_MODERATORS
     const normalizedUser = username.toLowerCase()
     const isModUser = checkIsMod(badges, chatterId, broadcasterId)
-    const isMod = isModUser || this.usersTreatedAsMod.includes(normalizedUser)
+    const isMod = isModUser || usersTreatedAsMods.includes(normalizedUser)
 
     if (!isMod) {
       const globalRateResult = rateLimiter.check(`global:${normalizedUser}`)

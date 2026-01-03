@@ -1,7 +1,7 @@
 import { describe, test, expect } from "bun:test"
 
 import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
-import { GithubCommandHandler } from "@/commands/github-commang-handler"
+import { GithubCommandHandler } from "@/commands/github-command-handler"
 
 const COMMAND = "!github"
 

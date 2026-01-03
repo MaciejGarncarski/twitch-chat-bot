@@ -23,6 +23,13 @@ const envSchema = z.object({
   TWITCH_BROADCASTER_NAME: z.string().default("CHECK_README_FOR_INFO"),
   TWITCH_REFRESH_TOKEN: z.string().default("CHECK_README_FOR_INFO"),
   REDIRECT_URI: z.url().default("http://localhost:3302/api/auth/callback"),
+  USERS_TREATED_AS_MODERATORS: z
+    .string()
+    .default("")
+    .transform((str) => str.split(",").map((s) => s.trim().toLowerCase()))
+    .pipe(z.array(z.string().min(1)))
+    .optional()
+    .default([]),
   YT_COOKIE: z.string().optional(),
 })
 

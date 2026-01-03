@@ -6,9 +6,10 @@ export interface IVoteManager {
   reset(): void
 }
 
+export const MAX_VOTES = 3
 export class VoteManager implements IVoteManager {
   private votes: Set<string> = new Set()
-  private readonly votesNeeded = 2
+  private readonly votesNeeded = MAX_VOTES
 
   public addVote(username: string): number {
     this.votes.add(username)

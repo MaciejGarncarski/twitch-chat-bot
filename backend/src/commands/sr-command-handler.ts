@@ -144,25 +144,3 @@ export class YoutubeSrHandler extends CommandHandler {
     return { videoId: song.video_id, metadata }
   }
 }
-
-export const SearchResultSchema = z
-  .object({
-    title: z.object({
-      text: z.string(),
-    }),
-    duration: z.object({
-      seconds: z.number(),
-    }),
-    thumbnails: z.array(
-      z.object({
-        url: z.string(),
-      }),
-    ),
-  })
-  .transform(
-    (data): SongMetadata => ({
-      title: data.title.text,
-      duration: data.duration.seconds,
-      thumbnail: data.thumbnails.at(-1)?.url ?? null,
-    }),
-  )

@@ -1,7 +1,7 @@
 import { ClearAllCommandHandler } from "@/commands/clear-all-command-handler"
 import { CurrentSongCommandHandler } from "@/commands/current-song-command-handler"
 import { FillCommandHandler } from "@/commands/fill-command-handler"
-import { GithubCommandHandler } from "@/commands/github-commang-handler"
+import { GithubCommandHandler } from "@/commands/github-command-handler"
 import { HelpCommandHandler } from "@/commands/help-command-handler"
 import { NextInfoCommandHandler } from "@/commands/next-info-command-handler"
 import { PauseCommandHandler } from "@/commands/pause-command-handler"

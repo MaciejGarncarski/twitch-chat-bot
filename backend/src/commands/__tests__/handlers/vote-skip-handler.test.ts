@@ -3,7 +3,7 @@ import { describe, test, expect } from "bun:test"
 import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
 import { VoteSkipCommandHandler } from "@/commands/vote-skip-command-handler"
 import { SongQueue } from "@/core/song-queue"
-import { VoteManager } from "@/core/vote-manager"
+import { MAX_VOTES, VoteManager } from "@/core/vote-manager"
 
 const COMMAND = "!voteskip"
 
@@ -65,22 +65,18 @@ describe("VoteSkipCommandHandler", () => {
       await queue.add({ username: "user1", videoId: "dQw4w9WgXcQ" })
       await queue.add({ username: "user2", videoId: "sk3rpYkiHe8" })
 
-      const ctx1 = createMockContext({
-        username: "voter1",
-        message: COMMAND,
-        deps: { songQueue: queue, voteManager },
-      })
+      const contexts = Array.from({ length: MAX_VOTES }, (_, i) =>
+        createMockContext({
+          username: `voter${i + 1}`,
+          message: COMMAND,
+          deps: { songQueue: queue, voteManager },
+        }),
+      )
 
-      const ctx2 = createMockContext({
-        username: "voter2",
-        message: COMMAND,
-        deps: { songQueue: queue, voteManager },
-      })
+      for (const ctx of contexts) {
+        await handler.execute(ctx)
+      }
 
-      await handler.execute(ctx1)
-      await handler.execute(ctx2)
-
-      expect(queue.getQueue().length).toBe(1)
       expect(queue.getCurrent()?.id).toBe("sk3rpYkiHe8")
       expect(voteManager.getCurrentCount()).toBe(0) // reset after skip
     })

@@ -1,6 +1,6 @@
 import { describe, test, expect } from "bun:test"
 
-import { VoteManager } from "@/core/vote-manager"
+import { MAX_VOTES, VoteManager } from "@/core/vote-manager"
 
 describe("VoteManager", () => {
   describe("addVote", () => {
@@ -58,7 +58,7 @@ describe("VoteManager", () => {
     test("returns configured votes needed threshold", () => {
       const vm = new VoteManager()
 
-      expect(vm.getVotesNeeded()).toBe(2)
+      expect(vm.getVotesNeeded()).toBe(MAX_VOTES)
     })
   })
 
