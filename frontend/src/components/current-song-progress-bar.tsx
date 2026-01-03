@@ -9,16 +9,16 @@ export function CurrentSongProgressBar({
 }) {
   const progress = duration ? playTime / duration : 0
 
+  const isResetting = progress === 0
+
   return (
     <div className="h-2 rounded-sm w-full overflow-hidden border bg-neutral-800">
       <motion.div
         className="bg-white h-full origin-left"
-        initial={{ scaleX: progress }}
-        animate={{
-          scaleX: progress,
-        }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: progress }}
         transition={{
-          duration: 1,
+          duration: isResetting ? 0 : 1,
           ease: "linear",
         }}
         style={{ width: "100%" }}

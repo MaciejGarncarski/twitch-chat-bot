@@ -38,13 +38,18 @@ export const CurrentSong = ({
       exit={{ opacity: 0, y: -40, transition: { duration: 0.3 } }}
       className="flex gap-6 items-center justify-center py-4 w-full px-4 border h-36 bg-neutral-900/95 rounded-md"
     >
-      <div className="w-48 h-28 relative shrink-0">
+      <a
+        href={`https://www.youtube.com/watch?v=${videoId}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block w-48 h-28 relative shrink-0"
+      >
         <img
           src={thumbnail || undefined}
           alt={title}
           className="w-full h-full rounded border object-cover border-neutral-800 block"
         />
-      </div>
+      </a>
 
       <div className="flex flex-col justify-between flex-1 h-full py-2">
         <div className="flex justify-between items-center gap-4">
