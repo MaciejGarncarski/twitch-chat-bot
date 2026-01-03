@@ -26,6 +26,7 @@ export const app = new Elysia()
   .use(
     cors({
       origin: env.APP_ORIGINS,
+      credentials: true,
     }),
   )
   .use(jwt(jwtConfig))
@@ -110,10 +111,10 @@ export const app = new Elysia()
             auth.set({
               value: "",
               httpOnly: true,
-              maxAge: 7 * 86400,
+              maxAge: 0,
               path: "/",
-              domain: env.COOKIE_DOMAIN,
-              secure: env.NODE_ENV === "production",
+              sameSite: "none",
+              secure: true,
             })
             return new Response(null, { status: 204 })
           })
@@ -133,8 +134,8 @@ export const app = new Elysia()
               httpOnly: true,
               maxAge: 7 * 86400,
               path: "/",
-              domain: env.COOKIE_DOMAIN,
-              secure: env.NODE_ENV === "production",
+              sameSite: "none",
+              secure: true,
             })
 
             return redirect(env.FRONTEND_URL)
