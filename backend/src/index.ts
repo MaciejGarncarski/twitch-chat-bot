@@ -113,9 +113,8 @@ export const app = new Elysia()
               httpOnly: true,
               maxAge: 0,
               path: "/",
-              sameSite: env.NODE_ENV === "production" ? "none" : "lax",
+              sameSite: "lax",
               secure: env.NODE_ENV === "production",
-              partitioned: env.NODE_ENV === "production",
             })
             return new Response(null, { status: 204 })
           })
@@ -135,9 +134,8 @@ export const app = new Elysia()
               httpOnly: true,
               maxAge: 7 * 86400,
               path: "/",
-              sameSite: env.NODE_ENV === "production" ? "none" : "lax",
+              sameSite: "lax",
               secure: env.NODE_ENV === "production",
-              partitioned: env.NODE_ENV === "production",
             })
 
             return redirect(env.FRONTEND_URL)
