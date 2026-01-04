@@ -47,10 +47,11 @@ export class YoutubeSrHandler extends CommandHandler {
     try {
       if (isYoutubeLink) {
         const newVideoId = this.extractVideoId(userInput)
-
         if (!newVideoId) {
           throw new Error("Invalid YouTube link.")
         }
+
+        logger.info(`[COMMAND] [SR] Extracted video ID: ${newVideoId}`)
 
         const videoInfo = await getVideoMetadata(newVideoId)
         videoId = newVideoId

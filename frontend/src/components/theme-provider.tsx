@@ -1,3 +1,4 @@
+import { transitionsManager } from "@/utils/transitions-manager"
 import { createContext, useContext, useEffect, useState } from "react"
 
 type Theme = "dark" | "light" | "system"
@@ -31,8 +32,9 @@ export function ThemeProvider({
   )
 
   useEffect(() => {
+    const transitions = transitionsManager()
+    transitions.disable()
     const root = window.document.documentElement
-
     root.classList.remove("light", "dark")
 
     if (theme === "system") {
@@ -41,10 +43,12 @@ export function ThemeProvider({
         : "light"
 
       root.classList.add(systemTheme)
+      window.requestAnimationFrame(transitions.enable)
       return
     }
 
     root.classList.add(theme)
+    window.requestAnimationFrame(transitions.enable)
   }, [theme])
 
   const value = {
