@@ -2,8 +2,18 @@ import { useCallback, useEffect, useState } from "react"
 
 const STORAGE_KEY = "user-has-interacted"
 
+/**
+ * Detects if running inside OBS browser source.
+ * OBS injects `window.obsstudio` object into browser sources.
+ */
+function isOBSBrowser(): boolean {
+  return "obsstudio" in window
+}
+
 export function useInteraction() {
   const [hasInteracted, setHasInteracted] = useState(() => {
+    // OBS browser sources don't require interaction for autoplay
+    if (isOBSBrowser()) return true
     return sessionStorage.getItem(STORAGE_KEY) === "true"
   })
 
