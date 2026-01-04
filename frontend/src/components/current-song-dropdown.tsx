@@ -77,7 +77,7 @@ export function CurrentSongDropdown({ isPlaying }: Props) {
             }}
           >
             <Dices />
-            Shuffle
+            Przetasuj
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

@@ -21,7 +21,6 @@ async function init() {
 }
 
 await init()
-
 export const app = new Elysia()
   .use(
     cors({

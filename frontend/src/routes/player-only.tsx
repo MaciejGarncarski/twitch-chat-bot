@@ -1,4 +1,5 @@
 import { CurrentSong } from "@/components/current-song"
+import { NavigationTabs } from "@/components/navigation-tabs"
 import { PlayerYT } from "@/components/player-yt"
 import { Queue } from "@/components/queue"
 import { QueueEmptyMessage } from "@/components/queue-empty-message"
@@ -30,8 +31,11 @@ function RouteComponent() {
   useVolume(playerRef, volume)
 
   return (
-    <div className="text-center min-h-screen max-w-3xl mx-auto px-8 py-10 flex flex-col gap-4">
-      <div className="flex flex-col gap-4 items-center px-4 min-h-40">
+    <div className="text-center min-h-screen max-w-3xl mx-auto px-4 py-4 md:py-8 flex flex-col gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <NavigationTabs />
+      </div>
+      <div className="flex flex-col gap-4 items-center min-h-40">
         <AnimatePresence mode="popLayout">
           {isLoading ? (
             <QueueLoadingMessage />
