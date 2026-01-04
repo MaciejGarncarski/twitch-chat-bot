@@ -61,7 +61,7 @@ export function PlayerYT({
   if (!songSrc) return null
 
   return (
-    <div className=" w-20 h-20 opacity-50">
+    <div className="fixed bottom-4 right-4 h-10 w-10 opacity-10">
       <ReactPlayer
         key={`${songSrc}-${retryCount}`}
         ref={playerRef}

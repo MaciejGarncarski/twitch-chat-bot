@@ -1,5 +1,5 @@
 export function CurrentSongTitle({ title }: { title: string }) {
-  const isLongTitle = title.length >= 38
+  const isLongTitle = title.length >= 30
 
   if (isLongTitle) {
     return (

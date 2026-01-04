@@ -41,7 +41,7 @@ export function CurrentSongDropdown({ isPlaying }: Props) {
         <DropdownMenuGroup>
           <>
             {playStateMutation.isPending ? (
-              <DropdownMenuItem>
+              <DropdownMenuItem disabled>
                 <Loader className="animate-spin animation-duration-[2s]" />
                 Ładowanie...
               </DropdownMenuItem>
@@ -62,9 +62,19 @@ export function CurrentSongDropdown({ isPlaying }: Props) {
               e.preventDefault()
               skipMutation.mutate()
             }}
+            disabled={skipMutation.isPending}
           >
-            <SkipForward />
-            Pomiń
+            {skipMutation.isPending ? (
+              <>
+                <Loader className="animate-spin animation-duration-[2s]" />
+                Pomijam...
+              </>
+            ) : (
+              <>
+                <SkipForward />
+                Pomiń
+              </>
+            )}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -75,9 +85,19 @@ export function CurrentSongDropdown({ isPlaying }: Props) {
               e.preventDefault()
               shuffleMutation.mutate()
             }}
+            disabled={shuffleMutation.isPending}
           >
-            <Dices />
-            Przetasuj
+            {shuffleMutation.isPending ? (
+              <>
+                <Loader className="animate-spin animation-duration-[2s]" />
+                Tasuję...
+              </>
+            ) : (
+              <>
+                <Dices />
+                Przetasuj
+              </>
+            )}
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

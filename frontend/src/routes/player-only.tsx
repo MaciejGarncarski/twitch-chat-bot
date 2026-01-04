@@ -1,9 +1,13 @@
 import { CurrentSong } from "@/components/current-song"
+import { InteractionNotification } from "@/components/interaction-notification"
 import { NavigationTabs } from "@/components/navigation-tabs"
 import { PlayerYT } from "@/components/player-yt"
 import { Queue } from "@/components/queue"
 import { QueueEmptyMessage } from "@/components/queue-empty-message"
 import { QueueLoadingMessage } from "@/components/queue-loading-message"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { useDetectTheme } from "@/hooks/use-detect-theme"
+import { useInteraction } from "@/hooks/use-interaction"
 import { usePlayState } from "@/hooks/use-play-state"
 import { usePlayerData } from "@/hooks/use-player-data"
 import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
@@ -22,11 +26,13 @@ export const Route = createFileRoute("/player-only")({
 function RouteComponent() {
   const { isLoading, data: queueData } = useQueue()
   const { isPlaying, playTime, volume, songId } = usePlayerData()
+  const { hasInteracted, handleInteract } = useInteraction()
   const [isReady, setIsReady] = useState(true)
   const playerRef = useRef<HTMLVideoElement>(null)
 
   const currentSong = queueData?.[0] ?? null
 
+  useDetectTheme()
   usePlayState(playerRef, playTime, isPlaying)
   useVolume(playerRef, volume)
 
@@ -34,6 +40,7 @@ function RouteComponent() {
     <div className="text-center min-h-screen max-w-3xl mx-auto px-4 py-4 md:py-8 flex flex-col gap-4">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <NavigationTabs />
+        <ThemeToggle />
       </div>
       <div className="flex flex-col gap-4 items-center min-h-40">
         <AnimatePresence mode="popLayout">
@@ -60,7 +67,7 @@ function RouteComponent() {
         {isLoading || queueData?.length === 0 ? null : <Queue />}
       </AnimatePresence>
 
-      {currentSong && songId === currentSong.id && (
+      {currentSong && songId === currentSong.id && hasInteracted && (
         <PlayerYT
           isReady={isReady}
           volume={volume}
@@ -70,6 +77,8 @@ function RouteComponent() {
           setIsReady={setIsReady}
         />
       )}
+
+      <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
     </div>
   )
 }

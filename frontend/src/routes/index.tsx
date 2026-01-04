@@ -2,10 +2,12 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useRef, useState } from "react"
 import { useVolume } from "@/hooks/use-volume"
 import { usePlayState } from "@/hooks/use-play-state"
+import { useInteraction } from "@/hooks/use-interaction"
 import { AnimatePresence } from "motion/react"
 import { CurrentSong } from "@/components/current-song"
 import { Queue } from "@/components/queue"
 import { PlayerYT } from "@/components/player-yt"
+import { InteractionNotification } from "@/components/interaction-notification"
 import { usePlayerData } from "@/hooks/use-player-data"
 import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
 import { QueueEmptyMessage } from "@/components/queue-empty-message"
@@ -13,6 +15,8 @@ import { QueueLoadingMessage } from "@/components/queue-loading-message"
 import { useAuth } from "@/hooks/use-auth"
 import { TwitchAuthButton } from "@/components/twitch-auth-button"
 import { NavigationTabs } from "@/components/navigation-tabs"
+import { useDetectTheme } from "@/hooks/use-detect-theme"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -24,11 +28,13 @@ export const Route = createFileRoute("/")({
 function App() {
   const { isLoading, data: queueData } = useQueue()
   const { isPlaying, playTime, volume, songId } = usePlayerData()
+  const { hasInteracted, handleInteract } = useInteraction()
   const [isReady, setIsReady] = useState(true)
   const playerRef = useRef<HTMLVideoElement>(null)
 
   const currentSong = queueData?.[0] ?? null
 
+  useDetectTheme()
   usePlayState(playerRef, playTime, isPlaying)
   useVolume(playerRef, volume)
   useAuth()
@@ -38,6 +44,7 @@ function App() {
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <NavigationTabs />
         <TwitchAuthButton />
+        <ThemeToggle />
       </div>
 
       <div className="flex flex-col gap-4 items-center min-h-40">
@@ -65,7 +72,7 @@ function App() {
         {isLoading || queueData?.length === 0 ? null : <Queue />}
       </AnimatePresence>
 
-      {currentSong && songId === currentSong.id && (
+      {currentSong && songId === currentSong.id && hasInteracted && (
         <PlayerYT
           isReady={isReady}
           volume={volume}
@@ -75,6 +82,8 @@ function App() {
           setIsReady={setIsReady}
         />
       )}
+
+      <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
     </div>
   )
 }

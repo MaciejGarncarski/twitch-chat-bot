@@ -7,5 +7,8 @@ export function useShuffle() {
       await api.api.player.shuffle.post()
       return new Promise((resolve) => setTimeout(resolve, 200))
     },
+    onSettled: (_, __, ___, ____, ctx) => {
+      ctx.client.invalidateQueries({ queryKey: ["queue"] })
+    },
   })
 }

@@ -8,5 +8,8 @@ export function useSkip() {
 
       return new Promise((resolve) => setTimeout(resolve, 200))
     },
+    onSettled: (_, __, ___, ____, ctx) => {
+      ctx.client.invalidateQueries({ queryKey: ["queue"] })
+    },
   })
 }

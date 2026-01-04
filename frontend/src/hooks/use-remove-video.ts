@@ -7,5 +7,8 @@ export function useRemoveVideo() {
       await api.api.player.remove.post({ videoId })
       return new Promise((resolve) => setTimeout(resolve, 200))
     },
+    onSettled: (_, __, ___, ____, ctx) => {
+      ctx.client.invalidateQueries({ queryKey: ["queue"] })
+    },
   })
 }

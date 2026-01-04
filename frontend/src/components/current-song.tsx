@@ -36,13 +36,13 @@ export const CurrentSong = ({
       animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
       initial={{ opacity: 0, y: 40, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, y: -40, transition: { duration: 0.3 } }}
-      className="flex flex-col md:flex-row gap-6 items-center justify-center py-4 w-full px-4 border md:h-36 bg-neutral-900/95 rounded-md"
+      className="flex flex-col md:flex-row gap-6 items-center justify-center py-4 w-full px-4 border md:h-36 bg-background/95 rounded-md"
     >
       <a
         href={`https://www.youtube.com/watch?v=${videoId}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="block w-48 h-28 relative shrink-0"
+        className="block w-48 h-28 relative shrink-0 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-3 rounded"
       >
         <img
           src={thumbnail || undefined}
@@ -57,7 +57,7 @@ export const CurrentSong = ({
           {isDashboard && <CurrentSongDropdown isPlaying={isPlaying} />}
         </div>
         <div className="flex flex-col gap-3">
-          <div className="flex gap-1 md:gap-2 text-gray-200 flex-col md:flex-row justify-between items-center text-base">
+          <div className="flex gap-1 md:gap-2 text-muted-foreground flex-col md:flex-row justify-between items-center text-base">
             <div className="flex gap-3 items-center">
               <DurationIndicator playTime={playTime} duration={duration} />
               <span>-</span>

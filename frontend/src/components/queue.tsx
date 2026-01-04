@@ -46,9 +46,9 @@ export const Queue = () => {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className={cn("flex flex-col bg-neutral-900/95 rounded-md px-4 py-4 gap-1 border pb-10")}
+      className={cn("flex flex-col bg-background rounded-md px-4 py-4 gap-1 border pb-10")}
     >
-      <h2 className="mr-auto ml-1 pb-2 text-xl font-semibold text-neutral-300">Kolejka</h2>
+      <h2 className="mr-auto ml-1 pb-2 text-xl font-semibold text-muted-foreground">Kolejka</h2>
       <ul
         className={cn(
           "border rounded-lg min-h-26 overflow-hidden",
@@ -62,7 +62,7 @@ export const Queue = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-14 text-center text-neutral-200"
+              className="p-14 text-center text-muted-foreground"
             >
               Brak pozycji w kolejce
             </motion.div>
@@ -75,9 +75,8 @@ export const Queue = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
               className={cn(
-                "p-4 border-b flex gap-6 items-center bg-neutral-800 flex-col md:flex-row",
+                "p-4 border-b flex gap-6 items-center bg-secondary focus-within:bg-background flex-col md:flex-row hover:bg-background",
                 idx === filteredCurrent?.length - 1 && "border-b-0",
               )}
             >
@@ -85,7 +84,7 @@ export const Queue = () => {
                 <a
                   href={item.videoUrl}
                   target="_blank"
-                  className="shrink-0"
+                  className="shrink-0 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-3 rounded"
                   rel="noopener noreferrer"
                 >
                   <img
@@ -97,7 +96,7 @@ export const Queue = () => {
               )}
               <div className="text-left flex flex-col gap-3 w-full">
                 <h3 className="font-semibold md:text-lg max-w-[40ch] truncate">{item.title}</h3>
-                <div className="text-gray-400 text-sm md:text-base flex items-center gap-4">
+                <div className="text-muted-foreground text-sm md:text-base flex items-center gap-4">
                   <span className="flex items-center gap-2">
                     <Clock3 size={16} /> {formatDuration(item.duration)}
                   </span>

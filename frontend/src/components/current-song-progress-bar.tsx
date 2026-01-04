@@ -14,10 +14,10 @@ export function CurrentSongProgressBar({
   const isResetting = progress === 0
 
   return (
-    <div className="h-2 rounded-sm w-full overflow-hidden border bg-neutral-800">
+    <div className="h-2 rounded-sm w-full overflow-hidden border bg-secondary">
       <motion.div
         key={videoId}
-        className="bg-white h-full origin-left"
+        className="bg-foreground h-full origin-left"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: progress }}
         transition={{
