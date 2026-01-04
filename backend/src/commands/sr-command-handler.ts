@@ -1,5 +1,4 @@
 import { YTNodes } from "youtubei.js/agnostic"
-import z from "zod"
 
 import { CommandContext, CommandHandler } from "@/commands/command"
 import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata"
