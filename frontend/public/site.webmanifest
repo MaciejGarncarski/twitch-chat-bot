@@ -1,21 +1,22 @@
 {
   "name": "Twitch Chat Bot",
   "short_name": "Twitch Chat Bot",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#9146FF",
+  "background_color": "#9146FF",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
-  ],
-  "theme_color": "#9146FF",
-  "background_color": "#9146FF",
-  "display": "standalone"
+  ]
 }
