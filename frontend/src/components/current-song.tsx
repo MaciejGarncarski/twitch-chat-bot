@@ -53,7 +53,7 @@ export const CurrentSong = ({
 
       <div className="flex flex-col  justify-between flex-1 w-full h-full py-2 gap-4 md:gap-0">
         <div className="flex justify-between items-center gap-4">
-          <CurrentSongTitle title={title} />
+          <CurrentSongTitle title={title} isPlaying={isPlaying} />
           {isDashboard && <CurrentSongDropdown isPlaying={isPlaying} />}
         </div>
         <div className="flex flex-col gap-3">

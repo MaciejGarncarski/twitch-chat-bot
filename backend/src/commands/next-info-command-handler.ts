@@ -4,7 +4,7 @@ import { getTimeUntilNextSong } from "@/helpers/get-time-until-next-song"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class NextInfoCommandHandler extends CommandHandler {
-  private readonly regex = /^!next\s*$/i
+  private readonly command = "!next"
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
@@ -12,7 +12,7 @@ export class NextInfoCommandHandler extends CommandHandler {
   }
 
   canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+    return messageText.toLowerCase() === this.command
   }
 
   async execute({

@@ -3,15 +3,15 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class WrongSongAllCommandHandler extends CommandHandler {
-  private readonly regexp = /^!wrongsongall\b/i
+  private readonly command = "!wrongsongall"
 
   rateLimit: RateLimitConfig = {
     windowMs: 15000,
     max: 1,
   }
 
-  public canHandle(message: string): boolean {
-    return this.regexp.test(message)
+  public canHandle(messageText: string): boolean {
+    return this.command === messageText.toLowerCase()
   }
 
   async execute({

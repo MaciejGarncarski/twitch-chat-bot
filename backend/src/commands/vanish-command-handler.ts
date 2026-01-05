@@ -2,7 +2,7 @@ import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class VanishCommandHandler extends CommandHandler {
-  private readonly regex = /^!vanish$/i
+  private readonly command = "!vanish"
   private readonly durationInSeconds = 3
 
   rateLimit: RateLimitConfig = {
@@ -11,7 +11,7 @@ export class VanishCommandHandler extends CommandHandler {
   }
 
   public canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+    return messageText.toLowerCase() === this.command
   }
 
   public async execute({

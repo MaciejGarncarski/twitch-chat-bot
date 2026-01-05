@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class SkipCommandHandler extends CommandHandler {
-  private readonly regex = /^!skip\s*$/i
+  private readonly command = "!skip"
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
@@ -11,7 +11,7 @@ export class SkipCommandHandler extends CommandHandler {
   }
 
   canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+    return messageText.toLowerCase() === this.command
   }
 
   async execute({

@@ -29,7 +29,7 @@ class CommandProcessor {
       return
     }
 
-    const sanitizedMessage = sanitizeMessage(messageText)
+    const sanitizedMessage = sanitizeMessage(messageText).toLowerCase()
     const messageId = parsed.payload.event?.message_id
     const userId = parsed.payload.event?.chatter_user_id
     const username =

@@ -2,7 +2,7 @@ import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class VoteSkipCommandHandler extends CommandHandler {
-  private readonly regex = /^!voteskip\s*$/i
+  private readonly command = "!voteskip"
 
   rateLimit: RateLimitConfig = {
     windowMs: 8000,
@@ -10,7 +10,7 @@ export class VoteSkipCommandHandler extends CommandHandler {
   }
 
   canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+    return messageText.toLowerCase() === this.command
   }
 
   async execute({

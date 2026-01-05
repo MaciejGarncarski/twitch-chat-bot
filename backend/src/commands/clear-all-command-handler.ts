@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class ClearAllCommandHandler extends CommandHandler {
-  private readonly regex = /^!clearall\s*$/i
+  private readonly command = "!clearall"
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
@@ -11,7 +11,7 @@ export class ClearAllCommandHandler extends CommandHandler {
   }
 
   public canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+    return messageText.toLowerCase() === this.command
   }
 
   public async execute({ deps, isMod, messageId }: CommandContext): Promise<void> {

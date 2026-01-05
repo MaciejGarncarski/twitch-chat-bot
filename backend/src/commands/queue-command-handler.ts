@@ -2,7 +2,7 @@ import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class QueueCommandHandler extends CommandHandler {
-  private readonly regex = /^!queue\s*$/i
+  private readonly command = "!queue"
 
   rateLimit: RateLimitConfig = {
     windowMs: 60_000,
@@ -10,7 +10,7 @@ export class QueueCommandHandler extends CommandHandler {
   }
 
   canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+    return this.command === messageText.toLowerCase()
   }
 
   async execute({ deps: { logger, songQueue, sendChatMessage }, messageId }: CommandContext) {

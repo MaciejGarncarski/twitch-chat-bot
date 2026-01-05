@@ -2,15 +2,15 @@ import { CommandContext, CommandHandler } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class WrongSongCommandHandler extends CommandHandler {
-  private readonly regexp = /^!wrongsong\b/i
+  private readonly command = "!wrongsong"
 
   rateLimit: RateLimitConfig = {
     windowMs: 15000,
     max: 1,
   }
 
-  public canHandle(message: string): boolean {
-    return this.regexp.test(message)
+  public canHandle(messageText: string): boolean {
+    return this.command === messageText.toLowerCase()
   }
 
   async execute({

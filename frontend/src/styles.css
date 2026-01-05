@@ -47,6 +47,7 @@
   --radius-4xl: calc(var(--radius) + 16px);
 
   --animate-marquee: marquee 20s linear infinite;
+  
 }
 
 :root {
@@ -135,5 +136,11 @@
     100% {
       transform: translateX(-100%);
     }
+  }
+}
+
+@layer utilities{
+  .animation-stopped {
+    animation-play-state: paused;
   }
 }

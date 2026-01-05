@@ -2,7 +2,7 @@ import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class HelpCommandHandler extends CommandHandler {
-  private readonly regex = /^!help$/i
+  private readonly command = "!help"
 
   rateLimit: RateLimitConfig = {
     windowMs: 60000,
@@ -10,7 +10,7 @@ export class HelpCommandHandler extends CommandHandler {
   }
 
   canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+    return messageText.toLowerCase() === this.command
   }
 
   async execute({ deps: { logger, sendChatMessage }, messageId }: CommandContext) {

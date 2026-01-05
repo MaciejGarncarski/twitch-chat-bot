@@ -1,10 +1,19 @@
-export function CurrentSongTitle({ title }: { title: string }) {
+import { cn } from "@/lib/utils"
+
+export function CurrentSongTitle({ title, isPlaying }: { title: string; isPlaying: boolean }) {
   const isLongTitle = title.length >= 30
 
   if (isLongTitle) {
     return (
       <div className="overflow-hidden whitespace-nowrap max-w-[33ch] text-xl">
-        <div className="inline-block animate-marquee pl-[100%]">{title}</div>
+        <div
+          className={cn(
+            "inline-block pl-[100%] animate-marquee",
+            !isPlaying && "animation-stopped",
+          )}
+        >
+          {title}
+        </div>
       </div>
     )
   }
