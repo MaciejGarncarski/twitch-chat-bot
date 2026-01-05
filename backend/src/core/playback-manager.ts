@@ -14,18 +14,21 @@ export interface IPlaybackManager extends EventEmitter {
   setVolume(volume: number): void
   seek(seekSeconds: number): void
   getIsPlaying(): boolean
+  getIsLoopEnabled(): boolean
+  toggleLoopEnabled(): boolean
 
   on(event: "song-ended", listener: () => void): this
 }
 
 export class PlaybackManager extends EventEmitter implements IPlaybackManager {
   private isPlaying: boolean = false
-  private volume: number = 20
-  private playTime: number = 0
+  private volume = 20
+  private playTime = 0
   private startedAt: number | null = null
   private intervalId: NodeJS.Timeout | null = null
   private songId: string | null = null
-  private currentSongDuration: number = 0
+  private currentSongDuration = 0
+  private isLoopEnabled = false
 
   constructor() {
     super()
@@ -43,6 +46,11 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
       this.currentSongDuration > 0 &&
       currentPlayTime >= this.currentSongDuration
     ) {
+      if (this.isLoopEnabled) {
+        this.seek(0)
+        return
+      }
+
       this.emit("song-ended")
       return
     }
@@ -53,6 +61,7 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
       songId: this.songId,
       playTime: this.isPlaying ? currentPlayTime : this.playTime,
       startedAt: this.startedAt,
+      isLoopEnabled: this.isLoopEnabled,
       serverTime: Date.now(),
     }
 
@@ -120,6 +129,17 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
 
   public setVolume(volume: number) {
     this.volume = Math.min(Math.max(volume, 0), 100)
+  }
+
+  public toggleLoopEnabled() {
+    this.isLoopEnabled = !this.isLoopEnabled
+    this.broadcastStatus()
+
+    return this.isLoopEnabled
+  }
+
+  public getIsLoopEnabled(): boolean {
+    return this.isLoopEnabled
   }
 
   public stop() {

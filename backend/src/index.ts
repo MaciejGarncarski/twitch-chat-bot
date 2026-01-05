@@ -159,6 +159,22 @@ export const app = new Elysia()
             songRequestEngine.getPlaybackManager().play()
             return status(204, null)
           })
+          .post("/loop-toggle", async ({ user, status }) => {
+            if (user?.role !== "MOD") {
+              return status(401, { status: "Unauthorized" })
+            }
+
+            songRequestEngine.getPlaybackManager().toggleLoopEnabled()
+            return status(204, null)
+          })
+          .post("/clear-queue", async ({ user, status }) => {
+            if (user?.role !== "MOD") {
+              return status(401, { status: "Unauthorized" })
+            }
+
+            songRequestEngine.getSongQueue().clearAll()
+            return status(204, null)
+          })
           .post("/skip", async ({ user, status }) => {
             if (user?.role !== "MOD") {
               return status(401, { status: "Unauthorized" })

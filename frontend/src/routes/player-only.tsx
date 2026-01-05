@@ -25,7 +25,7 @@ export const Route = createFileRoute("/player-only")({
 
 function RouteComponent() {
   const { isLoading, data: queueData } = useQueue()
-  const { isPlaying, playTime, volume, songId } = usePlayerData()
+  const { isPlaying, playTime, volume, songId, isLoopEnabled } = usePlayerData()
   const { hasInteracted, handleInteract } = useInteraction()
   const [isReady, setIsReady] = useState(true)
   const playerRef = useRef<HTMLVideoElement>(null)
@@ -48,6 +48,7 @@ function RouteComponent() {
             <QueueLoadingMessage />
           ) : currentSong ? (
             <CurrentSong
+              isLoopEnabled={isLoopEnabled}
               videoId={currentSong.id}
               duration={currentSong.duration}
               title={currentSong.title}

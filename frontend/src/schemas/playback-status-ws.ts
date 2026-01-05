@@ -5,6 +5,7 @@ export const playbackStatusWSSchema = z.object({
   volume: z.number().min(0).max(100),
   songId: z.string().nullable(),
   playTime: z.number().min(0),
+  isLoopEnabled: z.boolean(),
   startedAt: z.number().nullable(),
   serverTime: z.number(),
 })

@@ -3,6 +3,7 @@ import { CurrentSongCommandHandler } from "@/commands/current-song-command-handl
 import { FillCommandHandler } from "@/commands/fill-command-handler"
 import { GithubCommandHandler } from "@/commands/github-command-handler"
 import { HelpCommandHandler } from "@/commands/help-command-handler"
+import { LoopToggleCommandHandler } from "@/commands/loop-toggle-command-handler"
 import { NextInfoCommandHandler } from "@/commands/next-info-command-handler"
 import { PauseCommandHandler } from "@/commands/pause-command-handler"
 import { PlayCommandHandler } from "@/commands/play-command-handler"
@@ -28,6 +29,7 @@ export const commandHandlers = [
   new WrongSongCommandHandler(),
   new WrongSongAllCommandHandler(),
   new GithubCommandHandler(),
+  new LoopToggleCommandHandler(),
   new PlayCommandHandler(),
   new PauseCommandHandler(),
   new SeekCommandHandler(),

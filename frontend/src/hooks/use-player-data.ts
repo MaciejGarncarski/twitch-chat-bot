@@ -26,6 +26,7 @@ export function usePlayerData() {
   const playTime = playbackData?.playTime ?? 0
   const isPlaying = playbackData?.isPlaying ?? false
   const songId = playbackData?.songId ?? null
+  const isLoopEnabled = playbackData?.isLoopEnabled ?? false
 
-  return { volume, playTime, isPlaying, songId }
+  return { volume, playTime, isPlaying, songId, isLoopEnabled }
 }

@@ -2,6 +2,7 @@ import { CurrentSongDropdown } from "@/components/current-song-dropdown"
 import { CurrentSongProgressBar } from "@/components/current-song-progress-bar"
 import { CurrentSongTitle } from "@/components/current-song-title"
 import { DurationIndicator } from "@/components/duration-indicator"
+import { LoopIndicator } from "@/components/loop-indicator"
 import { VolumeIndicator } from "@/components/volume-indicator"
 import { useLocation } from "@tanstack/react-router"
 import { UserIcon } from "lucide-react"
@@ -9,6 +10,7 @@ import { motion } from "motion/react"
 
 type CurrentSongProps = {
   thumbnail: string | null
+  isLoopEnabled: boolean
   isPlaying: boolean
   volume: number
   videoId: string
@@ -27,6 +29,7 @@ export const CurrentSong = ({
   username,
   thumbnail,
   videoId,
+  isLoopEnabled,
 }: CurrentSongProps) => {
   const location = useLocation()
   const isDashboard = !location.href.includes("/player-only")
@@ -62,6 +65,8 @@ export const CurrentSong = ({
               <DurationIndicator playTime={playTime} duration={duration} />
               <span>-</span>
               <VolumeIndicator volume={volume} />
+              <span>-</span>
+              <LoopIndicator isLoopEnabled={isLoopEnabled} />
             </div>
             <p className="flex items-center gap-2">
               <UserIcon size={18} />

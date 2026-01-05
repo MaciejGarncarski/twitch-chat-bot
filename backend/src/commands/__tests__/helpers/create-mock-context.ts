@@ -94,6 +94,8 @@ export function createMockDeps(): CommandContext["deps"] {
       getPlayTime: mock(() => 0),
       getVolume: mock(() => 50),
       setVolume: mock(() => {}),
+      getIsLoopEnabled: mock(() => false),
+      toggleLoopEnabled: mock(() => false),
     } as unknown as CommandContext["deps"]["playbackManager"],
     voteManager: {
       hasVoted: mock(() => false),
