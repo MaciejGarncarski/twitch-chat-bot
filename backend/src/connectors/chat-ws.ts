@@ -9,7 +9,6 @@ const processor = new CommandProcessor(commandHandlers)
 
 export class ChatWebSocket {
   private ws?: WebSocket
-  private sessionId = ""
   private missedMessageTimer?: NodeJS.Timeout
 
   private isTransferring = false
@@ -66,11 +65,9 @@ export class ChatWebSocket {
         }
 
         const newSessionId = parsed.payload.session?.id
+
         if (!newSessionId) return
-
-        this.sessionId = newSessionId
         this.ws = socketContext
-
         logger.info(`[CHAT WS] Connected. Session ID: ${newSessionId}`)
 
         this.resetKeepaliveTimer()
