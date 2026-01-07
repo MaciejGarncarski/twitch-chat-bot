@@ -5,10 +5,10 @@ export function CurrentSongTitle({ title, isPlaying }: { title: string; isPlayin
 
   if (isLongTitle) {
     return (
-      <div className="overflow-hidden whitespace-nowrap max-w-[33ch] text-xl">
+      <div className="max-w-[33ch] overflow-hidden text-xl whitespace-nowrap">
         <div
           className={cn(
-            "inline-block pl-[100%] animate-marquee",
+            "animate-marquee inline-block pl-[100%]",
             !isPlaying && "animation-stopped",
           )}
         >
@@ -18,5 +18,5 @@ export function CurrentSongTitle({ title, isPlaying }: { title: string; isPlayin
     )
   }
 
-  return <p className="text-xl font-semibold max-w-[37ch] truncate">{title}</p>
+  return <p className="max-w-[37ch] truncate text-xl font-semibold">{title}</p>
 }

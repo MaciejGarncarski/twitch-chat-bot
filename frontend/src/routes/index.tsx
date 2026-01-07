@@ -40,8 +40,8 @@ function App() {
   useAuth()
 
   return (
-    <div className="text-center min-h-screen max-w-3xl mx-auto px-4 py-4 md:py-8 flex flex-col gap-4">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="mx-auto flex min-h-screen max-w-3xl flex-col gap-4 px-4 py-4 text-center md:py-8">
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <NavigationTabs />
 
         <div className="flex gap-4">
@@ -50,7 +50,7 @@ function App() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 items-center min-h-40">
+      <div className="flex min-h-40 flex-col items-center gap-4">
         <AnimatePresence mode="popLayout">
           {isLoading ? (
             <QueueLoadingMessage />

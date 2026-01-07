@@ -40,7 +40,7 @@ export const CurrentSong = ({
       animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
       initial={{ opacity: 0, y: 40, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, y: -40, transition: { duration: 0.3 } }}
-      className="flex flex-col relative md:flex-row gap-6 items-center justify-center py-4 w-full px-4 border md:h-36 bg-background/95 rounded-md"
+      className="bg-background/95 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-4 py-4 md:h-36 md:flex-row"
     >
       <AnimatePresence>
         {!isPlaying && (
@@ -48,10 +48,10 @@ export const CurrentSong = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-10 bg-background/70 backdrop-blur-xs flex items-center justify-center rounded-md"
+            className="bg-background/70 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
           >
-            <p className="text-2xl font-medium text-muted-foreground">
-              <Pause className="inline mb-1 mr-4" size={24} />
+            <p className="text-muted-foreground text-2xl font-medium">
+              <Pause className="mr-4 mb-1 inline" size={24} />
               Zapauzowano
             </p>
           </motion.div>
@@ -61,26 +61,26 @@ export const CurrentSong = ({
         href={`https://www.youtube.com/watch?v=${videoId}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="block w-48 h-28 relative shrink-0 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-3 rounded"
+        className="focus:ring-ring relative block h-28 w-48 shrink-0 rounded focus:ring-2 focus:ring-offset-3 focus:outline-none"
       >
         <img
           src={thumbnail || undefined}
           alt={title}
-          className="w-full h-full rounded border object-cover border-neutral-800 block"
+          className="block h-full w-full rounded border border-neutral-800 object-cover"
         />
       </a>
-      <div className="flex flex-col  justify-between flex-1 w-full h-full py-2 gap-4 md:gap-0">
-        <div className="flex justify-between items-center gap-4 relative">
+      <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-0">
+        <div className="relative flex items-center justify-between gap-4">
           <CurrentSongTitle title={title} isPlaying={isPlaying} />
           {isDashboard && (
-            <div className={cn(!isPlaying && "z-20 absolute right-0")}>
+            <div className={cn(!isPlaying && "absolute right-0 z-20")}>
               <CurrentSongDropdown isPlaying={isPlaying} />
             </div>
           )}
         </div>
         <div className="flex flex-col gap-3">
-          <div className="flex gap-1 md:gap-2 text-muted-foreground flex-col md:flex-row justify-between items-center text-base">
-            <div className="flex gap-3 items-center">
+          <div className="text-muted-foreground flex flex-col items-center justify-between gap-1 text-base md:flex-row md:gap-2">
+            <div className="flex items-center gap-3">
               <DurationIndicator playTime={playTime} duration={duration} />
               <span>-</span>
               <VolumeIndicator volume={volume} />

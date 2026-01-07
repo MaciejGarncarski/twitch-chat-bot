@@ -46,12 +46,12 @@ export const Queue = () => {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className={cn("flex flex-col bg-background rounded-md px-4 py-4 gap-1 border pb-10")}
+      className={cn("bg-background flex flex-col gap-1 rounded-md border px-4 py-4 pb-10")}
     >
-      <h2 className="mr-auto ml-1 pb-2 text-xl font-semibold text-muted-foreground">Kolejka</h2>
+      <h2 className="text-muted-foreground mr-auto ml-1 pb-2 text-xl font-semibold">Kolejka</h2>
       <ul
         className={cn(
-          "border rounded-lg min-h-26 overflow-hidden",
+          "min-h-26 overflow-hidden rounded-lg border",
           queuedCount === 0 && "border-transparent",
         )}
       >
@@ -62,7 +62,7 @@ export const Queue = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-14 text-center text-muted-foreground"
+              className="text-muted-foreground p-14 text-center"
             >
               Brak pozycji w kolejce
             </motion.div>
@@ -76,7 +76,7 @@ export const Queue = () => {
               animate="visible"
               exit="exit"
               className={cn(
-                "p-4 border-b flex gap-6 items-center bg-secondary focus-within:bg-background flex-col md:flex-row hover:bg-background",
+                "bg-secondary focus-within:bg-background hover:bg-background flex flex-col items-center gap-6 border-b p-4 md:flex-row",
                 idx === filteredCurrent?.length - 1 && "border-b-0",
               )}
             >
@@ -84,19 +84,19 @@ export const Queue = () => {
                 <a
                   href={item.videoUrl}
                   target="_blank"
-                  className="shrink-0 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-3 rounded"
+                  className="focus:ring-ring shrink-0 rounded focus:ring-2 focus:ring-offset-3 focus:outline-none"
                   rel="noopener noreferrer"
                 >
                   <img
                     src={item.thumbnail}
                     alt={item.title}
-                    className="h-11 w-20 md:h-22 md:w-39 object-cover rounded border border-neutral-700"
+                    className="h-11 w-20 rounded border border-neutral-700 object-cover md:h-22 md:w-39"
                   />
                 </a>
               )}
-              <div className="text-left flex flex-col gap-3 w-full">
-                <h3 className="font-semibold md:text-lg max-w-[40ch] truncate">{item.title}</h3>
-                <div className="text-muted-foreground text-sm md:text-base flex items-center gap-4">
+              <div className="flex w-full flex-col gap-3 text-left">
+                <h3 className="max-w-[40ch] truncate font-semibold md:text-lg">{item.title}</h3>
+                <div className="text-muted-foreground flex items-center gap-4 text-sm md:text-base">
                   <span className="flex items-center gap-2">
                     <Clock3 size={16} /> {formatDuration(item.duration)}
                   </span>

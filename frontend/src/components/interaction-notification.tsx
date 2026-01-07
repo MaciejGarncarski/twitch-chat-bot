@@ -15,7 +15,7 @@ export function InteractionNotification({ hasInteracted, onInteract }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.2 } }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 md:p-8"
+          className="bg-background/80 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm md:p-8"
           onClick={onInteract}
         >
           <motion.div
@@ -23,7 +23,7 @@ export function InteractionNotification({ hasInteracted, onInteract }: Props) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="flex flex-col items-center gap-4 rounded-2xl bg-card/90 p-6 md:p-8 text-card-foreground shadow-2xl ring-1 ring-border cursor-pointer select-none"
+            className="bg-card/90 text-card-foreground ring-border flex cursor-pointer flex-col items-center gap-4 rounded-2xl p-6 shadow-2xl ring-1 select-none md:p-8"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -41,8 +41,8 @@ export function InteractionNotification({ hasInteracted, onInteract }: Props) {
               <MousePointerClick className="h-10 w-10 md:h-12 md:w-12" />
             </motion.div>
             <div className="flex flex-col gap-1 text-center">
-              <h2 className="text-lg md:text-xl font-semibold">Kliknij, aby włączyć odtwarzanie</h2>
-              <p className="text-sm text-muted-foreground">
+              <h2 className="text-lg font-semibold md:text-xl">Kliknij, aby włączyć odtwarzanie</h2>
+              <p className="text-muted-foreground text-sm">
                 Przeglądarka wymaga interakcji przed odtwarzaniem dźwięku
               </p>
             </div>

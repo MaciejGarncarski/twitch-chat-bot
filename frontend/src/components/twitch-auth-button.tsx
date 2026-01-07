@@ -32,12 +32,12 @@ export function TwitchAuthButton() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className={" cursor-pointer"}>
+          <Button variant="outline" className={"cursor-pointer"}>
             {data.user.avatar ? (
               <img
                 src={data.user.avatar}
                 alt={`${data.user.login}'s avatar`}
-                className="w-5 h-5 mr-1"
+                className="mr-1 h-5 w-5"
               />
             ) : (
               <User size={18} className="mr-2" />

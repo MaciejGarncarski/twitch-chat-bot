@@ -22,7 +22,7 @@ export function LoopIndicator({ isLoopEnabled }: { isLoopEnabled: boolean }) {
       type="button"
       disabled={!isMod}
       onClick={toggleLoop}
-      className={cn("flex items-center gap-1 h-6 ", isMod ? "cursor-pointer" : "cursor-auto")}
+      className={cn("flex h-6 items-center gap-1", isMod ? "cursor-pointer" : "cursor-auto")}
     >
       <AnimatePresence mode="popLayout" initial={false}>
         {isLoopEnabled ? (

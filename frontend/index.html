@@ -20,17 +20,15 @@
     <div id="app"></div>
     <script>
       const handleFlashOnRender = () => {
-        const theme =
-          JSON.parse(localStorage.getItem('vite-ui-theme'))?.state?.theme || 'system'
+        const theme = JSON.parse(localStorage.getItem("vite-ui-theme"))?.state?.theme || "system"
 
         const root = window.document.documentElement
-        root.classList.remove('light', 'dark')
+        root.classList.remove("light", "dark")
 
-        if (theme === 'system' || !theme) {
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-            .matches
-            ? 'dark'
-            : 'light'
+        if (theme === "system" || !theme) {
+          const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"
 
           root.classList.add(systemTheme)
           return

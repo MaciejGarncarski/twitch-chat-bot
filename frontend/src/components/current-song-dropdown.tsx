@@ -126,7 +126,7 @@ function DropdownItemWithLoader({
     >
       {isPending ? (
         <>
-          <Loader className="animate-spin animation-duration-[2s]" />
+          <Loader className="animation-duration-[2s] animate-spin" />
           {loadingText}...
         </>
       ) : (

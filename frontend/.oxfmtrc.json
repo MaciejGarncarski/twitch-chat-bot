@@ -4,5 +4,8 @@
   "jsxSingleQuote": false,
   "semi": false,
   "printWidth": 100,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "experimentalTailwindcss": {
+    "functions": ["clsx", "cn"]
+  }
 }

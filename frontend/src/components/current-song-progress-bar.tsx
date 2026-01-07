@@ -14,7 +14,7 @@ export function CurrentSongProgressBar({
   const isResetting = progress === 0
 
   return (
-    <div className="h-2 rounded-sm w-full overflow-hidden border bg-secondary">
+    <div className="bg-secondary h-2 w-full overflow-hidden rounded-sm border">
       <motion.div
         key={videoId}
         className="bg-foreground h-full origin-left"
