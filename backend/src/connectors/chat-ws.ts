@@ -1,5 +1,5 @@
 import { commandHandlers } from "@/commands/handlers"
-import { subscribeToChat, unsubscribeAll } from "@/connectors/chat-subscription"
+import { ensureChatSubscription, unsubscribeAll } from "@/connectors/chat-subscription"
 import { logger } from "@/helpers/logger"
 import CommandProcessor from "@/processors/command-processor"
 import { twitchMessageSchema } from "@/types/twitch-ws-message"
@@ -76,8 +76,8 @@ export class ChatWebSocket {
           logger.info("[CHAT WS] Session transferred. Subscriptions preserved.")
           this.isTransferring = false
         } else {
-          logger.info("[CHAT WS] Fresh session. Subscribing to events...")
-          await subscribeToChat(newSessionId)
+          logger.info("[CHAT WS] Fresh session. Ensuring chat subscription...")
+          await ensureChatSubscription(newSessionId)
         }
 
         break

@@ -1,6 +1,16 @@
 import { twitchAuth } from "@/core/twitch-auth-manager"
 import { logger } from "@/helpers/logger"
 
+type EventSubSubscription = {
+  id: string
+  type: string
+  status?: string
+  transport?: {
+    method?: string
+    session_id?: string
+  }
+}
+
 export async function unsubscribeAll() {
   const res = await twitchAuth.fetch("https://api.twitch.tv/helix/eventsub/subscriptions")
   const { data } = await res.json()
@@ -53,4 +63,32 @@ export async function subscribeToChat(sessId: string) {
   }
 
   logger.info("[CHAT SUBSCRIPTION] Subscribed to chat")
+}
+
+export async function ensureChatSubscription(sessId: string) {
+  const listRes = await twitchAuth.fetch("https://api.twitch.tv/helix/eventsub/subscriptions")
+  const listJson = await listRes.json()
+  const subs: Array<EventSubSubscription> = listJson?.data ?? []
+
+  const chatSubs = subs.filter((s) => s.type === "channel.chat.message")
+  const activeForSession = chatSubs.find(
+    (s) =>
+      s?.transport?.method === "websocket" &&
+      s?.transport?.session_id === sessId &&
+      s?.status === "enabled",
+  )
+
+  if (activeForSession && chatSubs.length === 1) {
+    logger.info("[CHAT SUBSCRIPTION] Chat subscription already active for current session.")
+    return
+  }
+
+  if (chatSubs.length > 0) {
+    logger.info(
+      `[CHAT SUBSCRIPTION] Clearing ${chatSubs.length} stale/duplicate chat subscriptions`,
+    )
+    await Promise.all(chatSubs.map((sub) => unsubscribe(sub.id)))
+  }
+
+  await subscribeToChat(sessId)
 }
