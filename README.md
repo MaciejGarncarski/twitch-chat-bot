@@ -23,11 +23,13 @@ Before starting, ensure you have a registered application on Twitch.
 
 ### Generate OAuth Tokens
 
+#### Automatically (recommended)
 
 > [!IMPORTANT]
 > You need to be signed in as your **BOT Account**, this account will send messages etc..
+> For example if your channel name is Streamer1 and your bot account is Bot1, you must be signed in on twitch as Bot1.
+> If you do not have separate bot account, you can use your streamer account.
 
-#### Automatically (recommended)
 
 1.  Set `TWITCH_CLIENT_ID` and `TWITCH_CLIENT_SECRET` in [env](#backend)
 
