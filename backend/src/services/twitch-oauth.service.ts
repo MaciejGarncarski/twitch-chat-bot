@@ -1,6 +1,7 @@
 import { env } from "@/config/env"
 import { twitchAuth } from "@/core/twitch-auth-manager"
 import { logger } from "@/helpers/logger"
+import { JWTPayload, JWTPayloadSchema } from "@ttv-song-request/types"
 import z from "zod"
 
 const clientId = env.TWITCH_CLIENT_ID
@@ -31,10 +32,10 @@ const twitchModResponseSchema = z.object({
     .optional(),
 })
 
-export async function handleAppAuthCallback(request: Request) {
+export async function handleAppAuthCallback(request: Request): Promise<JWTPayload> {
   const url = new URL(request.url)
   const code = url.searchParams.get("code")
-  logger.info(`EXCHANGING CODE FOR TOKEN, CODE: ${code}`)
+  logger.info(`[USER AUTH] EXCHANGING CODE FOR TOKEN, CODE: ${code}`)
 
   if (!code) throw new Error("No code provided")
 
@@ -73,7 +74,18 @@ export async function handleAppAuthCallback(request: Request) {
   }
 
   const userData = await userResponse.json()
-  const user = userData.data[0]
+  const parsedData = userResponseSchema.safeParse(userData)
+
+  if (!parsedData.success) {
+    logger.error(parsedData.error, "Twitch API User Response Validation Failed")
+    throw new Error("Invalid user data structure from Twitch API")
+  }
+
+  if (parsedData.data.data.length === 0) {
+    throw new Error("No user data found in Twitch API response")
+  }
+
+  const user = parsedData.data.data[0]
 
   const isBroadcaster = user.id === twitchAuth.broadcasterId
   const isExtraMod = env.USERS_TREATED_AS_MODERATORS.includes(user.id)
@@ -83,6 +95,7 @@ export async function handleAppAuthCallback(request: Request) {
     return {
       sub: user.id,
       login: user.login,
+      avatar: user.profile_image_url || null,
       role: "MOD",
     }
   }
@@ -130,11 +143,30 @@ export async function handleAppAuthCallback(request: Request) {
     cursor = result.data.pagination?.cursor
   } while (cursor)
 
-  const data = {
+  const data: JWTPayload = {
     sub: user.id,
     login: user.login,
     role: isModAfterCheck ? "MOD" : "USER",
+    avatar: user.profile_image_url || null,
   }
 
   return data
 }
+
+const userResponseSchema = z.object({
+  data: z.array(
+    z.object({
+      id: z.string(),
+      login: z.string(),
+      display_name: z.string(),
+      type: z.string(),
+      broadcaster_type: z.string(),
+      description: z.string(),
+      profile_image_url: z.string(),
+      offline_image_url: z.string(),
+      view_count: z.number(),
+      email: z.string(),
+      created_at: z.string(),
+    }),
+  ),
+})

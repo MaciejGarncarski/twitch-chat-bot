@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bunx --bun vite",
+    "dev": "bun vite",
     "build": "bunx --bun vite build",
     "preview": "vite preview",
     "test": "vitest run",

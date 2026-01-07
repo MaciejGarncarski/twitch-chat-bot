@@ -15,7 +15,6 @@ import { authUrl, handleAppAuthCallback } from "@/services/twitch-oauth.service"
 
 async function init() {
   await Promise.all([twitchAuth.fetchUserId(), twitchAuth.fetchBroadcasterId()])
-  await twitchAuth.refresh()
   songRequestEngine.setupEventListeners()
   new ChatWebSocket()
 }

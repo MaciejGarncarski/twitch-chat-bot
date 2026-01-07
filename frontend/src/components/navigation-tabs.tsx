@@ -18,8 +18,12 @@ export function NavigationTabs() {
   return (
     <Tabs defaultValue={defaultValue} onValueChange={navigateOnSelect}>
       <TabsList className={"gap-2 px-2"}>
-        <TabsTrigger value="account">Zarządzanie</TabsTrigger>
-        <TabsTrigger value="player">Odtwarzacz</TabsTrigger>
+        <TabsTrigger value="account" className={"cursor-pointer"}>
+          Zarządzanie
+        </TabsTrigger>
+        <TabsTrigger value="player" className={"cursor-pointer"}>
+          Odtwarzacz
+        </TabsTrigger>
       </TabsList>
     </Tabs>
   )

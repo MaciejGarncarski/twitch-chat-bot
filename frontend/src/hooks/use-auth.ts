@@ -10,6 +10,7 @@ export const authQueryOptions = queryOptions({
     return {
       authenticated: response.data?.authenticated || false,
       user: response.data?.user || null,
+      avatar: response.data?.user?.avatar || null,
       isMod,
     }
   },
