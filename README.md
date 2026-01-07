@@ -23,7 +23,9 @@ Before starting, ensure you have a registered application on Twitch.
 
 ### Generate OAuth Tokens
 
-Generate tokens for your bot account. The account sending the messages must be signed into Twitch via your browser.
+
+> [!IMPORTANT]
+> You need to be signed in as your **BOT Account**, this account will send messages etc..
 
 #### Automatically (recommended)
 

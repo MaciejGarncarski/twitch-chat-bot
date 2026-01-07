@@ -20,6 +20,8 @@ type CurrentSongProps = {
   username: string
 }
 
+// TODO: If paused, add full width height overlay with "Paused" text
+
 export const CurrentSong = ({
   volume,
   playTime,

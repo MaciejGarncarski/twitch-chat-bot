@@ -18,11 +18,19 @@ export const app = new Elysia()
       .get("/auth/tokens", async ({ redirect }) => {
         return redirect(twitchAuth.authUrl)
       })
-      .get("/auth/callback", async ({ request }) => {
+      .get("/auth/callback/setup", async ({ request }) => {
         const refreshToken = await twitchAuth.handleCallback(request)
-        return {
-          ["REFRESH_TOKEN"]: refreshToken,
-        }
+
+        const html = `
+          <main style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+
+            <h1>Setup Complete</h1>
+            <p>Copy the refresh token below and add it to your .env file as TWITCH_REFRESH_TOKEN:</p>
+            <pre>${refreshToken}</pre>
+          </main>
+          `
+
+        return new Response(html, { headers: { "Content-Type": "text/html" } })
       })
   })
   .listen({ port: env.PORT || 3001 })
