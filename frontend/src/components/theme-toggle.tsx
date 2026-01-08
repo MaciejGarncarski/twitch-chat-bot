@@ -13,7 +13,7 @@ type ThemeToggleProps = {
   withText?: boolean
 }
 
-const iconSizeClass = "h-[1.3rem] w-[1.3rem]"
+const iconSizeClass = "h-[1.3rem] w-[1.3rem] mr-1"
 
 export function ThemeToggle({ withText = true }: ThemeToggleProps) {
   const { setTheme, theme } = useTheme()
@@ -22,10 +22,10 @@ export function ThemeToggle({ withText = true }: ThemeToggleProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size={withText ? "default" : "icon"}>
-          {withText ? <span>Motyw</span> : null}
           {theme === "light" && <Sun className={iconSizeClass} />}
           {theme === "dark" && <Moon className={iconSizeClass} />}
           {theme === "system" && <Monitor className={iconSizeClass} />}
+          {withText ? <span>Motyw</span> : null}
           <span className="sr-only">Motyw</span>
         </Button>
       </DropdownMenuTrigger>

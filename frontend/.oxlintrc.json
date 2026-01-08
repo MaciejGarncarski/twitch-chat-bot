@@ -44,7 +44,8 @@
     "react/no-unescaped-entities": "error",
     "react/no-unknown-property": "error",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "no-console": "warn"
   },
   "overrides": [
     {

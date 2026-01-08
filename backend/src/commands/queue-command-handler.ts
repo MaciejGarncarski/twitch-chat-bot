@@ -1,8 +1,11 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
+const ITEMS_TO_SHOW_DEFAULT = 5
+
 export class QueueCommandHandler extends CommandHandler {
   private readonly command = "!queue"
+  private readonly itemsToShow = ITEMS_TO_SHOW_DEFAULT
 
   rateLimit: RateLimitConfig = {
     windowMs: 60_000,
@@ -21,7 +24,12 @@ export class QueueCommandHandler extends CommandHandler {
     }
 
     const queueItems = songQueue.getQueue()
-    const formattedQueue = queueItems.map((item, index) => `${index + 1}. ${item.title}`).join("\n")
+
+    const itemsToDisplay = Math.min(this.itemsToShow, queueItems.length)
+    const queueItemsToShow = queueItems.slice(0, itemsToDisplay)
+    const formattedQueue = queueItemsToShow
+      .map((item, index) => `${index + 1}. ${item.title}`)
+      .join("\n")
 
     logger.info(`[COMMAND] [QUEUE] Sending current queue.`)
     await sendChatMessage(`Aktualna kolejka:\n${formattedQueue}`, messageId)

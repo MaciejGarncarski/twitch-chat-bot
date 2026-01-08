@@ -39,18 +39,17 @@ export const CurrentSong = ({
 
   return (
     <motion.div
-      animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
-      initial={{ opacity: 0, y: 40, transition: { duration: 0.3 } }}
-      exit={{ opacity: 0, y: -40, transition: { duration: 0.3 } }}
+      animate={{ opacity: 1, transition: { duration: 0.3 } }}
+      initial={{ opacity: 0, transition: { duration: 0.3 } }}
+      exit={{ opacity: 0, transition: { duration: 0.3 } }}
       className="bg-background/95 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-4 py-4 md:h-36 md:flex-row"
     >
       <AnimatePresence>
         {dataStatus === "loading" ? (
           <motion.div
-            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-background/70 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
+            className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
           >
             <p className="text-muted-foreground text-2xl font-medium">
               <Loader className="mr-4 mb-1 inline animate-spin" size={24} />
@@ -59,10 +58,10 @@ export const CurrentSong = ({
           </motion.div>
         ) : !isPlaying && dataStatus === "success" ? (
           <motion.div
-            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            initial={{ opacity: 0 }}
             exit={{ opacity: 0 }}
-            className="bg-background/70 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
+            className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
           >
             <p className="text-muted-foreground text-2xl font-medium">
               <Pause className="mr-4 mb-1 inline" size={24} />

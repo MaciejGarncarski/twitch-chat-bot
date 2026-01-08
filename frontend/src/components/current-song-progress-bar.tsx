@@ -19,8 +19,6 @@ export function CurrentSongProgressBar({
   const isNewSong = prevPlayTime - playTime > 0
   const durationForAnimation = isInitialRender || isNewSong ? 0 : 1
 
-  console.log({ playTime, prevPlayTime })
-
   return (
     <div className="bg-secondary h-2 w-full overflow-hidden rounded-sm border">
       <motion.div
