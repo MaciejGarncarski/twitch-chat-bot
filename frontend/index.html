@@ -1,44 +1,46 @@
 <!doctype html>
 <html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Twitch Chat Bot" />
 
-    <meta name="theme-color" content="#9146FF" />
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="Twitch Chat Bot" />
-    <link rel="manifest" href="/site.webmanifest" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Twitch Chat Bot" />
 
-    <title>Twitch Chat Bot</title>
-  </head>
+  <meta name="theme-color" content="#9146FF" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Twitch Chat Bot" />
+  <link rel="manifest" href="/site.webmanifest" />
 
-  <body>
-    <div id="app"></div>
-    <script>
-      const handleFlashOnRender = () => {
-        const theme = JSON.parse(localStorage.getItem("vite-ui-theme"))?.state?.theme || "system"
+  <title>Twitch Chat Bot</title>
+</head>
 
-        const root = window.document.documentElement
-        root.classList.remove("light", "dark")
+<body>
+  <div id="app"></div>
+  <script>
+    const handleFlashOnRender = () => {
+      const theme = localStorage.getItem("vite-ui-theme") || "system"
 
-        if (theme === "system" || !theme) {
-          const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light"
+      const root = window.document.documentElement
+      root.classList.remove("light", "dark")
 
-          root.classList.add(systemTheme)
-          return
-        }
+      if (theme === "system" || !theme) {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
 
-        root.classList.add(theme)
+        root.classList.add(systemTheme)
+        return
       }
 
-      handleFlashOnRender()
-    </script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+      root.classList.add(theme)
+    }
+
+    handleFlashOnRender()
+  </script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
