@@ -4,13 +4,13 @@ export function VolumeIndicator({ volume }: { volume: number }) {
   return (
     <p className="flex items-center gap-1">
       {volume === 0 ? (
-        <VolumeX size={18} className="mr-1 inline-block" />
+        <VolumeX size={17} className="mr-1 inline-block" />
       ) : volume < 0.2 ? (
-        <Volume size={18} className="mr-1 inline-block" />
+        <Volume size={17} className="mr-1 inline-block" />
       ) : volume < 0.5 ? (
-        <Volume1 size={18} className="mr-1 inline-block" />
+        <Volume1 size={17} className="mr-1 inline-block" />
       ) : (
-        <Volume2 size={18} className="mr-1 inline-block" />
+        <Volume2 size={17} className="mr-1 inline-block" />
       )}
       {volume * 100 || 0}%
     </p>

@@ -1,4 +1,4 @@
-import { CurrentSong } from "@/components/current-song"
+import { CurrentSong } from "@/components/player/current-song"
 import { NavigationTabs } from "@/components/navigation-tabs"
 import { Queue } from "@/components/queue"
 import { QueueEmptyMessage } from "@/components/queue-empty-message"

@@ -25,15 +25,16 @@ import { useSkip } from "@/hooks/use-skip"
 import { useShuffle } from "@/hooks/use-shuffle"
 import { useLoopToggle } from "@/hooks/use-loop-toggle"
 import { useClearQueue } from "@/hooks/use-clear-queue"
+import { cn } from "@/lib/utils"
+import { usePlayerData } from "@/hooks/use-player-data"
+import { useQueue } from "@/hooks/use-queue"
 
-type Props = {
-  isPlaying: boolean
-}
-
-export function CurrentSongDropdown({ isPlaying }: Props) {
+export function CurrentSongDropdown() {
+  const { isLoopEnabled, isPlaying } = usePlayerData()
   const playStateMutation = useSetPlayState({ isPlaying })
   const skipMutation = useSkip()
   const loopMutation = useLoopToggle()
+  const { data } = useQueue()
   const clearQueueMutation = useClearQueue()
   const shuffleMutation = useShuffle()
   const auth = useAuth()
@@ -42,6 +43,8 @@ export function CurrentSongDropdown({ isPlaying }: Props) {
   if (!isMod) {
     return null
   }
+
+  const isQueueEmpty = (data?.length ?? 0) <= 1
 
   return (
     <DropdownMenu>
@@ -61,7 +64,8 @@ export function CurrentSongDropdown({ isPlaying }: Props) {
             text={isPlaying ? "Zatrzymaj" : "Odtwórz"}
           />
           <DropdownItemWithLoader
-            icon={Repeat}
+            icon={isLoopEnabled ? Repeat : Repeat}
+            iconClassName={isLoopEnabled ? "text-green-500" : ""}
             isPending={loopMutation.isPending}
             onSelect={() => loopMutation.mutate()}
             loadingText="Zmieniam"
@@ -85,6 +89,7 @@ export function CurrentSongDropdown({ isPlaying }: Props) {
             onSelect={() => shuffleMutation.mutate()}
             loadingText="Tasuję"
             text="Przetasuj"
+            disabled={isQueueEmpty}
           />
           <DropdownItemWithLoader
             icon={Trash}
@@ -104,8 +109,10 @@ function DropdownItemWithLoader({
   isPending,
   onSelect,
   loadingText,
+  iconClassName,
   text,
   icon: Icon,
+  disabled,
   variant = "default",
 }: {
   isPending: boolean
@@ -113,6 +120,8 @@ function DropdownItemWithLoader({
   loadingText: string
   text: string
   icon: LucideIcon
+  disabled?: boolean
+  iconClassName?: string
   variant?: "default" | "destructive"
 }) {
   return (
@@ -122,7 +131,7 @@ function DropdownItemWithLoader({
         onSelect(e)
       }}
       variant={variant}
-      disabled={isPending}
+      disabled={isPending || disabled}
     >
       {isPending ? (
         <>
@@ -131,7 +140,7 @@ function DropdownItemWithLoader({
         </>
       ) : (
         <>
-          <Icon />
+          <Icon className={cn(iconClassName)} />
           {text}
         </>
       )}

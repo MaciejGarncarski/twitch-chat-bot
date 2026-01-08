@@ -1,4 +1,4 @@
-import { InteractionNotification } from "@/components/interaction-notification"
+import { InteractionNotification } from "@/components/player/interaction-notification"
 import { useAuth } from "@/hooks/use-auth"
 import { useInteraction } from "@/hooks/use-interaction"
 import { usePlayState } from "@/hooks/use-play-state"

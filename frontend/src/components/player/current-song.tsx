@@ -1,12 +1,13 @@
-import { CurrentSongDropdown } from "@/components/current-song-dropdown"
-import { CurrentSongProgressBar } from "@/components/current-song-progress-bar"
-import { CurrentSongTitle } from "@/components/current-song-title"
-import { DurationIndicator } from "@/components/duration-indicator"
-import { LoopIndicator } from "@/components/loop-indicator"
-import { VolumeIndicator } from "@/components/volume-indicator"
+import { CurrentSongDropdown } from "@/components/player/current-song-dropdown"
+import { CurrentSongProgressBar } from "@/components/player/current-song-progress-bar"
+import { CurrentSongTitle } from "@/components/player/current-song-title"
+import { DurationIndicator } from "@/components/player/duration-indicator"
+import { LoopIndicator } from "@/components/player/loop-indicator"
+import { PlayIndicator } from "@/components/player/play-indicator"
+import { VolumeIndicator } from "@/components/player/volume-indicator"
 import { cn } from "@/lib/utils"
 import { useLocation } from "@tanstack/react-router"
-import { Loader, Pause, UserIcon } from "lucide-react"
+import { Loader, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 type CurrentSongProps = {
@@ -49,23 +50,12 @@ export const CurrentSong = ({
           <motion.div
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
+            initial={{ opacity: 0 }}
+            className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-sm"
           >
             <p className="text-muted-foreground text-2xl font-medium">
               <Loader className="mr-4 mb-1 inline animate-spin" size={24} />
-              Synchronizacja...
-            </p>
-          </motion.div>
-        ) : !isPlaying && dataStatus === "success" ? (
-          <motion.div
-            animate={{ opacity: 1 }}
-            initial={{ opacity: 0 }}
-            exit={{ opacity: 0 }}
-            className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
-          >
-            <p className="text-muted-foreground text-2xl font-medium">
-              <Pause className="mr-4 mb-1 inline" size={24} />
-              Zapauzowano
+              Synchronizacja
             </p>
           </motion.div>
         ) : null}
@@ -87,17 +77,18 @@ export const CurrentSong = ({
           <CurrentSongTitle title={title} isPlaying={isPlaying} />
           {isDashboard && (
             <div className={cn(!isPlaying && "absolute right-0 z-20")}>
-              <CurrentSongDropdown isPlaying={isPlaying} />
+              <CurrentSongDropdown />
             </div>
           )}
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3.5">
           <div className="text-muted-foreground flex flex-col items-center justify-between gap-1 text-base md:flex-row md:gap-2">
             <div className="flex items-center gap-3">
+              <PlayIndicator isPlaying={isPlaying} />
               <DurationIndicator playTime={playTime} duration={duration} />
-              <span>-</span>
+              <span className="opacity-70">-</span>
               <VolumeIndicator volume={volume} />
-              <span>-</span>
+              <span className="opacity-70">-</span>
               <LoopIndicator isLoopEnabled={isLoopEnabled} />
             </div>
             <p className="flex items-center gap-2">

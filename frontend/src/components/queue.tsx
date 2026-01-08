@@ -7,28 +7,21 @@ import { formatDuration } from "@/utils/format-duration"
 import { Clock3, Trash2, UserIcon } from "lucide-react"
 import { AnimatePresence, motion, type Variants } from "motion/react"
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-}
-
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 0.95 },
-  visible: {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    scale: 1,
-    transition: { type: "spring", stiffness: 300, damping: 24 },
-  },
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 60,
+      delay: i * 0.3,
+    },
+  }),
   exit: {
     opacity: 0,
-    scale: 0.9,
-    x: -20,
+    x: -40,
     transition: { duration: 0.2 },
   },
 }
@@ -43,16 +36,13 @@ export const Queue = () => {
 
   return (
     <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
       className={cn("bg-background flex flex-col gap-1 rounded-md border px-4 py-4 pb-10")}
     >
       <h2 className="text-muted-foreground mr-auto ml-1 pb-2 text-xl font-semibold">Kolejka</h2>
-      <ul
+      <motion.ul
         className={cn(
-          "min-h-26 overflow-hidden rounded-lg border",
-          queuedCount === 0 && "border-transparent",
+          "bg-secondary/30 min-h-26 overflow-hidden rounded-lg border",
+          queuedCount === 0 && "border-transparent bg-transparent",
         )}
       >
         <AnimatePresence mode="popLayout">
@@ -71,6 +61,7 @@ export const Queue = () => {
             <motion.li
               key={item.id}
               layout
+              custom={idx}
               variants={itemVariants}
               initial="hidden"
               animate="visible"
@@ -111,6 +102,7 @@ export const Queue = () => {
                       <Button
                         size="sm"
                         variant="destructive"
+                        className={"cursor-pointer"}
                         onClick={() => removeVideoMutation.mutate(item.id)}
                       >
                         <Trash2 />
@@ -123,7 +115,7 @@ export const Queue = () => {
             </motion.li>
           ))}
         </AnimatePresence>
-      </ul>
+      </motion.ul>
     </motion.div>
   )
 }
