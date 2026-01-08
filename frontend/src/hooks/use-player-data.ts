@@ -1,14 +1,14 @@
 import { playbackStatusWSSchema } from "@/schemas/playback-status-ws"
 import { useMemo } from "react"
-import useWebSocket from "react-use-websocket"
+import useWebSocket, { ReadyState } from "react-use-websocket"
 
-export function usePlayerData() {
-  const { lastJsonMessage } = useWebSocket(
+export function usePlayerData(): PlayerDataReturn {
+  const { lastJsonMessage, readyState } = useWebSocket(
     import.meta.env.VITE_WS_URL || "ws://localhost:3001/ws",
     {
       shouldReconnect: () => true,
-      reconnectAttempts: 10,
-      reconnectInterval: 3000,
+      reconnectAttempts: 100,
+      reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
     },
   )
 
@@ -28,5 +28,43 @@ export function usePlayerData() {
   const songId = playbackData?.songId ?? null
   const isLoopEnabled = playbackData?.isLoopEnabled ?? false
 
-  return { volume, playTime, isPlaying, songId, isLoopEnabled }
+  const isConnected = readyState === ReadyState.OPEN
+
+  if (!playbackData) {
+    return {
+      volume,
+      playTime,
+      isPlaying,
+      songId,
+      isLoopEnabled,
+      status: "loading",
+    }
+  }
+
+  return {
+    volume,
+    playTime,
+    isPlaying,
+    songId,
+    isLoopEnabled,
+    status: isConnected ? "success" : "loading",
+  }
 }
+
+type PlayerDataReturn =
+  | {
+      volume: number
+      playTime: number
+      isPlaying: boolean
+      songId: string | null
+      isLoopEnabled: boolean
+      status: "loading"
+    }
+  | {
+      volume: number
+      playTime: number
+      isPlaying: boolean
+      songId: string | null
+      isLoopEnabled: boolean
+      status: "success"
+    }

@@ -6,7 +6,7 @@ import { LoopIndicator } from "@/components/loop-indicator"
 import { VolumeIndicator } from "@/components/volume-indicator"
 import { cn } from "@/lib/utils"
 import { useLocation } from "@tanstack/react-router"
-import { Pause, UserIcon } from "lucide-react"
+import { Loader, Pause, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 type CurrentSongProps = {
@@ -19,6 +19,7 @@ type CurrentSongProps = {
   title: string
   duration: number
   username: string
+  dataStatus: "loading" | "success"
 }
 
 export const CurrentSong = ({
@@ -31,6 +32,7 @@ export const CurrentSong = ({
   thumbnail,
   videoId,
   isLoopEnabled,
+  dataStatus,
 }: CurrentSongProps) => {
   const location = useLocation()
   const isDashboard = !location.href.includes("/player-only")
@@ -43,7 +45,19 @@ export const CurrentSong = ({
       className="bg-background/95 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-4 py-4 md:h-36 md:flex-row"
     >
       <AnimatePresence>
-        {!isPlaying && (
+        {dataStatus === "loading" ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="bg-background/70 absolute inset-0 z-10 flex items-center justify-center rounded-md backdrop-blur-xs"
+          >
+            <p className="text-muted-foreground text-2xl font-medium">
+              <Loader className="mr-4 mb-1 inline animate-spin" size={24} />
+              Synchronizacja...
+            </p>
+          </motion.div>
+        ) : !isPlaying && dataStatus === "success" ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -55,7 +69,7 @@ export const CurrentSong = ({
               Zapauzowano
             </p>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
       <a
         href={`https://www.youtube.com/watch?v=${videoId}`}
@@ -92,7 +106,7 @@ export const CurrentSong = ({
               {username}
             </p>
           </div>
-          <CurrentSongProgressBar videoId={videoId} duration={duration} playTime={playTime} />
+          <CurrentSongProgressBar duration={duration} playTime={playTime} />
         </div>
       </div>
     </motion.div>

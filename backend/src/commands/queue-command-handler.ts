@@ -21,10 +21,7 @@ export class QueueCommandHandler extends CommandHandler {
     }
 
     const queueItems = songQueue.getQueue()
-
-    const formattedQueue = queueItems
-      .map((item, index) => `${index + 1}. ${item.title} (dodany przez @${item.username})`)
-      .join("\n")
+    const formattedQueue = queueItems.map((item, index) => `${index + 1}. ${item.title}`).join("\n")
 
     logger.info(`[COMMAND] [QUEUE] Sending current queue.`)
     await sendChatMessage(`Aktualna kolejka:\n${formattedQueue}`, messageId)

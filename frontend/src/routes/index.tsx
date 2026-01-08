@@ -1,13 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import { useVolume } from "@/hooks/use-volume"
 import { usePlayState } from "@/hooks/use-play-state"
-import { useInteraction } from "@/hooks/use-interaction"
 import { AnimatePresence } from "motion/react"
 import { CurrentSong } from "@/components/current-song"
 import { Queue } from "@/components/queue"
-import { PlayerYT } from "@/components/player-yt"
-import { InteractionNotification } from "@/components/interaction-notification"
 import { usePlayerData } from "@/hooks/use-player-data"
 import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
 import { QueueEmptyMessage } from "@/components/queue-empty-message"
@@ -27,9 +24,7 @@ export const Route = createFileRoute("/")({
 
 function App() {
   const { isLoading, data: queueData } = useQueue()
-  const { isPlaying, playTime, volume, songId, isLoopEnabled } = usePlayerData()
-  const { hasInteracted, handleInteract } = useInteraction()
-  const [isReady, setIsReady] = useState(true)
+  const { playTime, isPlaying, volume, status, isLoopEnabled } = usePlayerData()
   const playerRef = useRef<HTMLVideoElement>(null)
 
   const currentSong = queueData?.[0] ?? null
@@ -56,6 +51,7 @@ function App() {
             <QueueLoadingMessage />
           ) : currentSong ? (
             <CurrentSong
+              dataStatus={status}
               isLoopEnabled={isLoopEnabled}
               videoId={currentSong.id}
               duration={currentSong.duration}
@@ -75,19 +71,6 @@ function App() {
       <AnimatePresence mode="popLayout">
         {isLoading || queueData?.length === 0 ? null : <Queue />}
       </AnimatePresence>
-
-      {currentSong && songId === currentSong.id && hasInteracted && (
-        <PlayerYT
-          isReady={isReady}
-          volume={volume}
-          isPlaying={isPlaying}
-          currentSong={currentSong}
-          playerRef={playerRef}
-          setIsReady={setIsReady}
-        />
-      )}
-
-      <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
     </div>
   )
 }

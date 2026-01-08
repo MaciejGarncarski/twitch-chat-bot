@@ -1,27 +1,34 @@
 import { motion } from "motion/react"
+import { useEffect, useState } from "react"
 
 export function CurrentSongProgressBar({
   duration,
   playTime,
-  videoId,
 }: {
   duration: number
   playTime: number
-  videoId: string
 }) {
-  const progress = duration ? playTime / duration : 0
+  const [prevPlayTime, setPrevPlayTime] = useState(0)
 
-  const isResetting = progress === 0
+  useEffect(() => {
+    setPrevPlayTime(playTime)
+  }, [playTime])
+
+  const progress = playTime / duration
+  const isInitialRender = playTime !== 0 && prevPlayTime === 0
+  const isNewSong = prevPlayTime - playTime > 0
+  const durationForAnimation = isInitialRender || isNewSong ? 0 : 1
+
+  console.log({ playTime, prevPlayTime })
 
   return (
     <div className="bg-secondary h-2 w-full overflow-hidden rounded-sm border">
       <motion.div
-        key={videoId}
         className="bg-foreground h-full origin-left"
-        initial={{ scaleX: 0 }}
+        initial={{ scaleX: progress }}
         animate={{ scaleX: progress }}
         transition={{
-          duration: isResetting ? 0 : 1.15,
+          duration: durationForAnimation,
           ease: "linear",
         }}
         style={{ width: "100%" }}

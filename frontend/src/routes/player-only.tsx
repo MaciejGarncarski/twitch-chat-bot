@@ -1,20 +1,17 @@
 import { CurrentSong } from "@/components/current-song"
-import { InteractionNotification } from "@/components/interaction-notification"
 import { NavigationTabs } from "@/components/navigation-tabs"
-import { PlayerYT } from "@/components/player-yt"
 import { Queue } from "@/components/queue"
 import { QueueEmptyMessage } from "@/components/queue-empty-message"
 import { QueueLoadingMessage } from "@/components/queue-loading-message"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useDetectTheme } from "@/hooks/use-detect-theme"
-import { useInteraction } from "@/hooks/use-interaction"
 import { usePlayState } from "@/hooks/use-play-state"
 import { usePlayerData } from "@/hooks/use-player-data"
 import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
 import { useVolume } from "@/hooks/use-volume"
 import { createFileRoute } from "@tanstack/react-router"
 import { AnimatePresence } from "motion/react"
-import { useRef, useState } from "react"
+import { useRef } from "react"
 
 export const Route = createFileRoute("/player-only")({
   loader: async ({ context }) => {
@@ -25,11 +22,8 @@ export const Route = createFileRoute("/player-only")({
 
 function RouteComponent() {
   const { isLoading, data: queueData } = useQueue()
-  const { isPlaying, playTime, volume, songId, isLoopEnabled } = usePlayerData()
-  const { hasInteracted, handleInteract } = useInteraction()
-  const [isReady, setIsReady] = useState(true)
+  const { isPlaying, playTime, volume, isLoopEnabled, status } = usePlayerData()
   const playerRef = useRef<HTMLVideoElement>(null)
-
   const currentSong = queueData?.[0] ?? null
 
   useDetectTheme()
@@ -48,6 +42,7 @@ function RouteComponent() {
             <QueueLoadingMessage />
           ) : currentSong ? (
             <CurrentSong
+              dataStatus={status}
               isLoopEnabled={isLoopEnabled}
               videoId={currentSong.id}
               duration={currentSong.duration}
@@ -67,19 +62,6 @@ function RouteComponent() {
       <AnimatePresence mode="popLayout">
         {isLoading || queueData?.length === 0 ? null : <Queue />}
       </AnimatePresence>
-
-      {currentSong && songId === currentSong.id && hasInteracted && (
-        <PlayerYT
-          isReady={isReady}
-          volume={volume}
-          isPlaying={isPlaying}
-          currentSong={currentSong}
-          playerRef={playerRef}
-          setIsReady={setIsReady}
-        />
-      )}
-
-      <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
     </div>
   )
 }
