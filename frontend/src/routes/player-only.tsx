@@ -60,7 +60,7 @@ function RouteComponent() {
       </div>
 
       <AnimatePresence mode="popLayout">
-        {isLoading || queueData?.length === 0 ? null : <Queue />}
+        {isLoading || queueData?.length === 0 ? null : <Queue showRemoveButton={false} />}
       </AnimatePresence>
     </div>
   )

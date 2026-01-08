@@ -26,7 +26,7 @@ const itemVariants: Variants = {
   },
 }
 
-export const Queue = () => {
+export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
   const { data: queueData } = useQueue()
   const auth = useAuth()
   const removeVideoMutation = useRemoveVideo()
@@ -97,7 +97,7 @@ export const Queue = () => {
                     {item.username}
                   </p>
 
-                  {isMod && (
+                  {isMod && showRemoveButton && (
                     <div className="ml-auto flex">
                       <Button
                         size="sm"

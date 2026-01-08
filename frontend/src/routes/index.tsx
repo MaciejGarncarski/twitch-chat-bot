@@ -69,7 +69,7 @@ function App() {
       </div>
 
       <AnimatePresence mode="popLayout">
-        {isLoading || queueData?.length === 0 ? null : <Queue />}
+        {isLoading || queueData?.length === 0 ? null : <Queue showRemoveButton />}
       </AnimatePresence>
     </div>
   )
