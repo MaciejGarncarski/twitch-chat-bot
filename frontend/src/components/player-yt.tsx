@@ -8,25 +8,25 @@ import { useVolume } from "@/hooks/use-volume"
 import { useEffect, useRef, useState } from "react"
 import ReactPlayer from "react-player"
 
-const MAX_RETRIES = 5
+const MAX_RETRIES = 20
 const RETRY_BASE_DELAY_MS = 5000
 
 export function PlayerYT() {
+  const [isMuted, setIsMuted] = useState(true)
+  const [retryCount, setRetryCount] = useState(0)
+  const [isReady, setIsReady] = useState(true)
+
   const { data: queueData, isLoading: isQueueLoading } = useQueue()
   const { isPlaying, playTime, volume, status } = usePlayerData()
   const { hasInteracted, handleInteract } = useInteraction()
   const playerRef = useRef<HTMLVideoElement>(null)
-  const currentSong = queueData?.[0] ?? null
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   usePlayState(playerRef, playTime, isPlaying)
   useVolume(playerRef, volume)
   useAuth()
 
-  const [isMuted, setIsMuted] = useState(true)
-  const [retryCount, setRetryCount] = useState(0)
-  const [isReady, setIsReady] = useState(true)
-  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
+  const currentSong = queueData?.[0] ?? null
   const songSrc = currentSong?.videoUrl
 
   useEffect(() => {
@@ -59,7 +59,9 @@ export function PlayerYT() {
     }, delay)
   }
 
-  if (!songSrc || isQueueLoading || status !== "success") return null
+  if (!songSrc || isQueueLoading || status !== "success") {
+    return <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
+  }
 
   return (
     <>
@@ -68,8 +70,8 @@ export function PlayerYT() {
           key={`${songSrc}-${retryCount}`}
           ref={playerRef}
           src={songSrc}
-          volume={volume}
-          muted={isMuted}
+          volume={isReady ? volume : 0}
+          muted={isMuted || !isReady}
           playing={isPlaying && isReady}
           onReady={handleReady}
           onError={handleError}
