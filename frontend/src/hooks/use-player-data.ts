@@ -6,6 +6,7 @@ export function usePlayerData(): PlayerDataReturn {
   const { lastJsonMessage, readyState } = useWebSocket(
     import.meta.env.VITE_WS_URL || "ws://localhost:3001/ws",
     {
+      share: true,
       shouldReconnect: () => true,
       reconnectAttempts: 100,
       reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
