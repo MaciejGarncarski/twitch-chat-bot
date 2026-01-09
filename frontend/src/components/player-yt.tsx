@@ -17,7 +17,7 @@ export function PlayerYT() {
   const [isReady, setIsReady] = useState(true)
 
   const { data: queueData, isLoading: isQueueLoading } = useQueue()
-  const { isPlaying, playTime, volume, status } = usePlayerData()
+  const { isPlaying, playTime, volume, status, songId } = usePlayerData()
   const { hasInteracted, handleInteract } = useInteraction()
   const playerRef = useRef<HTMLVideoElement>(null)
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -26,7 +26,7 @@ export function PlayerYT() {
   useVolume(playerRef, volume)
   useAuth()
 
-  const currentSong = queueData?.[0] ?? null
+  const currentSong = queueData?.find((song) => song.id === songId) ?? null
   const songSrc = currentSong?.videoUrl
 
   useEffect(() => {

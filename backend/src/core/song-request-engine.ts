@@ -39,7 +39,7 @@ export class SongRequestEngine {
       }
     })
 
-    this.songQueue.on("song-remove-current", (item) => {
+    this.songQueue.on("song-remove-current", async (item) => {
       try {
         logger.info(`[QUEUE] [REMOVED] [${item.title}] by [${item.username}]`)
         const nextSong = this.songQueue.getCurrent()
@@ -50,7 +50,7 @@ export class SongRequestEngine {
           this.playbackManager.setSong(nextSong.id, nextSong.duration)
 
           if (isPlaying) {
-            this.playbackManager.play()
+            this.playbackManager.playNextSongWithDelay()
           }
           return
         }
@@ -67,7 +67,7 @@ export class SongRequestEngine {
       this.playbackManager.stop()
     })
 
-    this.playbackManager.on("song-ended", () => {
+    this.playbackManager.on("song-ended", async () => {
       const removed = this.songQueue.removeCurrent()
       if (removed) {
         logger.info(`[PLAYBACK] [${removed.title}] Song finished playing`)

@@ -87,7 +87,7 @@ export class ChatWebSocket {
         const reconnectUrl = parsed.payload.session?.reconnect_url
         if (!reconnectUrl) return
 
-        logger.info("[CHAT WS] Twitch requested reconnect (Migration).")
+        logger.warn("[CHAT WS] Twitch requested reconnect (Migration).")
 
         this.isTransferring = true
         this.connect(reconnectUrl)

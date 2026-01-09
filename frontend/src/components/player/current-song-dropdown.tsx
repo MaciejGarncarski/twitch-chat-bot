@@ -44,7 +44,7 @@ export function CurrentSongDropdown() {
     return null
   }
 
-  const isQueueEmpty = (data?.length ?? 0) <= 1
+  const isQueueEmpty = (data?.length ?? 0) <= 2
 
   return (
     <DropdownMenu>

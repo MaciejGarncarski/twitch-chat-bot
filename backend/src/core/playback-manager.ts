@@ -2,10 +2,11 @@ import { EventEmitter } from "node:events"
 
 import { getBunServer } from "@/helpers/init-ws"
 import { logger } from "@/helpers/logger"
-import { playbackStatusWSSchema } from "@/types/playback-status-ws"
+import { PlaybackStatusWS } from "@/types/playback-status-ws"
 
 export interface IPlaybackManager extends EventEmitter {
   play(): void
+  playNextSongWithDelay(): Promise<void>
   pause(): void
   stop(): void
   setSong(songId: string | null, duration: number): void
@@ -37,7 +38,11 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
 
   private broadcastStatus() {
     const bunInstance = getBunServer()
-    if (!bunInstance) return
+
+    if (!bunInstance) {
+      logger.warn("[PLAYBACK] Bun instance not initialized")
+      return
+    }
 
     const currentPlayTime = this.getPlayTime()
 
@@ -55,7 +60,7 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
       return
     }
 
-    const playbackStatus = {
+    const playbackStatus: PlaybackStatusWS = {
       isPlaying: this.isPlaying,
       volume: this.volume,
       songId: this.songId,
@@ -65,14 +70,7 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
       serverTime: Date.now(),
     }
 
-    const parsedStatus = playbackStatusWSSchema.safeParse(playbackStatus)
-
-    if (!parsedStatus.success) {
-      logger.error("[PLAYBACK] Invalid playback status")
-      return
-    }
-
-    bunInstance.publish("playback-status", JSON.stringify(parsedStatus.data))
+    bunInstance.publish("playback-status", JSON.stringify(playbackStatus))
   }
 
   private startHeartbeat() {
@@ -84,9 +82,6 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
     this.songId = songId
     this.currentSongDuration = duration
     this.playTime = 0
-    if (this.isPlaying) {
-      this.startedAt = Date.now()
-    }
   }
 
   public getPlayTime() {
@@ -94,7 +89,21 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
     return Math.floor((Date.now() - this.startedAt) / 1000)
   }
 
+  public async playNextSongWithDelay() {
+    this.isPlaying = false
+    this.playTime = 0
+    this.startedAt = null
+    this.broadcastStatus()
+
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    this.isPlaying = true
+    this.startedAt = Date.now()
+    this.broadcastStatus()
+  }
+
   public play() {
+    this.startedAt = Date.now()
     if (this.isPlaying) return
 
     this.isPlaying = true

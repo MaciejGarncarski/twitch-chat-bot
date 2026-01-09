@@ -7,7 +7,7 @@ export const queueQueryOptions = queryOptions({
     const data = (await api.api.queue.get()) as { data: QueueTrackedItem[] }
     return data.data
   },
-  refetchInterval: 1500,
+  refetchInterval: 1000,
 })
 
 export function useQueue() {
