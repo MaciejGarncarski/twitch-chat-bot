@@ -17,7 +17,7 @@ export function PlayerYT() {
   const [isReady, setIsReady] = useState(true)
 
   const { data: queueData, isLoading: isQueueLoading } = useQueue()
-  const { isPlaying, playTime, volume, status, songId } = usePlayerData()
+  const { isPlaying, playTime, volume, status, songId, isLoopEnabled } = usePlayerData()
   const { hasInteracted, handleInteract } = useInteraction()
   const playerRef = useRef<HTMLVideoElement>(null)
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -70,6 +70,7 @@ export function PlayerYT() {
           key={`${songSrc}-${retryCount}`}
           ref={playerRef}
           src={songSrc}
+          loop={isLoopEnabled}
           volume={isReady ? volume : 0}
           muted={isMuted || !isReady}
           playing={isPlaying && isReady}

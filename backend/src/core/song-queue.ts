@@ -32,7 +32,8 @@ export interface ISongQueue extends EventEmitter {
   on(event: "song-remove-current", listener: (item: QueuedItem) => void): this
 }
 
-const MAX_QUEUE_LENGTH = 10
+// TODO: Change it someday lol
+const MAX_QUEUE_LENGTH = 300
 
 export class SongQueue extends EventEmitter implements ISongQueue {
   private queue: QueuedItem[] = []

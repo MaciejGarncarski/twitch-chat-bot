@@ -25,6 +25,10 @@ describe("GitHubCommandHandler", () => {
     test("sends repo link message with available commands", async () => {
       const ctx = createMockContext()
       await handler.execute(ctx)
+      expect(ctx.deps.sendChatMessage).toHaveBeenCalledWith(
+        "Link do repozytorium: https://github.com/maciejgarncarski/twitch-chat-bot",
+        ctx.messageId,
+      )
       expect(ctx.deps.sendChatMessage).toHaveBeenCalledTimes(1)
     })
   })

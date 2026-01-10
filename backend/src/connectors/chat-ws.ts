@@ -1,4 +1,6 @@
+import { sendChatMessage } from "@/api/send-chat-message"
 import { commandHandlers } from "@/commands/handlers"
+import { env } from "@/config/env"
 import { ensureChatSubscription, unsubscribeAll } from "@/connectors/chat-subscription"
 import { logger } from "@/helpers/logger"
 import CommandProcessor from "@/processors/command-processor"
@@ -10,7 +12,8 @@ const processor = new CommandProcessor(commandHandlers)
 export class ChatWebSocket {
   private ws?: WebSocket
   private missedMessageTimer?: NodeJS.Timeout
-
+  private readonly reminderIntervalMs = 5 * 60 * 1000 // 5 minutes
+  private reminderIntervalId?: NodeJS.Timeout
   private isTransferring = false
 
   private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws"
@@ -20,11 +23,23 @@ export class ChatWebSocket {
     this.connect()
   }
 
+  private startRemainderInterval() {
+    if (this.reminderIntervalId) {
+      clearInterval(this.reminderIntervalId)
+    }
+
+    this.reminderIntervalId = setInterval(() => {
+      sendChatMessage(`Wpisz ${env.COMMAND_PREFIX}help, aby zobaczyć dostępne komendy.`)
+    }, this.reminderIntervalMs)
+  }
+
   private connect(url: string = this.DEFAULT_WS_URL) {
     logger.info(`[CHAT WS] Connecting to ${url}...`)
 
     const ws = new WebSocket(url)
     this.ws = ws
+
+    this.startRemainderInterval()
 
     ws.addEventListener("message", async ({ data }) => {
       this.resetKeepaliveTimer()

@@ -2,6 +2,8 @@
 
 This project is a Twitch-integrated bot or dashboard that connects a custom frontend with a Bun-powered backend.
 
+📚 **[Pełna dokumentacja komend w języku polskim → DOCS.md](DOCS.md)**
+
 ## 1. Prerequisites
 
 Ensure you have [bun](https://bun.com/docs/installation) installed on your machine.

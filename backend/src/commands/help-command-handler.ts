@@ -24,6 +24,7 @@ export class HelpCommandHandler extends CommandHandler {
     next: { modOnly: false, text: "- informacje o nast." },
     playlist: { modOnly: false, text: "<nazwa / link>" },
     fill: { modOnly: false, text: "<fraza>" },
+    ui: { modOnly: false, text: "- interfejs web" },
     vanish: { modOnly: true, text: "" },
     pause: { modOnly: true, text: "" },
     play: { modOnly: true, text: "" },

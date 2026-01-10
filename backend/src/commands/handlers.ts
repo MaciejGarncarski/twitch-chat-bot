@@ -1,6 +1,7 @@
 import { ClearAllCommandHandler } from "@/commands/clear-all-command-handler"
 import { CurrentSongCommandHandler } from "@/commands/current-song-command-handler"
 import { FillCommandHandler } from "@/commands/fill-command-handler"
+import { FrontendCommandHandler } from "@/commands/frontend-command-handler"
 import { GithubCommandHandler } from "@/commands/github-command-handler"
 import { HelpCommandHandler } from "@/commands/help-command-handler"
 import { LoopToggleCommandHandler } from "@/commands/loop-toggle-command-handler"
@@ -21,14 +22,15 @@ import { WrongSongAllCommandHandler } from "@/commands/wrong-song-all-command-ha
 import { WrongSongCommandHandler } from "@/commands/wrong-song-command-handler"
 
 export const commandHandlers = [
-  new YoutubeSrHandler(),
   new SkipCommandHandler(),
   new CurrentSongCommandHandler(),
   new QueueCommandHandler(),
-  new VolumeCommandHandler(),
   new WrongSongCommandHandler(),
   new WrongSongAllCommandHandler(),
   new GithubCommandHandler(),
+  new FrontendCommandHandler(),
+  new VolumeCommandHandler(),
+  new YoutubeSrHandler(),
   new LoopToggleCommandHandler(),
   new PlayCommandHandler(),
   new PauseCommandHandler(),
