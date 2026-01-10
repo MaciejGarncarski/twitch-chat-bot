@@ -21,7 +21,7 @@ export function TwitchAuthButton() {
 
   if (isLoading) {
     return (
-      <Button type="button" variant={"ghost"} className={"cursor-pointer"}>
+      <Button type="button" variant={"outline"} disabled className={"cursor-pointer"}>
         <Loader size={16} className="mr-2 animate-spin" />
         Chwila
       </Button>
