@@ -1,27 +1,26 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 import { LoopToggleCommandHandler } from "@/commands/loop-toggle-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 
-const COMMAND = "!loop"
+const COMMAND = createCommand("loop")
 
 describe("LoopToggleCommandHandler", () => {
   const handler = new LoopToggleCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !loop (case insensitive)", () => {
-      expect(handler.canHandle("!loop")).toBe(true)
-      expect(handler.canHandle("!LOOP")).toBe(true)
-      expect(handler.canHandle("!Loop")).toBe(true)
+    test("matches loop command (case insensitive)", () => {
+      expect(handler.canHandle("loop")).toBe(true)
+      expect(handler.canHandle("LOOP")).toBe(true)
+      expect(handler.canHandle("Loop")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!loopx")).toBe(false)
-      expect(handler.canHandle("loop")).toBe(false)
-      expect(handler.canHandle("!loop now")).toBe(false)
+      expect(handler.canHandle("loopx")).toBe(false)
+      expect(handler.canHandle("loop now")).toBe(false)
     })
   })
 

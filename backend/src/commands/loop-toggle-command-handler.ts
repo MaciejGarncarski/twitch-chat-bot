@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class LoopToggleCommandHandler extends CommandHandler {
-  private readonly command = "!loop"
+  private readonly command = "loop"
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
@@ -18,7 +18,7 @@ export class LoopToggleCommandHandler extends CommandHandler {
     deps: { logger, playbackManager, sendChatMessage },
     isMod,
     messageId,
-    sanitizedMessage,
+    sanitizedCommand,
     username,
   }: CommandContext): Promise<void> {
     if (!isMod) {
@@ -29,7 +29,7 @@ export class LoopToggleCommandHandler extends CommandHandler {
     await sendChatMessage(`Loop ${state ? "włączony" : "wyłączony"}.`, messageId)
 
     logger.info(
-      `[COMMAND] [EXEC] [LOOP] User ${username} toggled loop to ${state ? "enabled" : "disabled"} (${sanitizedMessage})`,
+      `[COMMAND] [EXEC] [LOOP] User ${username} toggled loop to ${state ? "enabled" : "disabled"} (${sanitizedCommand})`,
     )
   }
 }

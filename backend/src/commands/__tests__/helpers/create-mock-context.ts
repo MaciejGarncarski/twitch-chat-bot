@@ -1,6 +1,7 @@
 import { mock } from "bun:test"
 
 import { CommandContext } from "@/commands/command"
+import { env } from "@/config/env"
 import { TwitchMessagePayload } from "@/types/twitch-ws-message"
 
 const createTextFragment = (text: string) => ({
@@ -109,7 +110,12 @@ export function createMockDeps(): CommandContext["deps"] {
 
 export function createMockContext(overrides: CreateMockContextOptions = {}): CommandContext {
   const { message, deps: depsOverrides, ...rest } = overrides
-  const messageText = message ?? "!sr test song"
+  const messageText = message ?? createCommand("sr test song")
+
+  // Strip the command prefix to get sanitizedCommand (like the real processor does)
+  const sanitizedCommand = messageText.startsWith(env.COMMAND_PREFIX)
+    ? messageText.slice(env.COMMAND_PREFIX.length)
+    : messageText
 
   const payload: TwitchMessagePayload = rest.payload ?? {
     ...defaultTwitchMessagePayload,
@@ -128,10 +134,19 @@ export function createMockContext(overrides: CreateMockContextOptions = {}): Com
     messageId: rest.messageId ?? "test-message-id",
     userId: rest.userId ?? "67890",
     username: rest.username ?? "test_chatter",
-    sanitizedMessage: rest.sanitizedMessage ?? messageText,
+    sanitizedCommand: rest.sanitizedCommand ?? sanitizedCommand,
     deps: {
       ...createMockDeps(),
       ...depsOverrides,
     },
   }
+}
+
+/**
+ * Helper to create a command message with the environment's command prefix.
+ * @param command - The command name without prefix (e.g., "help", "skip", "sr youtube.com/...")
+ * @returns The full command message with prefix (e.g., "#help" in test environment)
+ */
+export function createCommand(command: string): string {
+  return `${env.COMMAND_PREFIX}${command}`
 }

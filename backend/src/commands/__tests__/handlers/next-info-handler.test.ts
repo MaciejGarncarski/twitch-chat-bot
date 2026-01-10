@@ -1,26 +1,25 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { NextInfoCommandHandler } from "@/commands/next-info-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { SongQueue } from "@/core/song-queue"
 
-const COMMAND = "!next"
+const COMMAND = createCommand("next")
 
 describe("NextInfoCommandHandler", () => {
   const handler = new NextInfoCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !next (case insensitive)", () => {
-      expect(handler.canHandle("!next")).toBe(true)
-      expect(handler.canHandle("!NEXT")).toBe(true)
-      expect(handler.canHandle("!Next")).toBe(true)
+    test("matches next command (case insensitive)", () => {
+      expect(handler.canHandle("next")).toBe(true)
+      expect(handler.canHandle("NEXT")).toBe(true)
+      expect(handler.canHandle("Next")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!nex")).toBe(false)
-      expect(handler.canHandle("next")).toBe(false)
-      expect(handler.canHandle("!next song")).toBe(false)
+      expect(handler.canHandle("nex")).toBe(false)
+      expect(handler.canHandle("next song")).toBe(false)
     })
   })
 

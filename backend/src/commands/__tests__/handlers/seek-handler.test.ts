@@ -1,37 +1,36 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { SeekCommandHandler } from "@/commands/seek-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
-const COMMAND_SECONDS = "!seek 30"
-const COMMAND_TIME = "!seek 1:30"
+const COMMAND_SECONDS = createCommand("seek 30")
+const COMMAND_TIME = createCommand("seek 1:30")
 
 describe("SeekCommandHandler", () => {
   const handler = new SeekCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !seek with seconds (case insensitive)", () => {
-      expect(handler.canHandle("!seek 30")).toBe(true)
-      expect(handler.canHandle("!SEEK 30")).toBe(true)
-      expect(handler.canHandle("!Seek 0")).toBe(true)
-      expect(handler.canHandle("!seek 120")).toBe(true)
+    test("matches seek command with seconds (case insensitive)", () => {
+      expect(handler.canHandle("seek 30")).toBe(true)
+      expect(handler.canHandle("SEEK 30")).toBe(true)
+      expect(handler.canHandle("Seek 0")).toBe(true)
+      expect(handler.canHandle("seek 120")).toBe(true)
     })
 
-    test("matches !seek with mm:ss format (case insensitive)", () => {
-      expect(handler.canHandle("!seek 1:30")).toBe(true)
-      expect(handler.canHandle("!SEEK 1:30")).toBe(true)
-      expect(handler.canHandle("!Seek 0:00")).toBe(true)
-      expect(handler.canHandle("!seek 10:45")).toBe(true)
+    test("matches seek command with mm:ss format (case insensitive)", () => {
+      expect(handler.canHandle("seek 1:30")).toBe(true)
+      expect(handler.canHandle("SEEK 1:30")).toBe(true)
+      expect(handler.canHandle("Seek 0:00")).toBe(true)
+      expect(handler.canHandle("seek 10:45")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!seek")).toBe(false)
-      expect(handler.canHandle("seek 30")).toBe(false)
-      expect(handler.canHandle("!seek abc")).toBe(false)
-      expect(handler.canHandle("!seek 1:60")).toBe(false)
+      expect(handler.canHandle("seek")).toBe(false)
+      expect(handler.canHandle("seek abc")).toBe(false)
+      expect(handler.canHandle("seek 1:60")).toBe(false)
     })
   })
 
@@ -84,7 +83,7 @@ describe("SeekCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!seek 999",
+        message: createCommand("seek 999"),
         deps: { playbackManager, songQueue: queue },
       })
 

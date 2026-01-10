@@ -8,10 +8,11 @@ import { logger } from "@/helpers/logger"
 import { rateLimiter } from "@/helpers/rate-limit"
 import { sanitizeMessage } from "@/helpers/sanitize-message"
 import { CommandError, CommandErrorCode } from "@/types/errors"
-import { TwitchWSMessage } from "@/types/twitch-ws-message"
+import { MessageFragments, TwitchWSMessage } from "@/types/twitch-ws-message"
 
 class CommandProcessor {
   handlers: CommandHandler[]
+  private readonly COMMAND_PREFIX = env.COMMAND_PREFIX
 
   constructor(handlers: CommandHandler[]) {
     this.handlers = handlers
@@ -22,6 +23,9 @@ class CommandProcessor {
       return
     }
 
+    const commandFromMention = this.extractCommandFromMention(
+      parsed.payload.event?.message?.fragments || [],
+    )
     const messageText = parsed.payload.event?.message?.text.trim()
 
     if (!messageText) {
@@ -29,7 +33,13 @@ class CommandProcessor {
       return
     }
 
-    const sanitizedMessage = sanitizeMessage(messageText).toLowerCase()
+    if (!this.isCommandForBot(messageText) && !commandFromMention) {
+      return
+    }
+
+    const sanitizedMessage = sanitizeMessage(commandFromMention || messageText).toLowerCase()
+    const sanitizedCommand = sanitizedMessage.slice(1).trim()
+
     const messageId = parsed.payload.event?.message_id
     const userId = parsed.payload.event?.chatter_user_id
     const username =
@@ -72,7 +82,7 @@ class CommandProcessor {
     }
 
     for (const handler of this.handlers) {
-      const canHandle = handler.canHandle(sanitizedMessage)
+      const canHandle = handler.canHandle(sanitizedCommand)
 
       if (!canHandle) {
         continue
@@ -103,7 +113,7 @@ class CommandProcessor {
         await handler.execute({
           payload: parsed.payload,
           deps,
-          sanitizedMessage,
+          sanitizedCommand,
           userId,
           username: normalizedUser,
           messageId,
@@ -147,6 +157,43 @@ class CommandProcessor {
         }
       }
     }
+  }
+
+  private isCommandForBot(message: string): boolean {
+    return message[0] === this.COMMAND_PREFIX
+  }
+
+  private extractCommandFromMention(fragments: MessageFragments[]): string | null {
+    const isFirstFragmentMention = fragments.length > 0 && fragments[0].type === "mention"
+
+    if (!isFirstFragmentMention) {
+      return null
+    }
+
+    const message = fragments
+      .map((fragment) => fragment.text)
+      .join("")
+      .trim()
+
+    const TWITCH_BOT_USERNAME = "BOT_MG"
+    const mentionPrefix = `@${TWITCH_BOT_USERNAME.toLowerCase()}`
+
+    if (message.toLowerCase().startsWith(mentionPrefix)) {
+      const text = message.slice(mentionPrefix.length).trim()
+
+      if (!this.isCommandForBot(text)) {
+        const textWithPrefix = `${this.COMMAND_PREFIX}${text}`
+        if (this.isCommandForBot(textWithPrefix)) {
+          return textWithPrefix
+        }
+
+        return null
+      }
+
+      return text
+    }
+
+    return null
   }
 }
 

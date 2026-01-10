@@ -68,7 +68,7 @@ describe("SongRequestEngine", () => {
     })
 
     describe("song-remove-current event", () => {
-      test("plays next song when current is removed", () => {
+      test("plays next song when current is removed", async () => {
         songQueue.addItemToQueue(createMockItem("first"))
         songQueue.addItemToQueue(createMockItem("second"))
         playbackManager.play()
@@ -76,7 +76,10 @@ describe("SongRequestEngine", () => {
         songQueue.emit("song-remove-current", createMockItem("first"))
         songQueue.getQueue().shift() // simulate removal
 
-        // The next song should be set up
+        // playNextSongWithDelay sets isPlaying to false first, then true after 2s delay
+        // So we need to wait for the delay to complete
+        await new Promise((resolve) => setTimeout(resolve, 2100))
+
         expect(playbackManager.getIsPlaying()).toBe(true)
       })
 

@@ -1,24 +1,23 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { GithubCommandHandler } from "@/commands/github-command-handler"
 
-const COMMAND = "!github"
+const COMMAND = createCommand("github")
 
 describe("GitHubCommandHandler", () => {
   const handler = new GithubCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !github (case insensitive)", () => {
-      expect(handler.canHandle("!github")).toBe(true)
-      expect(handler.canHandle("!GITHUB")).toBe(true)
-      expect(handler.canHandle("!GitHub")).toBe(true)
+    test("matches github command (case insensitive)", () => {
+      expect(handler.canHandle("github")).toBe(true)
+      expect(handler.canHandle("GITHUB")).toBe(true)
+      expect(handler.canHandle("GitHub")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!gh")).toBe(false)
-      expect(handler.canHandle("github")).toBe(false)
-      expect(handler.canHandle("!git hub")).toBe(false)
+      expect(handler.canHandle("gh")).toBe(false)
+      expect(handler.canHandle("git hub")).toBe(false)
     })
   })
 

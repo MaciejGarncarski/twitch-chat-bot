@@ -36,6 +36,7 @@ const emoteFragment = z.object({
 })
 
 const messageFragments = z.union([emoteFragment, textFragment, mentionFragment])
+export type MessageFragments = z.infer<typeof messageFragments>
 
 const replySchema = z.object({
   parent_message_id: z.string(),

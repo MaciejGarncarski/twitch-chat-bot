@@ -14,7 +14,11 @@ import { jwtConfig } from "@/config/jwt"
 import { authUrl, handleAppAuthCallback } from "@/services/twitch-oauth.service"
 
 async function init() {
-  await Promise.all([twitchAuth.fetchUserId(), twitchAuth.fetchBroadcasterId()])
+  await Promise.all([
+    twitchAuth.fetchBotUsername(),
+    twitchAuth.fetchUserId(),
+    twitchAuth.fetchBroadcasterId(),
+  ])
   songRequestEngine.setupEventListeners()
   new ChatWebSocket()
 }

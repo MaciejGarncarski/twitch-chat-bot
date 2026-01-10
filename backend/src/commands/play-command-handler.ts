@@ -3,15 +3,15 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class PlayCommandHandler extends CommandHandler {
-  private readonly regex = /^!play\s*$/i
+  private readonly regex = /^play\s*$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
     max: 2,
   }
 
-  canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+  canHandle(command: string): boolean {
+    return this.regex.test(command)
   }
 
   async execute({ deps: { logger, playbackManager }, payload, isMod }: CommandContext) {

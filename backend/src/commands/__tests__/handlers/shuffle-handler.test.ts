@@ -1,26 +1,25 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { ShuffleCommandHandler } from "@/commands/shuffle-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
-const COMMAND = "!shuffle"
+const COMMAND = createCommand("shuffle")
 
 describe("ShuffleCommandHandler", () => {
   const handler = new ShuffleCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !shuffle (case insensitive)", () => {
-      expect(handler.canHandle("!shuffle")).toBe(true)
-      expect(handler.canHandle("!SHUFFLE")).toBe(true)
-      expect(handler.canHandle("!Shuffle")).toBe(true)
+    test("matches shuffle command (case insensitive)", () => {
+      expect(handler.canHandle("shuffle")).toBe(true)
+      expect(handler.canHandle("SHUFFLE")).toBe(true)
+      expect(handler.canHandle("Shuffle")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!shuffl")).toBe(false)
-      expect(handler.canHandle("shuffle")).toBe(false)
-      expect(handler.canHandle("!shuffle now")).toBe(false)
+      expect(handler.canHandle("shuffl")).toBe(false)
+      expect(handler.canHandle("shuffle now")).toBe(false)
     })
   })
 

@@ -1,26 +1,25 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { PauseCommandHandler } from "@/commands/pause-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { CommandErrorCode } from "@/types/errors"
 
-const COMMAND = "!pause"
+const COMMAND = createCommand("pause")
 
 describe("PauseCommandHandler", () => {
   const handler = new PauseCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !pause (case insensitive)", () => {
-      expect(handler.canHandle("!pause")).toBe(true)
-      expect(handler.canHandle("!PAUSE")).toBe(true)
-      expect(handler.canHandle("!Pause")).toBe(true)
+    test("matches pause command (case insensitive)", () => {
+      expect(handler.canHandle("pause")).toBe(true)
+      expect(handler.canHandle("PAUSE")).toBe(true)
+      expect(handler.canHandle("Pause")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!paus")).toBe(false)
-      expect(handler.canHandle("pause")).toBe(false)
-      expect(handler.canHandle("!pause now")).toBe(false)
+      expect(handler.canHandle("paus")).toBe(false)
+      expect(handler.canHandle("pause now")).toBe(false)
     })
   })
 

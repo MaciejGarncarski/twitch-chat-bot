@@ -1,26 +1,25 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { SkipCommandHandler } from "@/commands/skip-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
-const COMMAND = "!skip"
+const COMMAND = createCommand("skip")
 
 describe("SkipCommandHandler", () => {
   const handler = new SkipCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !skip (case insensitive)", () => {
-      expect(handler.canHandle("!skip")).toBe(true)
-      expect(handler.canHandle("!SKIP")).toBe(true)
-      expect(handler.canHandle("!Skip")).toBe(true)
+    test("matches skip command (case insensitive)", () => {
+      expect(handler.canHandle("skip")).toBe(true)
+      expect(handler.canHandle("SKIP")).toBe(true)
+      expect(handler.canHandle("Skip")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!ski")).toBe(false)
-      expect(handler.canHandle("skip")).toBe(false)
-      expect(handler.canHandle("!skip now")).toBe(false)
+      expect(handler.canHandle("ski")).toBe(false)
+      expect(handler.canHandle("skip now")).toBe(false)
     })
   })
 
@@ -68,7 +67,7 @@ describe("SkipCommandHandler", () => {
       const ctx = createMockContext({
         isMod: false,
         username: "test_chatter",
-        message: "!skip",
+        message: createCommand("skip"),
         deps: { songQueue: queue },
       })
 
@@ -80,7 +79,7 @@ describe("SkipCommandHandler", () => {
 
       const ctx = createMockContext({
         isMod: true,
-        message: "!skip",
+        message: createCommand("skip"),
         deps: { songQueue: queue },
       })
 

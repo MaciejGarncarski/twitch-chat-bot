@@ -1,26 +1,25 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { PlayCommandHandler } from "@/commands/play-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { CommandErrorCode } from "@/types/errors"
 
-const COMMAND = "!play"
+const COMMAND = createCommand("play")
 
 describe("PlayCommandHandler", () => {
   const handler = new PlayCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !play (case insensitive)", () => {
-      expect(handler.canHandle("!play")).toBe(true)
-      expect(handler.canHandle("!PLAY")).toBe(true)
-      expect(handler.canHandle("!Play")).toBe(true)
+    test("matches play command (case insensitive)", () => {
+      expect(handler.canHandle("play")).toBe(true)
+      expect(handler.canHandle("PLAY")).toBe(true)
+      expect(handler.canHandle("Play")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!pla")).toBe(false)
-      expect(handler.canHandle("play")).toBe(false)
-      expect(handler.canHandle("!play now")).toBe(false)
+      expect(handler.canHandle("pla")).toBe(false)
+      expect(handler.canHandle("play now")).toBe(false)
     })
   })
 

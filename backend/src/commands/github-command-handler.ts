@@ -3,15 +3,15 @@ import { logger } from "@/helpers/logger"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class GithubCommandHandler extends CommandHandler {
-  private readonly command = "!github"
+  private readonly command = "github"
 
   rateLimit: RateLimitConfig = {
     windowMs: 30000,
     max: 2,
   }
 
-  canHandle(messageText: string): boolean {
-    return messageText.toLowerCase() === this.command
+  canHandle(command: string): boolean {
+    return command.toLowerCase() === this.command
   }
 
   async execute({ deps: { sendChatMessage }, messageId }: CommandContext) {

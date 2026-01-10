@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class RemoveCommandHandler extends CommandHandler {
-  private readonly regex = /^!remove\s([1-9][0-9]?)$/i
+  private readonly regex = /^remove\s([1-9][0-9]?)$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
@@ -14,12 +14,12 @@ export class RemoveCommandHandler extends CommandHandler {
     return this.regex.test(command)
   }
 
-  public async execute({ deps, isMod, sanitizedMessage }: CommandContext): Promise<void> {
+  public async execute({ deps, isMod, sanitizedCommand }: CommandContext): Promise<void> {
     if (!isMod) {
       throw new CommandError(CommandErrorCode.NOT_A_MOD)
     }
 
-    const positionMatch = this.regex.exec(sanitizedMessage)
+    const positionMatch = this.regex.exec(sanitizedCommand)
     if (!positionMatch) {
       throw new CommandError(CommandErrorCode.INVALID_COMMAND_FORMAT)
     }

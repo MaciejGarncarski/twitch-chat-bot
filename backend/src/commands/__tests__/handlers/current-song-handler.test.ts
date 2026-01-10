@@ -1,25 +1,24 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { SongQueue } from "@/core/song-queue"
 import { CurrentSongCommandHandler } from "@/commands/current-song-command-handler"
 
-const COMMAND = "!currentsong"
+const COMMAND = createCommand("currentsong")
 
 describe("CurrentSongCommandHandler", () => {
   const handler = new CurrentSongCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !song (case insensitive)", () => {
-      expect(handler.canHandle("!song")).toBe(true)
-      expect(handler.canHandle("!SoNg")).toBe(true)
-      expect(handler.canHandle("!SONG")).toBe(true)
+    test("matches song command (case insensitive)", () => {
+      expect(handler.canHandle("song")).toBe(true)
+      expect(handler.canHandle("SoNg")).toBe(true)
+      expect(handler.canHandle("SONG")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!cs")).toBe(false)
-      expect(handler.canHandle("song")).toBe(false)
-      expect(handler.canHandle("!songs")).toBe(false)
+      expect(handler.canHandle("cs")).toBe(false)
+      expect(handler.canHandle("songs")).toBe(false)
     })
   })
 

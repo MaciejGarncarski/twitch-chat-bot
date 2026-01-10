@@ -1,24 +1,23 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { WrongSongCommandHandler } from "@/commands/wrong-song-command-handler"
 import { SongQueue } from "@/core/song-queue"
 
-const COMMAND = "!wrongsong"
+const COMMAND = createCommand("wrongsong")
 
 describe("WrongSongCommandHandler", () => {
   const handler = new WrongSongCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !wrongsong (case insensitive)", () => {
-      expect(handler.canHandle("!wrongsong")).toBe(true)
-      expect(handler.canHandle("!WRONGSONG")).toBe(true)
-      expect(handler.canHandle("!WrongSong")).toBe(true)
+    test("matches wrongsong command (case insensitive)", () => {
+      expect(handler.canHandle("wrongsong")).toBe(true)
+      expect(handler.canHandle("WRONGSONG")).toBe(true)
+      expect(handler.canHandle("WrongSong")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!wrong")).toBe(false)
-      expect(handler.canHandle("wrongsong")).toBe(false)
+      expect(handler.canHandle("wrong")).toBe(false)
     })
   })
 
@@ -31,7 +30,7 @@ describe("WrongSongCommandHandler", () => {
 
       const ctx = createMockContext({
         username: "test_chatter",
-        message: "!wrongsong",
+        message: createCommand("wrongsong"),
         deps: { songQueue: queue },
       })
 

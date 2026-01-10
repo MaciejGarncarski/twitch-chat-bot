@@ -2,15 +2,15 @@ import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class VoteSkipCommandHandler extends CommandHandler {
-  private readonly command = "!voteskip"
+  private readonly command = "voteskip"
 
   rateLimit: RateLimitConfig = {
     windowMs: 8000,
     max: 2,
   }
 
-  canHandle(messageText: string): boolean {
-    return messageText.toLowerCase() === this.command
+  canHandle(command: string): boolean {
+    return command.toLowerCase() === this.command
   }
 
   async execute({

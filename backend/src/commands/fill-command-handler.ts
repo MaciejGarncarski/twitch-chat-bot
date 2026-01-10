@@ -8,24 +8,24 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { shuffle } from "@/helpers/shuffle"
 
 export class FillCommandHandler extends CommandHandler {
-  private readonly regex = /^!fill\s+(.+)$/i
+  private readonly regex = /^fill\s+(.+)$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
     max: 3,
   }
 
-  public canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+  public canHandle(command: string): boolean {
+    return this.regex.test(command)
   }
 
   public async execute({
-    sanitizedMessage,
+    sanitizedCommand,
     deps,
     messageId,
     username,
   }: CommandContext): Promise<void> {
-    const match = sanitizedMessage.match(this.regex)
+    const match = sanitizedCommand.match(this.regex)
     if (!match) return
 
     const queueSlotsAvailable = deps.songQueue.getAvailableSlots()

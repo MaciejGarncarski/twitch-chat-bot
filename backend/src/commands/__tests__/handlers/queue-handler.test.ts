@@ -1,25 +1,24 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { QueueCommandHandler } from "@/commands/queue-command-handler"
 import { SongQueue } from "@/core/song-queue"
 
-const COMMAND = "!queue"
+const COMMAND = createCommand("queue")
 
 describe("QueueCommandHandler", () => {
   const handler = new QueueCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !queue (case insensitive)", () => {
-      expect(handler.canHandle("!queue")).toBe(true)
-      expect(handler.canHandle("!QUEUE")).toBe(true)
-      expect(handler.canHandle("!Queue")).toBe(true)
+    test("matches queue command (case insensitive)", () => {
+      expect(handler.canHandle("queue")).toBe(true)
+      expect(handler.canHandle("QUEUE")).toBe(true)
+      expect(handler.canHandle("Queue")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!queu")).toBe(false)
-      expect(handler.canHandle("queue")).toBe(false)
-      expect(handler.canHandle("!queue list")).toBe(false)
+      expect(handler.canHandle("queu")).toBe(false)
+      expect(handler.canHandle("queue list")).toBe(false)
     })
   })
 
@@ -40,8 +39,8 @@ describe("QueueCommandHandler", () => {
       const callArgs = (ctx.deps.sendChatMessage as ReturnType<typeof import("bun:test").mock>).mock
         .calls[0]
       expect(callArgs[0]).toContain("Aktualna kolejka:")
-      expect(callArgs[0]).toContain("@user1")
-      expect(callArgs[0]).toContain("@user2")
+      expect(callArgs[0]).toContain("1.")
+      expect(callArgs[0]).toContain("2.")
     })
 
     test("sends empty queue message when queue is empty", async () => {

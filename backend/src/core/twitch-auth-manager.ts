@@ -35,6 +35,7 @@ export class TwitchAuthManager {
   public authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${env.TWITCH_CLIENT_ID}&redirect_uri=${env.SETUP_REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(this.scopes)}`
   public broadcasterId: string = ""
   public userId: string = ""
+  public userBotUsername: string = ""
 
   constructor() {
     this.refreshToken = env.TWITCH_REFRESH_TOKEN
@@ -96,6 +97,29 @@ export class TwitchAuthManager {
 
     this.broadcasterId = data.data[0].id
     return this.broadcasterId
+  }
+
+  async fetchBotUsername() {
+    const response = await fetch(`https://api.twitch.tv/helix/users`, {
+      method: "GET",
+      headers: {
+        "Client-ID": env.TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${this.accessToken}`,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(`Failed to fetch bot username: ${error.message}`)
+    }
+
+    const data = await response.json()
+    if (!data.data || data.data.length === 0) {
+      throw new Error(`No user data found for the bot`)
+    }
+
+    this.userBotUsername = data.data[0].login
+    return this.userBotUsername
   }
 
   async fetchUserId() {

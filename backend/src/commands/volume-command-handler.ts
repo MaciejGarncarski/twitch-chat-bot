@@ -3,21 +3,21 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class VolumeCommandHandler extends CommandHandler {
-  private readonly regex = /^!volume(?:\s+(100|[1-9]?\d))?\s*$/i
+  private readonly regex = /^volume(?:\s+(100|[1-9]?\d))?\s*$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
     max: 3,
   }
 
-  canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+  canHandle(command: string): boolean {
+    return this.regex.test(command)
   }
 
   async execute({
     deps: { playbackManager, sendChatMessage },
     payload,
-    sanitizedMessage,
+    sanitizedCommand,
     messageId,
     isMod,
   }: CommandContext) {
@@ -29,7 +29,7 @@ export class VolumeCommandHandler extends CommandHandler {
       throw new CommandError(CommandErrorCode.NOT_A_MOD)
     }
 
-    const match = sanitizedMessage.match(this.regex)
+    const match = sanitizedCommand.match(this.regex)
     const isSetVolumeCommand = match ? match[1] !== undefined : false
 
     if (!isSetVolumeCommand) {

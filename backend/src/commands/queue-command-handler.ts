@@ -4,7 +4,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 const ITEMS_TO_SHOW_DEFAULT = 5
 
 export class QueueCommandHandler extends CommandHandler {
-  private readonly command = "!queue"
+  private readonly command = "queue"
   private readonly itemsToShow = ITEMS_TO_SHOW_DEFAULT
 
   rateLimit: RateLimitConfig = {
@@ -12,8 +12,8 @@ export class QueueCommandHandler extends CommandHandler {
     max: 1,
   }
 
-  canHandle(messageText: string): boolean {
-    return this.command === messageText.toLowerCase()
+  canHandle(command: string): boolean {
+    return this.command === command.toLowerCase()
   }
 
   async execute({ deps: { logger, songQueue, sendChatMessage }, messageId }: CommandContext) {
@@ -24,12 +24,11 @@ export class QueueCommandHandler extends CommandHandler {
     }
 
     const queueItems = songQueue.getQueue()
-
     const itemsToDisplay = Math.min(this.itemsToShow, queueItems.length)
     const queueItemsToShow = queueItems.slice(0, itemsToDisplay)
     const formattedQueue = queueItemsToShow
       .map((item, index) => `${index + 1}. ${item.title}`)
-      .join("\n")
+      .join(", ")
 
     logger.info(`[COMMAND] [QUEUE] Sending current queue.`)
     await sendChatMessage(`Aktualna kolejka:\n${formattedQueue}`, messageId)

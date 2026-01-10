@@ -27,6 +27,7 @@ const envSchema = z.object({
   TWITCH_REFRESH_TOKEN: z.string().default("CHECK_README_FOR_INFO"),
   APP_REDIRECT_URI: z.url().default("http://localhost:3302/api/auth/callback/app"),
   SETUP_REDIRECT_URI: z.url().default("http://localhost:3302/api/auth/callback/setup"),
+  COMMAND_PREFIX: isTest ? z.string().default("#") : z.string().default("!"),
   USERS_TREATED_AS_MODERATORS: z
     .string()
     .default("")

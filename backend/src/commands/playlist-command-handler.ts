@@ -7,7 +7,7 @@ import { innertube } from "@/data/innertube"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 
 export class PlaylistCommandHandler extends CommandHandler {
-  private readonly regex = /^!playlist\s+(.+)$/i
+  private readonly regex = /^playlist\s+(.+)$/i
   private readonly urlRegex = /[?&]list=([^#&?]+)/
 
   rateLimit: RateLimitConfig = {
@@ -15,17 +15,17 @@ export class PlaylistCommandHandler extends CommandHandler {
     max: 3,
   }
 
-  public canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+  public canHandle(command: string): boolean {
+    return this.regex.test(command)
   }
 
   public async execute({
     deps,
-    sanitizedMessage,
+    sanitizedCommand,
     messageId,
     username,
   }: CommandContext): Promise<void> {
-    const match = sanitizedMessage.match(this.regex)
+    const match = sanitizedCommand.match(this.regex)
     if (!match) return
 
     const query = match[1].trim()

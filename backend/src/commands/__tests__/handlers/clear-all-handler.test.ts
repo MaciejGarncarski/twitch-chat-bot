@@ -1,26 +1,25 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { ClearAllCommandHandler } from "@/commands/clear-all-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 
-const COMMAND = "!clearall"
+const COMMAND = createCommand("clearall")
 
 describe("ClearAllCommandHandler", () => {
   const handler = new ClearAllCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !clearall (case insensitive)", () => {
-      expect(handler.canHandle("!clearall")).toBe(true)
-      expect(handler.canHandle("!CLEARALL")).toBe(true)
-      expect(handler.canHandle("!ClearAll")).toBe(true)
+    test("matches clearall command (case insensitive)", () => {
+      expect(handler.canHandle("clearall")).toBe(true)
+      expect(handler.canHandle("CLEARALL")).toBe(true)
+      expect(handler.canHandle("ClearAll")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!ca")).toBe(false)
-      expect(handler.canHandle("clearall")).toBe(false)
-      expect(handler.canHandle("!clear all")).toBe(false)
+      expect(handler.canHandle("ca")).toBe(false)
+      expect(handler.canHandle("clear all")).toBe(false)
     })
   })
 

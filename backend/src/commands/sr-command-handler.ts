@@ -10,7 +10,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { QueueError } from "@/types/queue-errors"
 
 export class YoutubeSrHandler extends CommandHandler {
-  private readonly regex = /^!sr\s+(.+)$/i
+  private readonly regex = /^sr\s+(.+)$/i
   private readonly ytLinkRegex =
     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]{11})/
 
@@ -19,26 +19,26 @@ export class YoutubeSrHandler extends CommandHandler {
     max: 1,
   }
 
-  canHandle(messageText: string): boolean {
-    return this.regex.test(messageText)
+  canHandle(command: string): boolean {
+    return this.regex.test(command)
   }
 
   async execute({
     deps: { logger, songQueue, sendChatMessage, playbackManager },
-    sanitizedMessage,
+    sanitizedCommand,
     messageId,
     username,
   }: CommandContext) {
-    const messageMatch = sanitizedMessage?.match(this.regex)
+    const messageMatch = sanitizedCommand?.match(this.regex)
 
-    if (!messageMatch || !sanitizedMessage) {
+    if (!messageMatch || !sanitizedCommand) {
       throw new Error("Message does not match SR command.")
     }
 
     const userInput = messageMatch[1]
     const isYoutubeLink = this.ytLinkRegex.test(userInput)
 
-    logger.info(`[COMMAND] [SR] ${sanitizedMessage} by ${username}`)
+    logger.info(`[COMMAND] [SR] ${sanitizedCommand} by ${username}`)
 
     let videoId = ""
     let metadata: SongMetadata | undefined = undefined

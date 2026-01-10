@@ -23,7 +23,7 @@ export type CommandContext = {
   messageId: string | undefined
   userId: string | undefined
   username: string
-  sanitizedMessage: string
+  sanitizedCommand: string
   isMod: boolean
 }
 

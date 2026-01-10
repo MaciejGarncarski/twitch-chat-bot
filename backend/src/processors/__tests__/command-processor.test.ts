@@ -42,6 +42,7 @@ import { CommandContext, CommandHandler } from "@/commands/command"
 import CommandProcessor from "@/processors/command-processor"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 import { TwitchWSMessage } from "@/types/twitch-ws-message"
+import { env } from "@/config/env"
 
 const createMockMessage = (
   text: string,
@@ -99,6 +100,8 @@ class MockHandler extends CommandHandler {
 }
 
 describe("CommandProcessor", () => {
+  const prefix = env.COMMAND_PREFIX
+
   let processor: CommandProcessor
   let mockHandler: MockHandler
 
@@ -108,7 +111,7 @@ describe("CommandProcessor", () => {
   })
 
   test("should ignore non-notification messages", async () => {
-    const message = createMockMessage("!test", { messageType: "session_welcome" })
+    const message = createMockMessage(`${prefix}test`, { messageType: "session_welcome" })
 
     await processor.process(message)
 
@@ -124,15 +127,15 @@ describe("CommandProcessor", () => {
   })
 
   test("should call canHandle on handlers", async () => {
-    const message = createMockMessage("!test")
+    const message = createMockMessage(`${prefix}test`)
 
     await processor.process(message)
 
-    expect(mockHandler.canHandleMock).toHaveBeenCalledWith("!test")
+    expect(mockHandler.canHandleMock).toHaveBeenCalledWith("test")
   })
 
   test("should execute handler when canHandle returns true", async () => {
-    const message = createMockMessage("!test")
+    const message = createMockMessage(`${prefix}test`)
     mockHandler.canHandleMock.mockReturnValue(true)
 
     await processor.process(message)
@@ -141,7 +144,7 @@ describe("CommandProcessor", () => {
   })
 
   test("should not execute handler when canHandle returns false", async () => {
-    const message = createMockMessage("!test")
+    const message = createMockMessage(`${prefix}test`)
     mockHandler.canHandleMock.mockReturnValue(false)
 
     await processor.process(message)
@@ -150,7 +153,7 @@ describe("CommandProcessor", () => {
   })
 
   test("should pass correct context to handler", async () => {
-    const message = createMockMessage("!test", { username: "someuser" })
+    const message = createMockMessage(`${prefix}test`, { username: "someuser" })
     mockHandler.canHandleMock.mockReturnValue(true)
 
     await processor.process(message)
@@ -158,14 +161,14 @@ describe("CommandProcessor", () => {
     expect(mockHandler.executeMock).toHaveBeenCalled()
     const ctx = mockHandler.executeMock.mock.calls[0][0] as CommandContext
     expect(ctx.username).toBe("someuser")
-    expect(ctx.sanitizedMessage).toBe("!test")
+    expect(ctx.sanitizedCommand).toBe("test")
   })
 
   test("should stop processing after first matching handler", async () => {
     const secondHandler = new MockHandler()
     processor = new CommandProcessor([mockHandler, secondHandler])
 
-    const message = createMockMessage("!test")
+    const message = createMockMessage(`${prefix}test`)
     mockHandler.canHandleMock.mockReturnValue(true)
     secondHandler.canHandleMock.mockReturnValue(true)
 
@@ -176,7 +179,7 @@ describe("CommandProcessor", () => {
   })
 
   test("should handle CommandError.NOT_A_MOD", async () => {
-    const message = createMockMessage("!test")
+    const message = createMockMessage(`${prefix}test`)
     mockHandler.canHandleMock.mockReturnValue(true)
     mockHandler.executeMock.mockRejectedValue(new CommandError(CommandErrorCode.NOT_A_MOD))
 
@@ -185,7 +188,7 @@ describe("CommandProcessor", () => {
   })
 
   test("should handle CommandError.INVALID_COMMAND_FORMAT", async () => {
-    const message = createMockMessage("!test")
+    const message = createMockMessage(`${prefix}test`)
     mockHandler.canHandleMock.mockReturnValue(true)
     mockHandler.executeMock.mockRejectedValue(
       new CommandError(CommandErrorCode.INVALID_COMMAND_FORMAT),
@@ -196,7 +199,7 @@ describe("CommandProcessor", () => {
   })
 
   test("should handle generic errors gracefully", async () => {
-    const message = createMockMessage("!test")
+    const message = createMockMessage(`${prefix}test`)
     mockHandler.canHandleMock.mockReturnValue(true)
     mockHandler.executeMock.mockRejectedValue(new Error("Something went wrong"))
 
@@ -205,7 +208,7 @@ describe("CommandProcessor", () => {
   })
 
   test("should treat maciej_ga as mod", async () => {
-    const message = createMockMessage("!test", { username: "maciej_ga" })
+    const message = createMockMessage(`${prefix}test`, { username: "maciej_ga" })
     mockHandler.canHandleMock.mockReturnValue(true)
 
     await processor.process(message)

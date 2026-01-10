@@ -85,6 +85,8 @@ TWITCH_CLIENT_ID=twitch_dev_client_id
 TWITCH_CLIENT_SECRET=twitch_dev_client_secret
 TWITCH_REFRESH_TOKEN=generated_refresh_token
 TWITCH_BROADCASTER_NAME=channel_name_where_bot_works
+# Optional: Define command prefix (default is "!")
+COMMAND_PREFIX="!"
 # Optional: Comma-separated list of usernames to treat as moderators
 USERS_TREATED_AS_MODERATORS=mod_username1,mod_username2
 

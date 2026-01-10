@@ -3,7 +3,7 @@ import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class SeekCommandHandler extends CommandHandler {
-  private readonly regex = /^!seek\s+(?:(\d{1,2}):([0-5]?\d)|(\d{1,3}))$/i
+  private readonly regex = /^seek\s+(?:(\d{1,2}):([0-5]?\d)|(\d{1,3}))$/i
 
   rateLimit: RateLimitConfig = {
     windowMs: 5000,
@@ -18,14 +18,14 @@ export class SeekCommandHandler extends CommandHandler {
     deps: { logger, playbackManager, songQueue, sendChatMessage },
     isMod,
     messageId,
-    sanitizedMessage,
+    sanitizedCommand,
     username,
   }: CommandContext): Promise<void> {
     if (!isMod) {
       throw new CommandError(CommandErrorCode.NOT_A_MOD)
     }
 
-    const match = this.regex.exec(sanitizedMessage)
+    const match = this.regex.exec(sanitizedCommand)
 
     if (!match) {
       throw new CommandError(CommandErrorCode.INVALID_COMMAND_FORMAT)
@@ -56,7 +56,7 @@ export class SeekCommandHandler extends CommandHandler {
 
     playbackManager.seek(totalSeekSeconds)
     logger.info(
-      `[COMMAND] [EXEC] [SEEK] User ${username} seeked to ${totalSeekSeconds}s (${sanitizedMessage})`,
+      `[COMMAND] [EXEC] [SEEK] User ${username} seeked to ${totalSeekSeconds}s (${sanitizedCommand})`,
     )
   }
 }

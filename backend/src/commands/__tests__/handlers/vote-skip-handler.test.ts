@@ -1,26 +1,25 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { VoteSkipCommandHandler } from "@/commands/vote-skip-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { MAX_VOTES, VoteManager } from "@/core/vote-manager"
 
-const COMMAND = "!voteskip"
+const COMMAND = createCommand("voteskip")
 
 describe("VoteSkipCommandHandler", () => {
   const handler = new VoteSkipCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !voteskip (case insensitive)", () => {
-      expect(handler.canHandle("!voteskip")).toBe(true)
-      expect(handler.canHandle("!VOTESKIP")).toBe(true)
-      expect(handler.canHandle("!VoteSkip")).toBe(true)
+    test("matches voteskip command (case insensitive)", () => {
+      expect(handler.canHandle("voteskip")).toBe(true)
+      expect(handler.canHandle("VOTESKIP")).toBe(true)
+      expect(handler.canHandle("VoteSkip")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!vote")).toBe(false)
-      expect(handler.canHandle("voteskip")).toBe(false)
-      expect(handler.canHandle("!voteskip now")).toBe(false)
+      expect(handler.canHandle("vote")).toBe(false)
+      expect(handler.canHandle("voteskip now")).toBe(false)
     })
   })
 
@@ -32,7 +31,7 @@ describe("VoteSkipCommandHandler", () => {
 
       const ctx = createMockContext({
         username: "voter1",
-        message: "!voteskip",
+        message: createCommand("voteskip"),
         deps: { songQueue: queue, voteManager },
       })
 

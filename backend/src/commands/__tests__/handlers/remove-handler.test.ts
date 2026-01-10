@@ -1,30 +1,29 @@
 import { describe, test, expect } from "bun:test"
 
-import { createMockContext } from "@/commands/__tests__/helpers/create-mock-context"
+import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { ClearAllCommandHandler } from "@/commands/clear-all-command-handler"
 import { SongQueue } from "@/core/song-queue"
 import { CommandErrorCode } from "@/types/errors"
 import { RemoveCommandHandler } from "@/commands/remove-command-handler"
 
-const COMMAND_BASE = "!remove"
+const COMMAND_BASE = createCommand("remove")
 const COMMAND = `${COMMAND_BASE} 1`
 
 describe("RemoveCommandHandler", () => {
   const handler = new RemoveCommandHandler()
 
   describe("canHandle", () => {
-    test("matches !remove (case insensitive)", () => {
-      expect(handler.canHandle("!remove 1")).toBe(true)
-      expect(handler.canHandle("!REMOVE 2")).toBe(true)
-      expect(handler.canHandle("!Remove 3")).toBe(true)
+    test("matches remove command (case insensitive)", () => {
+      expect(handler.canHandle("remove 1")).toBe(true)
+      expect(handler.canHandle("REMOVE 2")).toBe(true)
+      expect(handler.canHandle("Remove 3")).toBe(true)
     })
 
     test("rejects invalid commands", () => {
-      expect(handler.canHandle("!remowe")).toBe(false)
-      expect(handler.canHandle("remove")).toBe(false)
-      expect(handler.canHandle("!remove -1")).toBe(false)
-      expect(handler.canHandle("!remove 999")).toBe(false)
-      expect(handler.canHandle("!remove abc")).toBe(false)
+      expect(handler.canHandle("remowe")).toBe(false)
+      expect(handler.canHandle("remove -1")).toBe(false)
+      expect(handler.canHandle("remove 999")).toBe(false)
+      expect(handler.canHandle("remove abc")).toBe(false)
     })
   })
 
