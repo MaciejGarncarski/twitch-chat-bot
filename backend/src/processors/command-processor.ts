@@ -3,6 +3,7 @@ import { timeoutUser } from "@/api/timeout-user"
 import { CommandHandler, ContextDeps } from "@/commands/command"
 import { env } from "@/config/env"
 import { songRequestEngine } from "@/core/song-request-engine"
+import { twitchAuth } from "@/core/twitch-auth-manager"
 import { checkIsMod } from "@/helpers/check-is-mod"
 import { logger } from "@/helpers/logger"
 import { rateLimiter } from "@/helpers/rate-limit"
@@ -37,21 +38,19 @@ class CommandProcessor {
       return
     }
 
-    const sanitizedMessage = sanitizeMessage(commandFromMention || messageText).toLowerCase()
-    const sanitizedCommand = sanitizedMessage.slice(1).trim()
-
-    const messageId = parsed.payload.event?.message_id
-    const userId = parsed.payload.event?.chatter_user_id
     const username =
       parsed.payload.event?.chatter_user_login || parsed.payload.event?.chatter_user_name
-    const badges = parsed.payload.event?.badges
-    const chatterId = parsed.payload.event?.chatter_user_id
-    const broadcasterId = parsed.payload.event?.broadcaster_user_id
 
     if (!username) {
       logger.warn("[COMMAND] Received message without username.")
       return
     }
+
+    const messageId = parsed.payload.event?.message_id
+    const userId = parsed.payload.event?.chatter_user_id
+    const badges = parsed.payload.event?.badges
+    const chatterId = parsed.payload.event?.chatter_user_id
+    const broadcasterId = parsed.payload.event?.broadcaster_user_id
 
     const usersTreatedAsMods = env.USERS_TREATED_AS_MODERATORS
     const normalizedUser = username.toLowerCase()
@@ -80,6 +79,9 @@ class CommandProcessor {
       sendChatMessage,
       timeoutUser: timeoutUser,
     }
+
+    const sanitizedMessage = sanitizeMessage(commandFromMention || messageText).toLowerCase()
+    const sanitizedCommand = sanitizedMessage.slice(env.COMMAND_PREFIX.length).trim()
 
     for (const handler of this.handlers) {
       const canHandle = handler.canHandle(sanitizedCommand)
@@ -164,6 +166,13 @@ class CommandProcessor {
   }
 
   private extractCommandFromMention(fragments: MessageFragments[]): string | null {
+    const twitchBotUsername = twitchAuth.userBotUsername
+
+    if (twitchBotUsername.trim() === "") {
+      logger.error("[COMMAND] Twitch bot username is not set.")
+      return null
+    }
+
     const isFirstFragmentMention = fragments.length > 0 && fragments[0].type === "mention"
 
     if (!isFirstFragmentMention) {
@@ -175,8 +184,7 @@ class CommandProcessor {
       .join("")
       .trim()
 
-    const TWITCH_BOT_USERNAME = "BOT_MG"
-    const mentionPrefix = `@${TWITCH_BOT_USERNAME.toLowerCase()}`
+    const mentionPrefix = `@${twitchBotUsername}`
 
     if (message.toLowerCase().startsWith(mentionPrefix)) {
       const text = message.slice(mentionPrefix.length).trim()

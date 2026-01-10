@@ -118,8 +118,7 @@ export class TwitchAuthManager {
       throw new Error(`No user data found for the bot`)
     }
 
-    this.userBotUsername = data.data[0].login
-    return this.userBotUsername
+    this.userBotUsername = data.data[0].login.toLowerCase()
   }
 
   async fetchUserId() {
