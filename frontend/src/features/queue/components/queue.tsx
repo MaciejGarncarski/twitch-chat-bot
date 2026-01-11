@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useQueue } from "@/features/queue/hooks/use-queue"
 import { useRemoveVideo } from "@/features/queue/hooks/use-remove-video"
+import { useTranslate } from "@/features/i18n/hooks/use-translate"
 import { cn } from "@/lib/utils"
 import { formatDuration } from "@/utils/format-duration"
 import { Clock3, Trash2, UserIcon } from "lucide-react"
@@ -27,6 +28,7 @@ const itemVariants: Variants = {
 }
 
 export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
+  const { t } = useTranslate()
   const { data: queueData } = useQueue()
   const auth = useAuth()
   const removeVideoMutation = useRemoveVideo()
@@ -38,7 +40,9 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
     <motion.div
       className={cn("bg-background flex flex-col gap-1 rounded-md border px-4 py-4 pb-10")}
     >
-      <h2 className="text-muted-foreground mr-auto ml-1 pb-2 text-xl font-semibold">Kolejka</h2>
+      <h2 className="text-muted-foreground mr-auto ml-1 pb-2 text-xl font-semibold">
+        {t("common.queue")}
+      </h2>
       <motion.ul
         className={cn(
           "bg-secondary/30 min-h-26 overflow-hidden rounded-lg border",
@@ -53,7 +57,7 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
               exit={{ opacity: 0 }}
               className="text-muted-foreground p-14 text-center"
             >
-              Brak pozycji w kolejce
+              {t("queue.empty")}
             </motion.div>
           )}
           {filteredCurrent?.map((item, idx) => (
@@ -105,7 +109,7 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
                         onClick={() => removeVideoMutation.mutate(item.id)}
                       >
                         <Trash2 />
-                        Usuń
+                        {t("common.delete")}
                       </Button>
                     </div>
                   )}

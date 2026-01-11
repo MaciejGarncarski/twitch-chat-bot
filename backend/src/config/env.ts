@@ -7,6 +7,7 @@ const envSchema = z.object({
     .union([z.literal("development"), z.literal("production"), z.literal("test")])
     .default("development"),
   API_URL: isTest ? z.string().default("http://localhost:3302") : z.string(),
+  APP_LANG: z.enum(["en", "pl"]).default("pl"),
   APP_ORIGINS: isTest
     ? z
         .string()

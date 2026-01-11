@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { t } from "@/i18n/i18n"
 
 export class WrongSongAllCommandHandler extends CommandHandler {
   private readonly command = "wrongsongall"
@@ -43,8 +44,13 @@ export class WrongSongAllCommandHandler extends CommandHandler {
     logger.info(
       `[COMMAND] [WRONGSONG] Removed songs: ${userSongs.map((s) => s.title).join(", ")} for user ${username}.`,
     )
+    const songWordKey =
+      userSongs.length === 1
+        ? "commands.wrongsongall.songSingular"
+        : "commands.wrongsongall.songPlural"
+    const songWord = t(songWordKey)
     await sendChatMessage(
-      `Usunięto ${userSongs.length} ${userSongs.length === 1 ? "utwór" : "utworów"} z kolejki.`,
+      t("commands.wrongsongall.removed", { count: userSongs.length, songWord }),
       messageId,
     )
   }

@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { logger } from "@/helpers/logger"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
 
 export class GithubCommandHandler extends CommandHandler {
   private readonly command = "github"
@@ -16,9 +17,6 @@ export class GithubCommandHandler extends CommandHandler {
 
   async execute({ deps: { sendChatMessage }, messageId }: CommandContext) {
     logger.info(`[COMMAND] [GITHUB] Sending GitHub repository link.`)
-    await sendChatMessage(
-      "Link do repozytorium: https://github.com/maciejgarncarski/twitch-chat-bot",
-      messageId,
-    )
+    await sendChatMessage(t("commands.github.link"), messageId)
   }
 }

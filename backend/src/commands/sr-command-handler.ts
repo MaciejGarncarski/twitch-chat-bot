@@ -6,6 +6,7 @@ import { getVideoUrl } from "@/helpers/get-video-url"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { youtubeSearchService } from "@/services/youtube-search.service"
 import { QueueError } from "@/types/queue-errors"
+import { t } from "@/i18n/i18n"
 
 export class YoutubeSrHandler extends CommandHandler {
   private readonly regex = /^sr\s+(.+)$/i
@@ -73,34 +74,43 @@ export class YoutubeSrHandler extends CommandHandler {
       const durationUntilPlay = formatDuration(
         getTimeUntilAddedSong(songQueue.getQueue(), playbackManager.getPlayTime()),
       )
-      const durationText = durationUntilPlay === "0:00" ? "teraz" : `za około ${durationUntilPlay}`
+      const playTime =
+        durationUntilPlay === "0:00"
+          ? t("commands.sr.playNow")
+          : t("commands.sr.playIn", { duration: durationUntilPlay })
 
       await sendChatMessage(
-        `Dodano do kolejki ${metadata?.title} przez @${username} (długość: ${durationFormatted}). Pozycja w kolejce ${position}. Odtwarzanie ${durationText}.`,
+        t("commands.sr.added", {
+          title: metadata?.title ?? "",
+          username,
+          duration: durationFormatted,
+          position: position || 0,
+          playTime,
+        }),
         messageId,
       )
     } catch (error) {
-      const title = metadata?.title || "Nieznany"
-      const duration = metadata ? formatDuration(metadata.duration) : "Nieznana"
-      const link = videoId ? getVideoUrl(videoId) : "Brak"
+      const title = metadata?.title || t("common.None")
+      const duration = metadata ? formatDuration(metadata.duration) : t("common.None")
+      const link = videoId ? getVideoUrl(videoId) : t("common.None")
 
-      let message = `FootYellow Nie udało się dodać do kolejki. Tytuł: ${title}, Długość: ${duration}, Link: ${link}`
+      let message = t("commands.sr.failed", { title, duration, link })
 
       if (error instanceof QueueError) {
         logger.error(`[COMMAND] [SR] QueueError: ${error.code}`)
 
         switch (error.code) {
           case "ALREADY_EXISTS":
-            message = `FootYellow Ten filmik jest już w kolejce!`
+            message = t("commands.sr.alreadyExists")
             break
           case "QUEUE_FULL":
-            message = `PoroSad Kolejka jest pełna! Spróbuj ponownie później.`
+            message = t("commands.sr.queueFull")
             break
           case "TOO_SHORT":
-            message = `FootYellow Filmik jest za krótki.`
+            message = t("commands.sr.tooShort")
             break
           case "TOO_LONG":
-            message = `FootYellow Filmik jest za długi.`
+            message = t("commands.sr.tooLong")
             break
         }
 

@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { t } from "@/i18n/i18n"
 
 export class SeekCommandHandler extends CommandHandler {
   private readonly regex = /^seek\s+(?:(\d{1,2}):([0-5]?\d)|(\d{1,3}))$/i
@@ -48,7 +49,10 @@ export class SeekCommandHandler extends CommandHandler {
 
     if (totalSeekSeconds >= currentSong.duration) {
       await sendChatMessage(
-        `Nie można przewinąć do ${totalSeekSeconds}s, ponieważ utwór trwa tylko ${currentSong.duration}s.`,
+        t("commands.seek.beyondDuration", {
+          seek: totalSeekSeconds,
+          duration: currentSong.duration,
+        }),
         messageId,
       )
       return

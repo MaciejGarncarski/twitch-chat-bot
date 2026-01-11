@@ -1,0 +1,57 @@
+export const pl = {
+  navigation: {
+    manageMode: "Zarządzaj",
+    playerMode: "Odtwarzacz",
+  },
+  player: {
+    play: "Odtwórz",
+    pause: "Pauza",
+    loopToggle: "Powtarzanie",
+    volume: "Głośność",
+    seek: "Przesuń",
+    skip: "Pomiń",
+    shuffle: "Przetasuj",
+    clearAll: "Wyczyść wszystko",
+    loading: {
+      sync: "Synchronizacja...",
+      play: "Odtwarzam",
+      pause: "Zatrzymuję",
+      loopToggle: "Zmieniam",
+      skip: "Pomijam",
+      shuffle: "Tasuję",
+      clearAll: "Poczekaj",
+    },
+  },
+  theme: {
+    light: "Jasny",
+    dark: "Ciemny",
+    system: "Systemowy",
+  },
+  queue: {
+    empty: "Brak utworów w kolejce.",
+    loading: "Ładowanie kolejki...",
+  },
+  auth: {
+    login: "Zaloguj się",
+    logout: "Wyloguj się",
+    account: "Konto",
+    loading: {
+      loading: "Chwila...",
+      logout: "Wylogowywanie...",
+      login: "Ładowanie...",
+    },
+  },
+  interactionNotification: {
+    title: "Kliknij, aby włączyć odtwarzanie",
+    description: "Przeglądarka wymaga interakcji przed odtwarzaniem dźwięku",
+  },
+  common: {
+    delete: "Usuń",
+    language: "Język",
+    en: "English",
+    pl: "Polski",
+    theme: "Motyw",
+    queue: "Kolejka",
+    song: "Piosenka",
+  },
+} as const

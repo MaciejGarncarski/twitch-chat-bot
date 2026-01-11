@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { logger } from "@/helpers/logger"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
 
 export class FrontendCommandHandler extends CommandHandler {
   private readonly command = "ui"
@@ -16,6 +17,6 @@ export class FrontendCommandHandler extends CommandHandler {
 
   async execute({ deps: { sendChatMessage }, messageId }: CommandContext) {
     logger.info(`[COMMAND] [UI] Sending frontend UI link.`)
-    await sendChatMessage("UI: https://bot.maciej-garncarski.pl/", messageId)
+    await sendChatMessage(t("commands.frontend.link"), messageId)
   }
 }

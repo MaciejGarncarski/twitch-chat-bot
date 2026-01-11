@@ -1,3 +1,4 @@
+import { useTranslate } from "@/features/i18n/hooks/use-translate"
 import { DurationIndicator } from "@/features/player/components/duration-indicator"
 import { LoopIndicator } from "@/features/player/components/loop-indicator"
 import { PlayIndicator } from "@/features/player/components/play-indicator"
@@ -36,6 +37,7 @@ export const Player = ({
   dataStatus,
 }: PlayerProps) => {
   const isManagement = useIsManageMode()
+  const { t } = useTranslate()
 
   return (
     <motion.div
@@ -53,7 +55,7 @@ export const Player = ({
           >
             <p className="text-muted-foreground text-2xl font-medium">
               <Loader className="mr-4 mb-1 inline animate-spin" size={24} />
-              Synchronizacja
+              {t("player.loading.sync")}
             </p>
           </motion.div>
         ) : null}

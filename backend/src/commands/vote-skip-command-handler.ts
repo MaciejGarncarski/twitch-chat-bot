@@ -1,5 +1,6 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
 
 export class VoteSkipCommandHandler extends CommandHandler {
   private readonly command = "voteskip"
@@ -20,7 +21,7 @@ export class VoteSkipCommandHandler extends CommandHandler {
   }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [VOTESKIP] Queue is empty, skipping not possible.`)
-      await sendChatMessage(`Kolejka jest pusta.`, messageId)
+      await sendChatMessage(t("commands.errors.queueEmpty"), messageId)
       return
     }
 
@@ -38,7 +39,11 @@ export class VoteSkipCommandHandler extends CommandHandler {
 
     if (votesLeft > 0) {
       await sendChatMessage(
-        `[VOTESKIP] [${votesCount}/${voteManager.getVotesNeeded()}] @${username} zagłosował za pominięciem utworu.`,
+        t("commands.voteskip.voteReceived", {
+          votes: votesCount,
+          needed: voteManager.getVotesNeeded(),
+          username,
+        }),
         messageId,
       )
       return
@@ -49,17 +54,18 @@ export class VoteSkipCommandHandler extends CommandHandler {
     voteManager.reset()
 
     if (skippedSong) {
-      const votesMessage = `${votesCount}/${voteManager.getVotesNeeded()}`
-
       await sendChatMessage(
-        `[VOTESKIP] [${votesMessage}] Pominięto utwór ${
-          skippedSong.title
-        } (dodany przez @${skippedSong.username}).`,
+        t("commands.voteskip.skipped", {
+          votes: votesCount,
+          needed: voteManager.getVotesNeeded(),
+          title: skippedSong.title,
+          username: skippedSong.username,
+        }),
         messageId,
       )
       return
     }
 
-    await sendChatMessage(`Kolejka jest pusta.`, messageId)
+    await sendChatMessage(t("commands.errors.queueEmpty"), messageId)
   }
 }

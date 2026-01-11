@@ -1,10 +1,11 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { env } from "@/config/env"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
+import { TKey } from "@/i18n/types"
 
 type CommandInfo = {
   modOnly: boolean
-  text: string
 }
 
 type CommandsRecord = Record<string, CommandInfo>
@@ -12,28 +13,28 @@ type CommandsRecord = Record<string, CommandInfo>
 export class HelpCommandHandler extends CommandHandler {
   private readonly command = "help"
   private readonly commands: CommandsRecord = {
-    sr: { modOnly: false, text: "<link | fraza>" },
-    song: { modOnly: false, text: "" },
-    queue: { modOnly: false, text: "" },
-    help: { modOnly: false, text: "" },
-    wrongsong: { modOnly: false, text: "" },
-    wrongsongall: { modOnly: true, text: "" },
-    github: { modOnly: false, text: "" },
-    voteskip: { modOnly: false, text: "" },
-    skip: { modOnly: false, text: "" },
-    next: { modOnly: false, text: "- informacje o nast." },
-    playlist: { modOnly: false, text: "<nazwa / link>" },
-    fill: { modOnly: false, text: "<fraza>" },
-    ui: { modOnly: false, text: "- interfejs web" },
-    vanish: { modOnly: true, text: "" },
-    pause: { modOnly: true, text: "" },
-    play: { modOnly: true, text: "" },
-    volume: { modOnly: true, text: "<0-100>" },
-    seek: { modOnly: true, text: "<ss | mm:ss>" },
-    loop: { modOnly: true, text: "" },
-    remove: { modOnly: true, text: "<pozycja>" },
-    shuffle: { modOnly: true, text: "" },
-    clearall: { modOnly: true, text: "" },
+    sr: { modOnly: false },
+    song: { modOnly: false },
+    queue: { modOnly: false },
+    help: { modOnly: false },
+    wrongsong: { modOnly: false },
+    wrongsongall: { modOnly: true },
+    github: { modOnly: false },
+    voteskip: { modOnly: false },
+    skip: { modOnly: false },
+    next: { modOnly: false },
+    playlist: { modOnly: false },
+    fill: { modOnly: false },
+    ui: { modOnly: false },
+    vanish: { modOnly: true },
+    pause: { modOnly: true },
+    play: { modOnly: true },
+    volume: { modOnly: true },
+    seek: { modOnly: true },
+    loop: { modOnly: true },
+    remove: { modOnly: true },
+    shuffle: { modOnly: true },
+    clearall: { modOnly: true },
   }
 
   rateLimit: RateLimitConfig = {
@@ -54,9 +55,14 @@ export class HelpCommandHandler extends CommandHandler {
         .filter(([_, cmd]) => (cmd.modOnly ? isMod : true)),
     )
 
-    const helpMessage = `Komendy: ${Object.entries(filteredCommands)
-      .map(([cmd, desc]) => `${env.COMMAND_PREFIX}${cmd} ${desc.text}`.trim())
-      .join(" | ")}`
-    await sendChatMessage(helpMessage, messageId)
+    const commandsText = Object.entries(filteredCommands)
+      .map(([cmd]) => {
+        const descriptionKey = `commands.help.commandDescription.${cmd}` as TKey
+        const description = t(descriptionKey)
+        return `${env.COMMAND_PREFIX}${cmd} ${description}`.trim()
+      })
+      .join(" | ")
+
+    await sendChatMessage(t("commands.help.header", { commands: commandsText }), messageId)
   }
 }

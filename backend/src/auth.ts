@@ -4,6 +4,7 @@ import { sendChatMessage } from "@/api/send-chat-message"
 import { env } from "@/config/env"
 import { twitchAuth } from "@/core/twitch-auth-manager"
 import { logger } from "@/helpers/logger"
+import { t } from "@/i18n/i18n"
 
 export const app = new Elysia()
   .onStart(async () => {
@@ -11,7 +12,7 @@ export const app = new Elysia()
     logger.info(`GO TO: ${twitchAuth.authUrl}`)
   })
   .onStop(async () => {
-    await sendChatMessage("Bot wyłączony StinkyGlitch")
+    await sendChatMessage(t("bot.stopMessage"))
   })
   .group("/api", (app) => {
     return app

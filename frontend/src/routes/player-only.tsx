@@ -12,6 +12,7 @@ import { AnimatePresence } from "motion/react"
 import { useRef } from "react"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { Player } from "@/features/player/components/player"
+import { LanguageSwitcher } from "@/features/i18n/components/language-switcher"
 
 export const Route = createFileRoute("/player-only")({
   loader: async ({ context }) => {
@@ -34,7 +35,10 @@ function RouteComponent() {
     <div className="mx-auto flex min-h-screen max-w-3xl flex-col gap-4 px-4 py-4 text-center md:py-8">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <NavigationTabs />
-        <ThemeToggle />
+        <div className="flex gap-4">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </div>
       </div>
       <div className="flex min-h-40 flex-col items-center gap-4">
         <AnimatePresence mode="popLayout">

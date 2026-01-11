@@ -16,6 +16,7 @@ import { CommandProcessor } from "@/processors/command-processor"
 import { commandHandlers } from "@/commands/handlers"
 import { unsubscribeAll } from "@/connectors/chat-subscription"
 import { twitchUserResponseSchema } from "@/schemas/user-response"
+import { t as translate } from "@/i18n/i18n"
 
 async function init() {
   await unsubscribeAll()
@@ -54,7 +55,7 @@ export const app = new Elysia()
   })
   .onStart(async ({ server }) => {
     logger.info(`[SERVER] [UP] listening on ${env.API_URL}`)
-    await sendChatMessage(`Bot uruchomiony TwitchLit`)
+    await sendChatMessage(translate("bot.startChat"))
     setBunServer(server)
 
     if (env.NODE_ENV === "development") {
@@ -69,7 +70,7 @@ export const app = new Elysia()
     }
   })
   .onStop(async () => {
-    await sendChatMessage("Bot wyłączony StinkyGlitch")
+    await sendChatMessage(translate("bot.stopMessage"))
   })
   .onError(async ({ code, status }) => {
     if (code === "NOT_FOUND") {
