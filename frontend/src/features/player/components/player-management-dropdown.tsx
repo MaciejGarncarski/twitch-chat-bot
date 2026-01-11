@@ -28,8 +28,10 @@ import { useClearQueue } from "@/features/queue/hooks/use-clear-queue"
 import { cn } from "@/lib/utils"
 import { useQueue } from "@/features/queue/hooks/use-queue"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
+import { useTranslate } from "@/features/i18n/hooks/use-translate"
 
 export function PlayerManagementDropdown() {
+  const { t } = useTranslate()
   const { isLoopEnabled, isPlaying } = usePlayerData()
   const playStateMutation = useSetPlayState({ isPlaying })
   const skipMutation = useSkip()
@@ -54,49 +56,49 @@ export function PlayerManagementDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44" align="start">
-        <DropdownMenuLabel>Piosenka</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("common.song")}</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownItemWithLoader
             icon={isPlaying ? Pause : Play}
             isPending={playStateMutation.isPending}
             onSelect={() => playStateMutation.mutate()}
-            loadingText={isPlaying ? "Zatrzymuję" : "Odtwarzam"}
-            text={isPlaying ? "Zatrzymaj" : "Odtwórz"}
+            loadingText={isPlaying ? t("player.loading.pause") : t("player.loading.play")}
+            text={isPlaying ? t("player.pause") : t("player.play")}
           />
           <DropdownItemWithLoader
             icon={isLoopEnabled ? Repeat : Repeat}
             iconClassName={isLoopEnabled ? "text-green-500" : ""}
             isPending={loopMutation.isPending}
             onSelect={() => loopMutation.mutate()}
-            loadingText="Zmieniam"
-            text="Zapętlenie"
+            loadingText={t("player.loading.loopToggle")}
+            text={t("player.loopToggle")}
           />
           <DropdownItemWithLoader
             icon={SkipForward}
             isPending={skipMutation.isPending}
             onSelect={() => skipMutation.mutate()}
-            loadingText="Pomijam"
-            text="Pomiń"
+            loadingText={t("player.loading.skip")}
+            text={t("player.skip")}
             variant="destructive"
           />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Kolejka</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("common.queue")}</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownItemWithLoader
             icon={Dices}
             isPending={shuffleMutation.isPending}
             onSelect={() => shuffleMutation.mutate()}
-            loadingText="Tasuję"
-            text="Przetasuj"
+            loadingText={t("player.loading.shuffle")}
+            text={t("player.shuffle")}
             disabled={isQueueEmpty}
           />
           <DropdownItemWithLoader
             icon={Trash}
             isPending={clearQueueMutation.isPending}
             onSelect={() => clearQueueMutation.mutate()}
-            loadingText="Poczekaj"
-            text="Wyczyść wszystko"
+            loadingText={t("player.loading.clearAll")}
+            text={t("player.clearAll")}
             variant="destructive"
           />
         </DropdownMenuGroup>

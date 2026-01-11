@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "motion/react"
 import { MousePointerClick } from "lucide-react"
+import { useTranslate } from "@/features/i18n/hooks/use-translate"
 
 type Props = {
   hasInteracted: boolean
@@ -7,6 +8,8 @@ type Props = {
 }
 
 export function InteractionNotification({ hasInteracted, onInteract }: Props) {
+  const { t } = useTranslate()
+
   return (
     <AnimatePresence>
       {!hasInteracted && (
@@ -41,9 +44,11 @@ export function InteractionNotification({ hasInteracted, onInteract }: Props) {
               <MousePointerClick className="h-10 w-10 md:h-12 md:w-12" />
             </motion.div>
             <div className="flex flex-col gap-1 text-center">
-              <h2 className="text-lg font-semibold md:text-xl">Kliknij, aby włączyć odtwarzanie</h2>
+              <h2 className="text-lg font-semibold md:text-xl">
+                {t("interactionNotification.title")}
+              </h2>
               <p className="text-muted-foreground text-sm">
-                Przeglądarka wymaga interakcji przed odtwarzaniem dźwięku
+                {t("interactionNotification.description")}
               </p>
             </div>
           </motion.div>

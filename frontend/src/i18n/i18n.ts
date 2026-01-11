@@ -1,14 +1,12 @@
-import { env } from "@/config/env"
 import { en } from "@/i18n/locales/en"
 import { pl } from "@/i18n/locales/pl"
-import { TKey, TranslationParams, TranslationSchema } from "@/i18n/types"
+import type { Language, TKey, TranslationParams, TranslationSchema } from "@/i18n/types"
 
 const languages: Record<string, TranslationSchema> = { en, pl }
 
-const selectedLang: TranslationSchema = languages[env.APP_LANG] || en
-
-export function t<K extends TKey>(key: K, params?: TranslationParams<K>): string {
+export function t<K extends TKey>(lang: Language, key: K, params?: TranslationParams<K>): string {
   const keys = key.split(".")
+  const selectedLang: TranslationSchema = languages[lang] || en
   let value: unknown = selectedLang
 
   for (const k of keys) {

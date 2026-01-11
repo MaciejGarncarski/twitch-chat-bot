@@ -11,11 +11,14 @@ import {
 import { TwitchIcon } from "@/features/auth/components/twitch-icon"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useSignOut } from "@/features/auth/hooks/use-sign-out"
+import { useTranslate } from "@/features/i18n/hooks/use-translate"
 import { cn } from "@/lib/utils"
 import { Loader, LogOut, User } from "lucide-react"
 
+const oauthUrl = apiURL + "api/auth/sign-in"
+
 export function TwitchAuthButton() {
-  const oauthUrl = apiURL + "api/auth/sign-in"
+  const { t } = useTranslate()
   const { data, isLoading, isFetching } = useAuth()
   const signOutMutation = useSignOut()
 
@@ -23,7 +26,7 @@ export function TwitchAuthButton() {
     return (
       <Button type="button" variant={"outline"} disabled className={"cursor-pointer"}>
         <Loader size={16} className="mr-2 animate-spin" />
-        Chwila
+        {t("auth.loading.login")}
       </Button>
     )
   }
@@ -50,7 +53,7 @@ export function TwitchAuthButton() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuLabel>Konto</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("auth.account")}</DropdownMenuLabel>
           <DropdownMenuGroup>
             <DropdownMenuItem
               onSelect={(e) => {
@@ -60,7 +63,7 @@ export function TwitchAuthButton() {
               variant="destructive"
             >
               <LogOut />
-              {signOutMutation.isPending ? "Wylogowywanie..." : "Wyloguj się"}
+              {signOutMutation.isPending ? t("auth.loading.logout") : t("auth.logout")}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -79,7 +82,7 @@ export function TwitchAuthButton() {
       )}
     >
       <TwitchIcon className="mr-1" />
-      Zaloguj się
+      {t("auth.login")}
     </a>
   )
 }

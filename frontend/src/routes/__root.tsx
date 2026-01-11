@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { PlayerYT } from "@/features/player/components/player-yt"
 import { useDetectTheme } from "@/hooks/use-detect-theme"
 import { PlayerDataProvider } from "@/features/player/components/player-data-provider"
+import { I18nProvider } from "@/features/i18n/components/i18n-provider"
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -18,12 +19,14 @@ const RootComponent = () => {
 
   return (
     <>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <PlayerDataProvider>
-          <Outlet />
-          <PlayerYT />
-        </PlayerDataProvider>
-      </ThemeProvider>
+      <I18nProvider defaultLanguage="pl" storageKey="bot-ui-language">
+        <ThemeProvider defaultTheme="system" storageKey="bot-ui-theme">
+          <PlayerDataProvider>
+            <Outlet />
+            <PlayerYT />
+          </PlayerDataProvider>
+        </ThemeProvider>
+      </I18nProvider>
       <TanStackDevtools
         config={{
           position: "bottom-right",

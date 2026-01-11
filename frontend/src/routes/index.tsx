@@ -14,6 +14,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { TwitchAuthButton } from "@/features/auth/components/twitch-auth-button"
 import { Player } from "@/features/player/components/player"
+import { LanguageSwitcher } from "@/features/i18n/components/language-switcher"
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -41,7 +42,10 @@ function App() {
 
         <div className="flex gap-4">
           <TwitchAuthButton />
-          <ThemeToggle />
+          <div className="flex gap-4">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
       </div>
 

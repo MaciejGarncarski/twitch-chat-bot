@@ -1,0 +1,60 @@
+import type { TranslationSchema } from "@/i18n/types"
+
+export const en: TranslationSchema = {
+  navigation: {
+    manageMode: "Manage",
+    playerMode: "Player",
+  },
+  player: {
+    play: "Play",
+    pause: "Pause",
+    loopToggle: "Loop",
+    volume: "Volume",
+    seek: "Seek",
+    skip: "Skip",
+    shuffle: "Shuffle",
+    clearAll: "Clear All",
+
+    loading: {
+      sync: "Syncing...",
+      clearAll: "Wait",
+      pause: "Pausing",
+      play: "Playing",
+      loopToggle: "Toggling",
+      skip: "Skipping",
+      shuffle: "Shuffling",
+    },
+  },
+  theme: {
+    light: "Light",
+    dark: "Dark",
+    system: "System",
+  },
+  queue: {
+    empty: "No songs in the queue.",
+    loading: "Loading queue...",
+  },
+  auth: {
+    login: "Log In",
+    logout: "Log Out",
+    account: "Account",
+    loading: {
+      loading: "Loading...",
+      logout: "Logging out...",
+      login: "Loading...",
+    },
+  },
+  interactionNotification: {
+    title: "Click to enable playback",
+    description: "The browser requires interaction before playing audio",
+  },
+  common: {
+    delete: "Delete",
+    en: "English",
+    pl: "Polski",
+    language: "Language",
+    theme: "Theme",
+    queue: "Queue",
+    song: "Song",
+  },
+}
