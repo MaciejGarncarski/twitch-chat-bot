@@ -5,7 +5,7 @@ import { DurationIndicator } from "@/components/player/duration-indicator"
 import { LoopIndicator } from "@/components/player/loop-indicator"
 import { PlayIndicator } from "@/components/player/play-indicator"
 import { VolumeIndicator } from "@/components/player/volume-indicator"
-import { useIsManagementPage } from "@/hooks/use-is-management-page"
+import { useIsManageMode } from "@/hooks/use-is-manage-mode"
 import { cn } from "@/lib/utils"
 import { Loader, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
@@ -35,7 +35,7 @@ export const CurrentSong = ({
   isLoopEnabled,
   dataStatus,
 }: CurrentSongProps) => {
-  const isManagement = useIsManagementPage()
+  const isManagement = useIsManageMode()
 
   return (
     <motion.div

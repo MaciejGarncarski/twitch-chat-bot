@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useIsManagementPage } from "@/hooks/use-is-management-page"
+import { useIsManagementPage } from "@/hooks/use-is-manage-mode"
 import { useNavigate } from "@tanstack/react-router"
 
 export function NavigationTabs() {

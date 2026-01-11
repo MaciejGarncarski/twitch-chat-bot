@@ -53,7 +53,7 @@ export const app = new Elysia()
   })
   .onStart(async ({ server }) => {
     logger.info(`[SERVER] [UP] listening on ${env.API_URL}`)
-    await sendChatMessage(`Bot uruchomiony${env.NODE_ENV === "development" ? " (dev)" : ""}`)
+    await sendChatMessage(`Bot uruchomiony TwitchLit`)
     setBunServer(server)
 
     if (env.NODE_ENV === "development") {

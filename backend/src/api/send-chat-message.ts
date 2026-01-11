@@ -1,8 +1,11 @@
+import { env } from "@/config/env"
 import { twitchAuth } from "@/core/twitch-auth-manager"
 import { logger } from "@/helpers/logger"
 import z from "zod"
 
 export const sendChatMessage = async (message: string, replyChatId?: string) => {
+  const messageFormatted = env.NODE_ENV === "development" ? `[DEV] ${message}` : message
+
   const data = await twitchAuth.fetch("https://api.twitch.tv/helix/chat/messages", {
     method: "POST",
     headers: {
@@ -11,7 +14,7 @@ export const sendChatMessage = async (message: string, replyChatId?: string) => 
     body: JSON.stringify({
       broadcaster_id: twitchAuth.broadcasterId,
       sender_id: twitchAuth.userId,
-      message: message,
+      message: messageFormatted,
       reply_parent_message_id: replyChatId ? replyChatId : undefined,
     }),
   })
