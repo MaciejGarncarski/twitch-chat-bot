@@ -42,7 +42,7 @@ const parsedEnv = envSchema.safeParse(process.env)
 
 if (!parsedEnv.success) {
   // eslint-disable-next-line no-console
-  console.log(parsedEnv.error)
+  console.error(parsedEnv.error)
   process.exit(1)
 }
 

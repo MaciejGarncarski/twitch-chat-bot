@@ -1,6 +1,7 @@
 import { describe, test, expect } from "bun:test"
 
-import { MAX_VOTES, VoteManager } from "@/core/vote-manager"
+import { MAX_VOTES } from "@/config/voting"
+import { VoteManager } from "@/core/vote-manager"
 
 describe("VoteManager", () => {
   describe("addVote", () => {

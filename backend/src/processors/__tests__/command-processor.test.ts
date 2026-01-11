@@ -39,10 +39,11 @@ mock.module("@/core/song-request-engine", () => ({
 }))
 
 import { CommandContext, CommandHandler } from "@/commands/command"
-import CommandProcessor from "@/processors/command-processor"
+import { CommandProcessor } from "@/processors/command-processor"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 import { TwitchWSMessage } from "@/types/twitch-ws-message"
 import { env } from "@/config/env"
+import { ITwitchAuthManager } from "@/types/twitch-auth"
 
 const createMockMessage = (
   text: string,
@@ -104,10 +105,13 @@ describe("CommandProcessor", () => {
 
   let processor: CommandProcessor
   let mockHandler: MockHandler
+  const mockTwitchAuth = {
+    userBotUsername: "testbot",
+  }
 
   beforeEach(() => {
     mockHandler = new MockHandler()
-    processor = new CommandProcessor([mockHandler])
+    processor = new CommandProcessor([mockHandler], mockTwitchAuth as ITwitchAuthManager)
   })
 
   test("should ignore non-notification messages", async () => {
@@ -166,7 +170,10 @@ describe("CommandProcessor", () => {
 
   test("should stop processing after first matching handler", async () => {
     const secondHandler = new MockHandler()
-    processor = new CommandProcessor([mockHandler, secondHandler])
+    processor = new CommandProcessor(
+      [mockHandler, secondHandler],
+      mockTwitchAuth as ITwitchAuthManager,
+    )
 
     const message = createMockMessage(`${prefix}test`)
     mockHandler.canHandleMock.mockReturnValue(true)

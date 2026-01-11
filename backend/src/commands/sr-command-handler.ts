@@ -1,18 +1,14 @@
-import { YTNodes } from "youtubei.js/agnostic"
-
 import { CommandContext, CommandHandler } from "@/commands/command"
 import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata"
-import { innertube } from "@/data/innertube"
 import { formatDuration } from "@/helpers/format-duration"
 import { getTimeUntilAddedSong } from "@/helpers/get-time-until-added-song"
 import { getVideoUrl } from "@/helpers/get-video-url"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { youtubeSearchService } from "@/services/youtube-search.service"
 import { QueueError } from "@/types/queue-errors"
 
 export class YoutubeSrHandler extends CommandHandler {
   private readonly regex = /^sr\s+(.+)$/i
-  private readonly ytLinkRegex =
-    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]{11})/
 
   rateLimit: RateLimitConfig = {
     windowMs: 8000,
@@ -36,7 +32,7 @@ export class YoutubeSrHandler extends CommandHandler {
     }
 
     const userInput = messageMatch[1]
-    const isYoutubeLink = this.ytLinkRegex.test(userInput)
+    const isYoutubeLink = youtubeSearchService.isYouTubeLink(userInput)
 
     logger.info(`[COMMAND] [SR] ${sanitizedCommand} by ${username}`)
 
@@ -45,7 +41,7 @@ export class YoutubeSrHandler extends CommandHandler {
 
     try {
       if (isYoutubeLink) {
-        const newVideoId = this.extractVideoId(userInput)
+        const newVideoId = youtubeSearchService.extractVideoId(userInput)
         if (!newVideoId) {
           throw new Error("Invalid YouTube link.")
         }
@@ -58,7 +54,7 @@ export class YoutubeSrHandler extends CommandHandler {
       }
 
       if (!isYoutubeLink) {
-        const searchResult = await this.searchYoutubeVideo(userInput)
+        const searchResult = await youtubeSearchService.searchVideo(userInput)
         if (!searchResult) {
           throw new Error("No YT search results found.")
         }
@@ -117,30 +113,5 @@ export class YoutubeSrHandler extends CommandHandler {
       }
       await sendChatMessage(message, messageId)
     }
-  }
-
-  private extractVideoId(url: string): string | null {
-    const match = url.match(this.ytLinkRegex)
-    return match ? match[1] : null
-  }
-
-  private async searchYoutubeVideo(
-    query: string,
-  ): Promise<{ videoId: string; metadata: SongMetadata } | null> {
-    const results = await innertube.search(query, { type: "video" })
-
-    const song = results.videos.find((node): node is YTNodes.Video => node.type === "Video")
-
-    if (!song) {
-      return null
-    }
-
-    const metadata: SongMetadata = {
-      duration: song.duration?.seconds ?? 0,
-      title: song.title.toString(),
-      thumbnail: song.thumbnails.at(-1)?.url ?? null,
-    }
-
-    return { videoId: song.video_id, metadata }
   }
 }

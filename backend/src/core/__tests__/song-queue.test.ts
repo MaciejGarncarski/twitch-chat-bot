@@ -1,5 +1,6 @@
 import { describe, test, expect, mock } from "bun:test"
 
+import { MAX_QUEUE_LENGTH } from "@/config/queue"
 import { SongQueue } from "@/core/song-queue"
 import { QueuedItem } from "@/types/queue"
 
@@ -125,12 +126,12 @@ describe("SongQueue", () => {
     test("throws QUEUE_FULL when queue is at max capacity", async () => {
       const queue = new SongQueue()
 
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < MAX_QUEUE_LENGTH; i++) {
         await queue.add({ username: "user1", videoId: `video${i}` }, createMockMetadata())
       }
 
       expect(
-        queue.add({ username: "user1", videoId: "video11" }, createMockMetadata()),
+        queue.add({ username: "user1", videoId: "video_overflow" }, createMockMetadata()),
       ).rejects.toThrow("QUEUE_FULL")
     })
 
@@ -265,7 +266,7 @@ describe("SongQueue", () => {
   describe("getAvailableSlots", () => {
     test("returns max slots when queue is empty", () => {
       const queue = new SongQueue()
-      expect(queue.getAvailableSlots()).toBe(10)
+      expect(queue.getAvailableSlots()).toBe(MAX_QUEUE_LENGTH)
     })
 
     test("returns correct remaining slots", () => {
@@ -274,7 +275,7 @@ describe("SongQueue", () => {
       queue.addItemToQueue(createMockItem("b"))
       queue.addItemToQueue(createMockItem("c"))
 
-      expect(queue.getAvailableSlots()).toBe(7)
+      expect(queue.getAvailableSlots()).toBe(MAX_QUEUE_LENGTH - 3)
     })
   })
 

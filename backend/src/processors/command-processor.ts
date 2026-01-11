@@ -1,17 +1,24 @@
 import { sendChatMessage } from "@/api/send-chat-message"
 import { timeoutUser } from "@/api/timeout-user"
 import { CommandHandler, ContextDeps } from "@/commands/command"
-import { commandHandlers } from "@/commands/handlers"
 import { env } from "@/config/env"
 import { songRequestEngine } from "@/core/song-request-engine"
-import { twitchAuth } from "@/core/twitch-auth-manager"
-import { checkIsMod } from "@/helpers/check-is-mod"
+import { ChatBadge, checkIsMod } from "@/helpers/check-is-mod"
 import { logger } from "@/helpers/logger"
 import { rateLimiter } from "@/helpers/rate-limit"
 import { sanitizeMessage } from "@/helpers/sanitize-message"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 import { ITwitchAuthManager } from "@/types/twitch-auth"
 import { MessageFragments, TwitchWSMessage } from "@/types/twitch-ws-message"
+
+type CommandInfo = {
+  sanitizedCommand: string
+  username: string
+  normalizedUser: string
+  userId: string | undefined
+  messageId: string | undefined
+  isMod: boolean
+}
 
 export class CommandProcessor {
   private readonly COMMAND_PREFIX = env.COMMAND_PREFIX
@@ -26,6 +33,26 @@ export class CommandProcessor {
       return
     }
 
+    const commandInfo = this.extractCommandInfo(parsed)
+    if (!commandInfo) {
+      return
+    }
+
+    if (!this.checkGlobalRateLimit(commandInfo.normalizedUser, commandInfo.isMod)) {
+      return
+    }
+
+    const deps = this.createContextDeps()
+    const handler = this.findHandler(commandInfo.sanitizedCommand)
+
+    if (!handler) {
+      return
+    }
+
+    await this.executeCommand(handler, commandInfo, deps, parsed)
+  }
+
+  private extractCommandInfo(parsed: TwitchWSMessage): CommandInfo | null {
     const commandFromMention = this.extractCommandFromMention(
       parsed.payload.event?.message?.fragments || [],
     )
@@ -33,11 +60,11 @@ export class CommandProcessor {
 
     if (!messageText) {
       logger.warn("[COMMAND] Received message without text.")
-      return
+      return null
     }
 
     if (!this.isCommandForBot(messageText) && !commandFromMention) {
-      return
+      return null
     }
 
     const username =
@@ -45,7 +72,7 @@ export class CommandProcessor {
 
     if (!username) {
       logger.warn("[COMMAND] Received message without username.")
-      return
+      return null
     }
 
     const messageId = parsed.payload.event?.message_id
@@ -54,26 +81,55 @@ export class CommandProcessor {
     const chatterId = parsed.payload.event?.chatter_user_id
     const broadcasterId = parsed.payload.event?.broadcaster_user_id
 
-    const usersTreatedAsMods = env.USERS_TREATED_AS_MODERATORS
     const normalizedUser = username.toLowerCase()
+    const isMod = this.checkUserPermissions(badges, chatterId, broadcasterId, normalizedUser)
+
+    const sanitizedMessage = sanitizeMessage(commandFromMention || messageText).toLowerCase()
+    const sanitizedCommand = sanitizedMessage.slice(env.COMMAND_PREFIX.length).trim()
+
+    return {
+      sanitizedCommand,
+      username,
+      normalizedUser,
+      userId,
+      messageId,
+      isMod,
+    }
+  }
+
+  private checkUserPermissions(
+    badges: ChatBadge[] | null | undefined,
+    chatterId: string | undefined,
+    broadcasterId: string | undefined,
+    normalizedUser: string,
+  ): boolean {
+    const usersTreatedAsMods = env.USERS_TREATED_AS_MODERATORS
     const isModUser = checkIsMod(badges, chatterId, broadcasterId)
-    const isMod = isModUser || usersTreatedAsMods.includes(normalizedUser)
+    return isModUser || usersTreatedAsMods.includes(normalizedUser)
+  }
 
-    if (!isMod) {
-      const globalRateResult = rateLimiter.check(`global:${normalizedUser}`)
-
-      if (!globalRateResult.allowed) {
-        const retrySeconds = Math.max(1, Math.ceil((globalRateResult.retryIn ?? 0) / 1000))
-
-        logger.warn(
-          `[COMMAND] [RATE_LIMIT] Global limit hit for ${normalizedUser}. Retry in ${retrySeconds}s`,
-        )
-
-        return
-      }
+  private checkGlobalRateLimit(normalizedUser: string, isMod: boolean): boolean {
+    if (isMod) {
+      return true
     }
 
-    const deps: ContextDeps = {
+    const globalRateResult = rateLimiter.check(`global:${normalizedUser}`)
+
+    if (!globalRateResult.allowed) {
+      const retrySeconds = Math.max(1, Math.ceil((globalRateResult.retryIn ?? 0) / 1000))
+
+      logger.warn(
+        `[COMMAND] [RATE_LIMIT] Global limit hit for ${normalizedUser}. Retry in ${retrySeconds}s`,
+      )
+
+      return false
+    }
+
+    return true
+  }
+
+  private createContextDeps(): ContextDeps {
+    return {
       songQueue: songRequestEngine.getSongQueue(),
       playbackManager: songRequestEngine.getPlaybackManager(),
       voteManager: songRequestEngine.getVoteManager(),
@@ -81,85 +137,109 @@ export class CommandProcessor {
       sendChatMessage,
       timeoutUser: timeoutUser,
     }
+  }
 
-    const sanitizedMessage = sanitizeMessage(commandFromMention || messageText).toLowerCase()
-    const sanitizedCommand = sanitizedMessage.slice(env.COMMAND_PREFIX.length).trim()
-
+  private findHandler(sanitizedCommand: string): CommandHandler | null {
     for (const handler of this.handlers) {
-      const canHandle = handler.canHandle(sanitizedCommand)
-
-      if (!canHandle) {
-        continue
+      if (handler.canHandle(sanitizedCommand)) {
+        return handler
       }
+    }
+    return null
+  }
 
-      try {
-        const commandName = handler.constructor.name
-        const commandRateConfig = handler.rateLimit
+  private async executeCommand(
+    handler: CommandHandler,
+    commandInfo: CommandInfo,
+    deps: ContextDeps,
+    parsed: TwitchWSMessage,
+  ): Promise<void> {
+    if (!this.checkCommandRateLimit(handler, commandInfo.normalizedUser, commandInfo.isMod)) {
+      return
+    }
 
-        if (commandRateConfig && !isMod) {
-          const commandRateResult = rateLimiter.check(
-            `command:${commandName}:${normalizedUser}`,
-            commandRateConfig,
-          )
+    try {
+      logger.info(`[COMMAND] [EXEC] ${handler.constructor.name}`)
+      await handler.execute({
+        payload: parsed.payload,
+        deps,
+        sanitizedCommand: commandInfo.sanitizedCommand,
+        userId: commandInfo.userId,
+        username: commandInfo.normalizedUser,
+        messageId: commandInfo.messageId,
+        isMod: commandInfo.isMod,
+      })
+    } catch (error) {
+      await this.handleCommandError(error, handler, commandInfo.messageId)
+    }
+  }
 
-          if (!commandRateResult.allowed) {
-            const retrySeconds = Math.max(1, Math.ceil((commandRateResult.retryIn ?? 0) / 1000))
+  private checkCommandRateLimit(
+    handler: CommandHandler,
+    normalizedUser: string,
+    isMod: boolean,
+  ): boolean {
+    const commandRateConfig = handler.rateLimit
 
-            logger.warn(
-              `[COMMAND] [RATE_LIMIT] ${commandName} hit limit for ${normalizedUser}. Retry in ${retrySeconds}s`,
-            )
+    if (!commandRateConfig || isMod) {
+      return true
+    }
 
-            return
-          }
-        }
+    const commandName = handler.constructor.name
+    const commandRateResult = rateLimiter.check(
+      `command:${commandName}:${normalizedUser}`,
+      commandRateConfig,
+    )
 
-        logger.info(`[COMMAND] [EXEC] ${handler.constructor.name}`)
-        await handler.execute({
-          payload: parsed.payload,
-          deps,
-          sanitizedCommand,
-          userId,
-          username: normalizedUser,
-          messageId,
-          isMod,
-        })
-        return
-      } catch (error) {
-        if (error instanceof CommandError) {
-          switch (error.code) {
-            case CommandErrorCode.INVALID_COMMAND_FORMAT:
-              await sendChatMessage("Niepoprawny format komendy.", messageId)
-              break
+    if (!commandRateResult.allowed) {
+      const retrySeconds = Math.max(1, Math.ceil((commandRateResult.retryIn ?? 0) / 1000))
 
-            case CommandErrorCode.CANNOT_SKIP_SONG:
-              await sendChatMessage("Nie możesz pominąć tego utworu.", messageId)
-              break
+      logger.warn(
+        `[COMMAND] [RATE_LIMIT] ${commandName} hit limit for ${normalizedUser}. Retry in ${retrySeconds}s`,
+      )
 
-            case CommandErrorCode.NOT_A_MOD:
-              await sendChatMessage("Tylko moderatorzy mogą używać tej komendy.", messageId)
-              break
+      return false
+    }
 
-            case CommandErrorCode.EVENT_NOT_FOUND:
-              logger.error(
-                `[COMMAND] [ERROR] ${handler.constructor.name} Missing event in payload.`,
-              )
-              break
+    return true
+  }
 
-            default:
-              logger.error(
-                `[COMMAND] [ERROR] ${handler.constructor.name} Unhandled CommandError: ${error.code}`,
-              )
-          }
+  private async handleCommandError(
+    error: unknown,
+    handler: CommandHandler,
+    messageId: string | undefined,
+  ): Promise<void> {
+    if (error instanceof CommandError) {
+      switch (error.code) {
+        case CommandErrorCode.INVALID_COMMAND_FORMAT:
+          await sendChatMessage("Niepoprawny format komendy.", messageId)
+          break
 
-          return
-        }
+        case CommandErrorCode.CANNOT_SKIP_SONG:
+          await sendChatMessage("Nie możesz pominąć tego utworu.", messageId)
+          break
 
-        if (error instanceof Error) {
+        case CommandErrorCode.NOT_A_MOD:
+          await sendChatMessage("Tylko moderatorzy mogą używać tej komendy.", messageId)
+          break
+
+        case CommandErrorCode.EVENT_NOT_FOUND:
+          logger.error(`[COMMAND] [ERROR] ${handler.constructor.name} Missing event in payload.`)
+          break
+
+        default:
           logger.error(
-            `[COMMAND] [ERROR] ${handler.constructor.name} Error executing command: ${error.message}`,
+            `[COMMAND] [ERROR] ${handler.constructor.name} Unhandled CommandError: ${error.code}`,
           )
-        }
       }
+
+      return
+    }
+
+    if (error instanceof Error) {
+      logger.error(
+        `[COMMAND] [ERROR] ${handler.constructor.name} Error executing command: ${error.message}`,
+      )
     }
   }
 

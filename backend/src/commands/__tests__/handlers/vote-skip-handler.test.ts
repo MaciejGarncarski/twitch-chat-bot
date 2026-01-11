@@ -2,8 +2,9 @@ import { describe, test, expect } from "bun:test"
 
 import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { VoteSkipCommandHandler } from "@/commands/vote-skip-command-handler"
+import { MAX_VOTES } from "@/config/voting"
 import { SongQueue } from "@/core/song-queue"
-import { MAX_VOTES, VoteManager } from "@/core/vote-manager"
+import { VoteManager } from "@/core/vote-manager"
 
 const COMMAND = createCommand("voteskip")
 

@@ -5,6 +5,8 @@ import { MAX_VIDEO_DURATION_SECONDS } from "@/config/video"
 import { SongMetadata } from "@/data/get-video-metadata"
 import { innertube } from "@/data/innertube"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { shuffle } from "@/helpers/shuffle"
+import { youtubeSearchService } from "@/services/youtube-search.service"
 
 export class PlaylistCommandHandler extends CommandHandler {
   private readonly regex = /^playlist\s+(.+)$/i
@@ -122,18 +124,11 @@ export class PlaylistCommandHandler extends CommandHandler {
         return video.id && duration && duration <= MAX_VIDEO_DURATION_SECONDS
       })
 
-    for (let i = validVideos.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[validVideos[i], validVideos[j]] = [validVideos[j], validVideos[i]]
-    }
+    shuffle(validVideos)
 
     return validVideos.slice(0, limit).map((video) => ({
       videoId: video.id,
-      metadata: {
-        title: video.title.toString(),
-        thumbnail: video.thumbnails[0]?.url || null,
-        duration: video.duration.seconds,
-      },
+      metadata: youtubeSearchService.mapYTNodeToMetadata(video),
     }))
   }
 }

@@ -1,3 +1,5 @@
+import { MAX_VOTES } from "@/config/voting"
+
 export interface IVoteManager {
   addVote(username: string): number
   hasVoted(username: string): boolean
@@ -6,7 +8,6 @@ export interface IVoteManager {
   reset(): void
 }
 
-export const MAX_VOTES = 3
 export class VoteManager implements IVoteManager {
   private votes: Set<string> = new Set()
   private readonly votesNeeded = MAX_VOTES

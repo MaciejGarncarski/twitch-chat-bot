@@ -6,6 +6,7 @@ import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config
 import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata"
 import { getVideoUrl } from "@/helpers/get-video-url"
 import { shuffle } from "@/helpers/shuffle"
+import { MAX_QUEUE_LENGTH } from "@/config/queue"
 import { QueuedItem, songRequestInputSchema } from "@/types/queue"
 import { QueueError } from "@/types/queue-errors"
 
@@ -31,9 +32,6 @@ export interface ISongQueue extends EventEmitter {
   on(event: "clear-queue", listener: () => void): this
   on(event: "song-remove-current", listener: (item: QueuedItem) => void): this
 }
-
-// TODO: Change it someday lol
-const MAX_QUEUE_LENGTH = 300
 
 export class SongQueue extends EventEmitter implements ISongQueue {
   private queue: QueuedItem[] = []
