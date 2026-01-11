@@ -1,17 +1,14 @@
+import { usePlayerData } from "@/features/player/components/player-data-provider"
+import { useQueue } from "@/features/queue/hooks/use-queue"
 import { motion } from "motion/react"
-import { useEffect, useState } from "react"
 
-export function PlayerProgressBar({ duration, playTime }: { duration: number; playTime: number }) {
-  const [prevPlayTime, setPrevPlayTime] = useState(0)
-
-  useEffect(() => {
-    setPrevPlayTime(playTime)
-  }, [playTime])
+export function PlayerProgressBar() {
+  const { playTime } = usePlayerData()
+  const { data: queueData, isPending } = useQueue()
+  const currentSong = queueData?.[0] ?? null
+  const duration = currentSong ? currentSong.duration : 0
 
   const progress = playTime / duration
-  const isInitialRender = playTime !== 0 && prevPlayTime === 0
-  const isNewSong = prevPlayTime - playTime > 0
-  const durationForAnimation = isInitialRender || isNewSong ? 0 : 1
 
   return (
     <div className="bg-secondary h-2 w-full overflow-hidden rounded-sm border">
@@ -20,7 +17,7 @@ export function PlayerProgressBar({ duration, playTime }: { duration: number; pl
         initial={{ scaleX: progress }}
         animate={{ scaleX: progress }}
         transition={{
-          duration: durationForAnimation,
+          duration: isPending ? 0 : 1,
           ease: "linear",
         }}
         style={{ width: "100%" }}

@@ -10,8 +10,8 @@ const MotionPause = motion(Pause)
 
 const btnVariants: Variants = {
   initial: {
-    scale: 0.8,
-    opacity: 0,
+    scale: 0.5,
+    opacity: 0.5,
   },
   animate: {
     scale: 1,

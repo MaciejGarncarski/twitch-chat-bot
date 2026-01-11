@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
@@ -29,6 +30,18 @@ import { cn } from "@/lib/utils"
 import { useQueue } from "@/features/queue/hooks/use-queue"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
+import { ctrlOsBased } from "@/utils/ctrl-os-based"
+import { useHotkeys } from "react-hotkeys-hook"
+
+const modifier = `${ctrlOsBased}+Shift`
+const playKeyboardShortcut = `${modifier}+P`
+const toggleKeyboardShortcut = `${modifier}+L`
+const shuffleKeyboardShortcut = `${modifier}+H`
+
+const hotkeyOptions = {
+  enableOnFormTags: false,
+  preventDefault: true,
+}
 
 export function PlayerManagementDropdown() {
   const { t } = useTranslate()
@@ -41,6 +54,33 @@ export function PlayerManagementDropdown() {
   const shuffleMutation = useShuffle()
   const auth = useAuth()
   const isMod = auth.data?.isMod || false
+
+  useHotkeys(
+    playKeyboardShortcut,
+    () => {
+      playStateMutation.mutate()
+    },
+    hotkeyOptions,
+    [isPlaying, playStateMutation],
+  )
+
+  useHotkeys(
+    toggleKeyboardShortcut,
+    () => {
+      loopMutation.mutate()
+    },
+    hotkeyOptions,
+    [isLoopEnabled, loopMutation],
+  )
+
+  useHotkeys(
+    shuffleKeyboardShortcut,
+    () => {
+      shuffleMutation.mutate()
+    },
+    hotkeyOptions,
+    [shuffleMutation],
+  )
 
   if (!isMod) {
     return null
@@ -55,7 +95,7 @@ export function PlayerManagementDropdown() {
           <Menu size={12} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-44" align="start">
+      <DropdownMenuContent className="w-34 lg:w-60" align="start">
         <DropdownMenuLabel>{t("common.song")}</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownItemWithLoader
@@ -64,6 +104,7 @@ export function PlayerManagementDropdown() {
             onSelect={() => playStateMutation.mutate()}
             loadingText={isPlaying ? t("player.loading.pause") : t("player.loading.play")}
             text={isPlaying ? t("player.pause") : t("player.play")}
+            keyboardShortcut={playKeyboardShortcut}
           />
           <DropdownItemWithLoader
             icon={isLoopEnabled ? Repeat : Repeat}
@@ -72,6 +113,7 @@ export function PlayerManagementDropdown() {
             onSelect={() => loopMutation.mutate()}
             loadingText={t("player.loading.loopToggle")}
             text={t("player.loopToggle")}
+            keyboardShortcut={toggleKeyboardShortcut}
           />
           <DropdownItemWithLoader
             icon={SkipForward}
@@ -92,6 +134,7 @@ export function PlayerManagementDropdown() {
             loadingText={t("player.loading.shuffle")}
             text={t("player.shuffle")}
             disabled={isQueueEmpty}
+            keyboardShortcut={shuffleKeyboardShortcut}
           />
           <DropdownItemWithLoader
             icon={Trash}
@@ -116,6 +159,7 @@ function DropdownItemWithLoader({
   icon: Icon,
   disabled,
   variant = "default",
+  keyboardShortcut,
 }: {
   isPending: boolean
   onSelect: (e: Event) => void
@@ -125,6 +169,7 @@ function DropdownItemWithLoader({
   disabled?: boolean
   iconClassName?: string
   variant?: "default" | "destructive"
+  keyboardShortcut?: string
 }) {
   return (
     <DropdownMenuItem
@@ -145,6 +190,13 @@ function DropdownItemWithLoader({
           <Icon className={cn(iconClassName)} />
           {text}
         </>
+      )}
+      {keyboardShortcut && (
+        <DropdownMenuShortcut
+          className={cn(variant === "destructive" && "text-destructive/80", "hidden lg:inline")}
+        >
+          {keyboardShortcut}
+        </DropdownMenuShortcut>
       )}
     </DropdownMenuItem>
   )
