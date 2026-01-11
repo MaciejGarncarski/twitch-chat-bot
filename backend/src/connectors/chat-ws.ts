@@ -1,13 +1,10 @@
 import { sendChatMessage } from "@/api/send-chat-message"
-import { commandHandlers } from "@/commands/handlers"
 import { env } from "@/config/env"
-import { ensureChatSubscription, unsubscribeAll } from "@/connectors/chat-subscription"
+import { ensureChatSubscription } from "@/connectors/chat-subscription"
 import { logger } from "@/helpers/logger"
-import CommandProcessor from "@/processors/command-processor"
+import { CommandProcessor } from "@/processors/command-processor"
+import { ITwitchAuthManager } from "@/types/twitch-auth"
 import { twitchMessageSchema } from "@/types/twitch-ws-message"
-
-await unsubscribeAll()
-const processor = new CommandProcessor(commandHandlers)
 
 export class ChatWebSocket {
   private ws?: WebSocket
@@ -19,7 +16,10 @@ export class ChatWebSocket {
   private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws"
   private keepaliveTimeoutSeconds = 30_000
 
-  constructor() {
+  constructor(
+    private twitchAuth: ITwitchAuthManager,
+    private commandProcessor: CommandProcessor,
+  ) {
     this.connect()
   }
 
@@ -28,7 +28,13 @@ export class ChatWebSocket {
       clearInterval(this.reminderIntervalId)
     }
 
-    this.reminderIntervalId = setInterval(() => {
+    this.reminderIntervalId = setInterval(async () => {
+      const isLive = await this.twitchAuth.isStreamerBroadcasting()
+
+      if (!isLive) {
+        return
+      }
+
       sendChatMessage(`Wpisz ${env.COMMAND_PREFIX}help, aby zobaczyć dostępne komendy.`)
     }, this.reminderIntervalMs)
   }
@@ -110,7 +116,7 @@ export class ChatWebSocket {
       }
 
       case "notification": {
-        await processor.process(parsed)
+        await this.commandProcessor.process(parsed)
         break
       }
 

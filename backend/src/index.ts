@@ -12,15 +12,20 @@ import { logger } from "@/helpers/logger"
 import { JWTPayload, JWTPayloadSchema } from "@ttv-song-request/types"
 import { jwtConfig } from "@/config/jwt"
 import { authUrl, handleAppAuthCallback } from "@/services/twitch-oauth.service"
+import { CommandProcessor } from "@/processors/command-processor"
+import { commandHandlers } from "@/commands/handlers"
+import { unsubscribeAll } from "@/connectors/chat-subscription"
 
 async function init() {
+  await unsubscribeAll()
   await Promise.all([
     twitchAuth.fetchBotUsername(),
     twitchAuth.fetchUserId(),
     twitchAuth.fetchBroadcasterId(),
   ])
   songRequestEngine.setupEventListeners()
-  new ChatWebSocket()
+  const commandProcessor = new CommandProcessor(commandHandlers, twitchAuth)
+  new ChatWebSocket(twitchAuth, commandProcessor)
 }
 
 await init()

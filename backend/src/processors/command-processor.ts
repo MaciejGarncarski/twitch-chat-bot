@@ -1,6 +1,7 @@
 import { sendChatMessage } from "@/api/send-chat-message"
 import { timeoutUser } from "@/api/timeout-user"
 import { CommandHandler, ContextDeps } from "@/commands/command"
+import { commandHandlers } from "@/commands/handlers"
 import { env } from "@/config/env"
 import { songRequestEngine } from "@/core/song-request-engine"
 import { twitchAuth } from "@/core/twitch-auth-manager"
@@ -9,15 +10,16 @@ import { logger } from "@/helpers/logger"
 import { rateLimiter } from "@/helpers/rate-limit"
 import { sanitizeMessage } from "@/helpers/sanitize-message"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { ITwitchAuthManager } from "@/types/twitch-auth"
 import { MessageFragments, TwitchWSMessage } from "@/types/twitch-ws-message"
 
-class CommandProcessor {
-  handlers: CommandHandler[]
+export class CommandProcessor {
   private readonly COMMAND_PREFIX = env.COMMAND_PREFIX
 
-  constructor(handlers: CommandHandler[]) {
-    this.handlers = handlers
-  }
+  constructor(
+    private handlers: CommandHandler[],
+    private twitchAuth: ITwitchAuthManager,
+  ) {}
 
   async process(parsed: TwitchWSMessage) {
     if (parsed.metadata.message_type !== "notification") {
@@ -166,7 +168,7 @@ class CommandProcessor {
   }
 
   private extractCommandFromMention(fragments: MessageFragments[]): string | null {
-    const twitchBotUsername = twitchAuth.userBotUsername
+    const twitchBotUsername = this.twitchAuth.userBotUsername
 
     if (twitchBotUsername.trim() === "") {
       logger.error("[COMMAND] Twitch bot username is not set.")
@@ -204,5 +206,3 @@ class CommandProcessor {
     return null
   }
 }
-
-export default CommandProcessor

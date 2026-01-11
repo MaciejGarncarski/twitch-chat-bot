@@ -1,32 +1,13 @@
-import z from "zod"
-
 import { env } from "@/config/env"
 import { logger } from "@/helpers/logger"
+import {
+  ITwitchAuthManager,
+  refreshResponseSchema,
+  tokenResponseSchema,
+  userResponseSchema,
+} from "@/types/twitch-auth"
 
-const userResponseSchema = z.object({
-  client_id: z.string(),
-  login: z.string(),
-  scopes: z.array(z.string()),
-  user_id: z.string(),
-  expires_in: z.number(),
-})
-
-const refreshResponseSchema = z.object({
-  access_token: z.string(),
-  refresh_token: z.string(),
-  scope: z.array(z.string()).optional(),
-  token_type: z.string().optional(),
-})
-
-const tokenResponseSchema = z.object({
-  access_token: z.string(),
-  refresh_token: z.string(),
-  expires_in: z.number(),
-  scope: z.array(z.string()),
-  token_type: z.string(),
-})
-
-export class TwitchAuthManager {
+export class TwitchAuthManager implements ITwitchAuthManager {
   public accessToken: string | null = null
   public refreshToken: string
   public readonly scopes =
@@ -207,6 +188,19 @@ export class TwitchAuthManager {
 
     const tokensData = tokenResponseSchema.parse(jsonData)
     return tokensData.refresh_token
+  }
+
+  public async isStreamerBroadcasting(): Promise<boolean> {
+    const requestUrl = `https://api.twitch.tv/helix/streams?user_id=${this.broadcasterId}`
+
+    const response = await this.fetch(requestUrl)
+    const data = await response.json()
+
+    const isLive = data.data && data.data.length > 0
+
+    logger.info(`[TWITCH AUTH] Streamer is ${isLive ? "LIVE" : "OFFLINE"}`)
+
+    return isLive
   }
 }
 
