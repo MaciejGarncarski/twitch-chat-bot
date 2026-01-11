@@ -15,6 +15,7 @@ import { authUrl, handleAppAuthCallback } from "@/services/twitch-oauth.service"
 import { CommandProcessor } from "@/processors/command-processor"
 import { commandHandlers } from "@/commands/handlers"
 import { unsubscribeAll } from "@/connectors/chat-subscription"
+import { twitchUserResponseSchema } from "@/schemas/user-response"
 
 async function init() {
   await unsubscribeAll()
@@ -88,7 +89,7 @@ export const app = new Elysia()
       })
       .group("/auth", (authRoutes) => {
         return authRoutes
-          .get("/status", async ({ jwt, cookie: { auth } }) => {
+          .get("/me", async ({ jwt, cookie: { auth } }) => {
             const token = auth.value as string | undefined
 
             if (!token) {
@@ -101,11 +102,29 @@ export const app = new Elysia()
               const data = await jwt.verify(token)
               const parsedData = JWTPayloadSchema.parse(data)
 
+              const userResponse = await twitchAuth.fetch(
+                `https://api.twitch.tv/helix/users?id=${parsedData.sub}`,
+                {
+                  method: "GET",
+                },
+              )
+
+              if (!userResponse.ok) {
+                throw new Error("Failed to fetch user data from Twitch")
+              }
+
+              const userData = await userResponse.json()
+              const parsedUserData = twitchUserResponseSchema.parse(userData)
+
               return {
                 authenticated: true,
-                user: parsedData,
+                user: {
+                  ...parsedData,
+                  avatar: parsedUserData.data[0].profile_image_url,
+                },
               }
             } catch (error) {
+              logger.error(error, "[AUTH SERVICE] Auth Me Failed")
               return {
                 authenticated: false,
               }

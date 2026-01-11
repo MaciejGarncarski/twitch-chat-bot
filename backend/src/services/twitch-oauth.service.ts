@@ -1,7 +1,8 @@
 import { env } from "@/config/env"
 import { twitchAuth } from "@/core/twitch-auth-manager"
 import { logger } from "@/helpers/logger"
-import { JWTPayload, JWTPayloadSchema } from "@ttv-song-request/types"
+import { twitchUserResponseSchema } from "@/schemas/user-response"
+import { JWTPayload } from "@ttv-song-request/types"
 import z from "zod"
 
 const clientId = env.TWITCH_CLIENT_ID
@@ -74,7 +75,7 @@ export async function handleAppAuthCallback(request: Request): Promise<JWTPayloa
   }
 
   const userData = await userResponse.json()
-  const parsedData = userResponseSchema.safeParse(userData)
+  const parsedData = twitchUserResponseSchema.safeParse(userData)
 
   if (!parsedData.success) {
     logger.error(parsedData.error, "Twitch API User Response Validation Failed")
@@ -95,7 +96,6 @@ export async function handleAppAuthCallback(request: Request): Promise<JWTPayloa
     return {
       sub: user.id,
       login: user.login,
-      avatar: user.profile_image_url || null,
       role: "MOD",
     }
   }
@@ -147,26 +147,7 @@ export async function handleAppAuthCallback(request: Request): Promise<JWTPayloa
     sub: user.id,
     login: user.login,
     role: isModAfterCheck ? "MOD" : "USER",
-    avatar: user.profile_image_url || null,
   }
 
   return data
 }
-
-const userResponseSchema = z.object({
-  data: z.array(
-    z.object({
-      id: z.string(),
-      login: z.string(),
-      display_name: z.string(),
-      type: z.string(),
-      broadcaster_type: z.string(),
-      description: z.string(),
-      profile_image_url: z.string(),
-      offline_image_url: z.string(),
-      view_count: z.number(),
-      email: z.string(),
-      created_at: z.string(),
-    }),
-  ),
-})
