@@ -127,4 +127,7 @@ export const pl = {
       skipped: "[VOTESKIP] [{votes}/{needed}] Pominięto utwór {title} (dodany przez @{username}).",
     },
   },
+  common: {
+    None: "Brak",
+  },
 } as const

@@ -126,4 +126,7 @@ export const en: TranslationSchema = {
       skipped: "[VOTESKIP] [{votes}/{needed}] Skipped {title} (added by @{username}).",
     },
   },
+  common: {
+    None: "None",
+  },
 }

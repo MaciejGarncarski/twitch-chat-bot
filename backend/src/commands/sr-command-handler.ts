@@ -90,9 +90,9 @@ export class YoutubeSrHandler extends CommandHandler {
         messageId,
       )
     } catch (error) {
-      const title = metadata?.title || "Nieznany"
-      const duration = metadata ? formatDuration(metadata.duration) : "Nieznana"
-      const link = videoId ? getVideoUrl(videoId) : "Brak"
+      const title = metadata?.title || t("common.None")
+      const duration = metadata ? formatDuration(metadata.duration) : t("common.None")
+      const link = videoId ? getVideoUrl(videoId) : t("common.None")
 
       let message = t("commands.sr.failed", { title, duration, link })
 

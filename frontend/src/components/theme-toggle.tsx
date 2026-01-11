@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "@/components/theme-provider"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
+import { cn } from "@/lib/utils"
 
 type ThemeToggleProps = {
   withText?: boolean
@@ -27,8 +28,7 @@ export function ThemeToggle({ withText = true }: ThemeToggleProps) {
           {theme === "light" && <Sun className={iconSizeClass} />}
           {theme === "dark" && <Moon className={iconSizeClass} />}
           {theme === "system" && <Monitor className={iconSizeClass} />}
-          {withText ? <span>{t("common.theme")}</span> : null}
-          <span className="sr-only">{t("common.theme")}</span>
+          <span className={cn(!withText && "sr-only")}>{t("common.theme")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
