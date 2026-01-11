@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { t } from "@/i18n/i18n"
 
 export class VolumeCommandHandler extends CommandHandler {
   private readonly regex = /^volume(?:\s+(100|[1-9]?\d))?\s*$/i
@@ -34,7 +35,7 @@ export class VolumeCommandHandler extends CommandHandler {
 
     if (!isSetVolumeCommand) {
       const volume = playbackManager.getVolume()
-      await sendChatMessage(`Aktualna głośność to ${volume}%.`, messageId)
+      await sendChatMessage(t("commands.volume.current", { volume }), messageId)
       return
     }
 
@@ -50,6 +51,6 @@ export class VolumeCommandHandler extends CommandHandler {
 
     playbackManager.setVolume(volume)
 
-    await sendChatMessage(`Ustawiono głośność na ${volume}%.`, messageId)
+    await sendChatMessage(t("commands.volume.set", { volume }), messageId)
   }
 }

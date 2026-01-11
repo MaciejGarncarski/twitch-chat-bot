@@ -10,6 +10,7 @@ import { sanitizeMessage } from "@/helpers/sanitize-message"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 import { ITwitchAuthManager } from "@/types/twitch-auth"
 import { MessageFragments, TwitchWSMessage } from "@/types/twitch-ws-message"
+import { t } from "@/i18n/i18n"
 
 type CommandInfo = {
   sanitizedCommand: string
@@ -212,15 +213,15 @@ export class CommandProcessor {
     if (error instanceof CommandError) {
       switch (error.code) {
         case CommandErrorCode.INVALID_COMMAND_FORMAT:
-          await sendChatMessage("Niepoprawny format komendy.", messageId)
+          await sendChatMessage(t("commands.errors.invalidFormat"), messageId)
           break
 
         case CommandErrorCode.CANNOT_SKIP_SONG:
-          await sendChatMessage("Nie możesz pominąć tego utworu.", messageId)
+          await sendChatMessage(t("commands.errors.cannotSkip"), messageId)
           break
 
         case CommandErrorCode.NOT_A_MOD:
-          await sendChatMessage("Tylko moderatorzy mogą używać tej komendy.", messageId)
+          await sendChatMessage(t("commands.errors.notAMod"), messageId)
           break
 
         case CommandErrorCode.EVENT_NOT_FOUND:

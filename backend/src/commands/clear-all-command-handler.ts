@@ -1,5 +1,6 @@
 import { CommandContext, CommandHandler } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
 import { CommandError, CommandErrorCode } from "@/types/errors"
 
 export class ClearAllCommandHandler extends CommandHandler {
@@ -22,6 +23,6 @@ export class ClearAllCommandHandler extends CommandHandler {
     deps.songQueue.clearAll()
     deps.logger.info(`[COMMAND] [CLEARALL] Cleared the song queue.`)
 
-    await deps.sendChatMessage(`Kolejka została wyczyszczona.`, messageId)
+    await deps.sendChatMessage(t("commands.clearall.success"), messageId)
   }
 }

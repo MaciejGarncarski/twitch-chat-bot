@@ -1,5 +1,6 @@
 import { CommandContext, CommandHandler } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
 
 export class WrongSongCommandHandler extends CommandHandler {
   private readonly command = "wrongsong"
@@ -29,13 +30,13 @@ export class WrongSongCommandHandler extends CommandHandler {
       logger.info(
         `[COMMAND] [WRONGSONG] User ${username} tried to skip currently playing song, which is not allowed.`,
       )
-      await sendChatMessage(`@${username} Nie możesz pominąć odtwarzanego utworu.`, messageId)
+      await sendChatMessage(t("commands.wrongsong.cannotSkipCurrent", { username }), messageId)
 
       return
     }
 
     songQueue.removeById(foundSong.id)
     logger.info(`[COMMAND] [WRONGSONG] Removed song with ID ${foundSong.id} for user ${username}.`)
-    await sendChatMessage(`Usunięto z kolejki.`, messageId)
+    await sendChatMessage(t("commands.wrongsong.removed"), messageId)
   }
 }

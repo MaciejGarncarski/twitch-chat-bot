@@ -2,6 +2,7 @@ import { CommandContext, CommandHandler } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { shuffle } from "@/helpers/shuffle"
 import { youtubeSearchService } from "@/services/youtube-search.service"
+import { t } from "@/i18n/i18n"
 
 export class FillCommandHandler extends CommandHandler {
   private readonly regex = /^fill\s+(.+)$/i
@@ -26,7 +27,7 @@ export class FillCommandHandler extends CommandHandler {
 
     const queueSlotsAvailable = deps.songQueue.getAvailableSlots()
     if (queueSlotsAvailable <= 0) {
-      await deps.sendChatMessage(`Kolejka jest pełna! Nie można dodać więcej piosenek.`, messageId)
+      await deps.sendChatMessage(t("commands.fill.queueFull"), messageId)
       return
     }
 
@@ -36,7 +37,7 @@ export class FillCommandHandler extends CommandHandler {
     const songsToAdd = shuffledSongs.slice(0, queueSlotsAvailable)
 
     if (songsToAdd.length === 0) {
-      await deps.sendChatMessage(`Nie znaleziono pasujących utworów.`, messageId)
+      await deps.sendChatMessage(t("commands.fill.notFound"), messageId)
       return
     }
 
@@ -57,9 +58,14 @@ export class FillCommandHandler extends CommandHandler {
       `[COMMAND] [FILL] Added ${addedCount}/${songsToAdd.length} songs for query: ${query}`,
     )
 
-    await deps.sendChatMessage(
-      `Dodano ${addedCount} piosenek do kolejki dla: ${query}${errorCount > 0 ? ` (${errorCount} nie udało się dodać)` : ""}`,
-      messageId,
-    )
+    if (errorCount > 0) {
+      await deps.sendChatMessage(
+        t("commands.fill.summaryWithErrors", { added: addedCount, query, errors: errorCount }),
+        messageId,
+      )
+      return
+    }
+
+    await deps.sendChatMessage(t("commands.fill.summary", { added: addedCount, query }), messageId)
   }
 }

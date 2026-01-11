@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { t } from "@/i18n/i18n"
 
 export class RemoveCommandHandler extends CommandHandler {
   private readonly regex = /^remove\s([1-9][0-9]?)$/i
@@ -28,11 +29,13 @@ export class RemoveCommandHandler extends CommandHandler {
     const songToRemove = deps.songQueue.getAtPosition(position)
 
     if (!songToRemove) {
-      await deps.sendChatMessage(`Nie ma utworu na pozycji ${position + 1}.`)
+      await deps.sendChatMessage(t("commands.remove.notFound", { position: position + 1 }))
       return
     }
 
     deps.songQueue.removeById(songToRemove.id)
-    await deps.sendChatMessage(`Usunięto utwór "${songToRemove.title}" z pozycji ${position + 1}.`)
+    await deps.sendChatMessage(
+      t("commands.remove.removed", { title: songToRemove.title, position: position + 1 }),
+    )
   }
 }

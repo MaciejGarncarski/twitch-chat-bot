@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { t } from "@/i18n/i18n"
 
 export class SkipCommandHandler extends CommandHandler {
   private readonly command = "skip"
@@ -22,7 +23,7 @@ export class SkipCommandHandler extends CommandHandler {
   }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [SKIP] Queue is empty, skipping not possible.`)
-      await sendChatMessage(`Kolejka jest pusta.`, messageId)
+      await sendChatMessage(t("commands.errors.queueEmpty"), messageId)
       return
     }
 
@@ -37,12 +38,12 @@ export class SkipCommandHandler extends CommandHandler {
 
     if (skippedSong) {
       await sendChatMessage(
-        `Pominięto utwór ${skippedSong.title} (dodany przez @${skippedSong.username}).`,
+        t("commands.skip.skipped", { title: skippedSong.title, username: skippedSong.username }),
         messageId,
       )
       return
     }
 
-    await sendChatMessage(`Kolejka jest pusta.`, messageId)
+    await sendChatMessage(t("commands.errors.queueEmpty"), messageId)
   }
 }

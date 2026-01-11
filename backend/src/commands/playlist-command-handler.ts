@@ -7,6 +7,7 @@ import { innertube } from "@/data/innertube"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { shuffle } from "@/helpers/shuffle"
 import { youtubeSearchService } from "@/services/youtube-search.service"
+import { t } from "@/i18n/i18n"
 
 export class PlaylistCommandHandler extends CommandHandler {
   private readonly regex = /^playlist\s+(.+)$/i
@@ -34,24 +35,21 @@ export class PlaylistCommandHandler extends CommandHandler {
     const queueSlotsAvailable = deps.songQueue.getAvailableSlots()
 
     if (queueSlotsAvailable <= 0) {
-      await deps.sendChatMessage(`Kolejka jest pełna! Nie można dodać playlisty.`, messageId)
+      await deps.sendChatMessage(t("commands.playlist.queueFull"), messageId)
       return
     }
 
     const playlistId = await this.resolvePlaylistId(query)
 
     if (!playlistId) {
-      await deps.sendChatMessage(`Nie znaleziono playlisty dla zapytania: "${query}"`, messageId)
+      await deps.sendChatMessage(t("commands.playlist.notFound", { query }), messageId)
       return
     }
 
     const videos = await this.fetchPlaylistVideos(playlistId, queueSlotsAvailable)
 
     if (videos.length === 0) {
-      await deps.sendChatMessage(
-        `Ta playlista jest pusta lub nie zawiera odpowiednich utworów.`,
-        messageId,
-      )
+      await deps.sendChatMessage(t("commands.playlist.empty"), messageId)
       return
     }
 
@@ -68,7 +66,7 @@ export class PlaylistCommandHandler extends CommandHandler {
     }
 
     if (results.added === 0) {
-      await deps.sendChatMessage(`Nie udało się dodać żadnego utworu z playlisty.`, messageId)
+      await deps.sendChatMessage(t("commands.playlist.noneAdded"), messageId)
       return
     }
 
@@ -78,12 +76,22 @@ export class PlaylistCommandHandler extends CommandHandler {
       `[COMMAND] [PLAYLIST] Added ${results.added} songs from playlist ${playlistUrl}${results.failed > 0 ? ` (${results.failed} failed)` : ""}`,
     )
 
-    const message =
-      results.failed > 0
-        ? `Dodano ${results.added} utworów z playlisty (${results.failed} pominięto). ${playlistUrl}`
-        : `Dodano ${results.added} utworów z playlisty do kolejki! ${playlistUrl}`
+    if (results.failed > 0) {
+      await deps.sendChatMessage(
+        t("commands.playlist.successWithFailures", {
+          added: results.added,
+          failed: results.failed,
+          url: playlistUrl,
+        }),
+        messageId,
+      )
+      return
+    }
 
-    await deps.sendChatMessage(message, messageId)
+    await deps.sendChatMessage(
+      t("commands.playlist.success", { added: results.added, url: playlistUrl }),
+      messageId,
+    )
   }
 
   private async resolvePlaylistId(query: string): Promise<string | null> {

@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { t } from "@/i18n/i18n"
 
 export class LoopToggleCommandHandler extends CommandHandler {
   private readonly command = "loop"
@@ -26,7 +27,8 @@ export class LoopToggleCommandHandler extends CommandHandler {
     }
 
     const state = playbackManager.toggleLoopEnabled()
-    await sendChatMessage(`Loop ${state ? "włączony" : "wyłączony"}.`, messageId)
+    const messageKey = state ? "commands.loop.enabled" : "commands.loop.disabled"
+    await sendChatMessage(t(messageKey), messageId)
 
     logger.info(
       `[COMMAND] [EXEC] [LOOP] User ${username} toggled loop to ${state ? "enabled" : "disabled"} (${sanitizedCommand})`,

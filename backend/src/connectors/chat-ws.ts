@@ -5,6 +5,7 @@ import { logger } from "@/helpers/logger"
 import { CommandProcessor } from "@/processors/command-processor"
 import { ITwitchAuthManager } from "@/types/twitch-auth"
 import { twitchMessageSchema } from "@/types/twitch-ws-message"
+import { t } from "@/i18n/i18n"
 
 export class ChatWebSocket {
   private ws?: WebSocket
@@ -35,7 +36,7 @@ export class ChatWebSocket {
         return
       }
 
-      sendChatMessage(`Wpisz ${env.COMMAND_PREFIX}help, aby zobaczyć dostępne komendy.`)
+      sendChatMessage(t("reminders.helpPrompt", { prefix: env.COMMAND_PREFIX }))
     }, this.reminderIntervalMs)
   }
 

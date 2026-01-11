@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { CommandError, CommandErrorCode } from "@/types/errors"
+import { t } from "@/i18n/i18n"
 
 export class ShuffleCommandHandler extends CommandHandler {
   private readonly command = "shuffle"
@@ -26,6 +27,6 @@ export class ShuffleCommandHandler extends CommandHandler {
 
     songQueue.shuffle()
     logger.info(`[COMMAND] [EXEC] [SHUFFLE] User ${username} shuffled the queue`)
-    await sendChatMessage(`Kolejka została przetasowana.`, messageId)
+    await sendChatMessage(t("commands.shuffle.success"), messageId)
   }
 }

@@ -1,6 +1,7 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { formatDuration } from "@/helpers/format-duration"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
 
 export class CurrentSongCommandHandler extends CommandHandler {
   private readonly command = "song"
@@ -20,7 +21,7 @@ export class CurrentSongCommandHandler extends CommandHandler {
   }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [SKIP] Queue is empty, skipping not possible.`)
-      await sendChatMessage(`Kolejka jest pusta.`, messageId)
+      await sendChatMessage(t("commands.errors.queueEmpty"), messageId)
       return
     }
 
@@ -37,7 +38,11 @@ export class CurrentSongCommandHandler extends CommandHandler {
       `[COMMAND] [CURRENTSONG] Current song is ${currentSong.title} added by ${currentSong.username}.`,
     )
     await sendChatMessage(
-      `Aktualny utwór to ${currentSong.title} (dodany przez @${currentSong.username}). Pozostało do końca: ${formatDurationToEnd}.`,
+      t("commands.currentSong.message", {
+        title: currentSong.title,
+        username: currentSong.username,
+        duration: formatDurationToEnd,
+      }),
       messageId,
     )
   }

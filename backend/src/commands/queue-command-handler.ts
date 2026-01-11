@@ -1,5 +1,6 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
+import { t } from "@/i18n/i18n"
 
 const ITEMS_TO_SHOW_DEFAULT = 5
 
@@ -19,7 +20,7 @@ export class QueueCommandHandler extends CommandHandler {
   async execute({ deps: { logger, songQueue, sendChatMessage }, messageId }: CommandContext) {
     if (songQueue.isEmpty()) {
       logger.info(`[COMMAND] [QUEUE] Queue is empty.`)
-      await sendChatMessage(`Kolejka jest pusta.`, messageId)
+      await sendChatMessage(t("commands.errors.queueEmpty"), messageId)
       return
     }
 
@@ -31,6 +32,6 @@ export class QueueCommandHandler extends CommandHandler {
       .join(", ")
 
     logger.info(`[COMMAND] [QUEUE] Sending current queue.`)
-    await sendChatMessage(`Aktualna kolejka:\n${formattedQueue}`, messageId)
+    await sendChatMessage(t("commands.queue.list", { queue: formattedQueue }), messageId)
   }
 }
