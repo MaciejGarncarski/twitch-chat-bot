@@ -8,6 +8,7 @@ export const en: TranslationSchema = {
   },
   reminders: {
     helpPrompt: "Type {prefix}help to see available commands.",
+    songRequestPrompt: "You can request a song by typing {prefix}sr <link_or_phrase>!",
   },
   commands: {
     errors: {

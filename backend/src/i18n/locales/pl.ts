@@ -6,6 +6,7 @@ export const pl = {
   },
   reminders: {
     helpPrompt: "Wpisz {prefix}help, aby zobaczyć dostępne komendy.",
+    songRequestPrompt: "Możesz poprosić o piosenkę, wpisując {prefix}sr <link_lub_fraza>!",
   },
   commands: {
     errors: {

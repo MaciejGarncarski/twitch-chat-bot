@@ -32,10 +32,11 @@ export const cyclicMessages: CyclicMessageConfig[] = [
     requireLive: true,
   },
   {
-    id: "hello-message",
-    message: "Witam chat :)",
-    intervalMs: 500, // 15 minutes
-    minMessagesBetween: 2,
-    requireLive: false,
+    id: "song-request-reminder",
+    messageKey: "reminders.songRequestPrompt",
+    messageParams: { prefix: env.COMMAND_PREFIX },
+    intervalMs: 7 * 60 * 1000, // 7 minutes
+    minMessagesBetween: 20,
+    requireLive: true,
   },
 ]
