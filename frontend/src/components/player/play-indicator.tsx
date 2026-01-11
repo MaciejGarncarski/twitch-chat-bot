@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth"
+import { useIsManagementPage } from "@/hooks/use-is-management-page"
 import { useSetPlayState } from "@/hooks/use-set-play-state"
 import { cn } from "@/lib/utils"
 import { Pause, Play } from "lucide-react"
@@ -22,6 +23,7 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
   const playStateMutation = useSetPlayState({ isPlaying })
   const { data } = useAuth()
   const isMod = data?.isMod ?? false
+  const isManagement = useIsManagementPage()
 
   const togglePlayState = () => {
     if (isMod) {
@@ -32,7 +34,7 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
   return (
     <button
       type="button"
-      disabled={!isMod}
+      disabled={!isMod || !isManagement}
       onClick={togglePlayState}
       className={cn(
         "relative flex h-6 items-center gap-1 px-1",

@@ -5,8 +5,8 @@ import { DurationIndicator } from "@/components/player/duration-indicator"
 import { LoopIndicator } from "@/components/player/loop-indicator"
 import { PlayIndicator } from "@/components/player/play-indicator"
 import { VolumeIndicator } from "@/components/player/volume-indicator"
+import { useIsManagementPage } from "@/hooks/use-is-management-page"
 import { cn } from "@/lib/utils"
-import { useLocation } from "@tanstack/react-router"
 import { Loader, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
@@ -35,8 +35,7 @@ export const CurrentSong = ({
   isLoopEnabled,
   dataStatus,
 }: CurrentSongProps) => {
-  const location = useLocation()
-  const isDashboard = !location.href.includes("/player-only")
+  const isManagement = useIsManagementPage()
 
   return (
     <motion.div
@@ -75,7 +74,7 @@ export const CurrentSong = ({
       <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-0">
         <div className="relative flex items-center justify-between gap-4">
           <CurrentSongTitle title={title} isPlaying={isPlaying} />
-          {isDashboard && (
+          {isManagement && (
             <div className={cn(!isPlaying && "absolute right-0 z-20")}>
               <CurrentSongDropdown />
             </div>

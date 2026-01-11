@@ -16,7 +16,7 @@ const itemVariants: Variants = {
       type: "spring",
       stiffness: 300,
       damping: 60,
-      delay: i * 0.3,
+      delay: i > 10 ? 0 : i * 0.3,
     },
   }),
   exit: {

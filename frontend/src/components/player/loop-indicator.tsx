@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth"
+import { useIsManagementPage } from "@/hooks/use-is-management-page"
 import { useLoopToggle } from "@/hooks/use-loop-toggle"
 import { cn } from "@/lib/utils"
 import { Repeat } from "lucide-react"
@@ -10,6 +11,7 @@ export function LoopIndicator({ isLoopEnabled }: { isLoopEnabled: boolean }) {
   const loopMutation = useLoopToggle()
   const { data } = useAuth()
   const isMod = data?.isMod ?? false
+  const isManagement = useIsManagementPage()
 
   const toggleLoop = () => {
     if (isMod) {
@@ -20,7 +22,7 @@ export function LoopIndicator({ isLoopEnabled }: { isLoopEnabled: boolean }) {
   return (
     <button
       type="button"
-      disabled={!isMod}
+      disabled={!isMod || !isManagement}
       onClick={toggleLoop}
       className={cn("flex h-6 items-center gap-1 px-1", isMod ? "cursor-pointer" : "cursor-auto")}
     >
