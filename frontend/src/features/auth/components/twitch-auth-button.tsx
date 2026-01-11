@@ -1,5 +1,4 @@
 import { apiURL } from "@/api/api-treaty"
-import { TwitchIcon } from "@/components/twitch-icon"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -9,14 +8,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useAuth } from "@/hooks/use-auth"
-import { useSignOut } from "@/hooks/use-sign-out"
+import { TwitchIcon } from "@/features/auth/components/twitch-icon"
+import { useAuth } from "@/features/auth/hooks/use-auth"
+import { useSignOut } from "@/features/auth/hooks/use-sign-out"
 import { cn } from "@/lib/utils"
 import { Loader, LogOut, User } from "lucide-react"
 
 export function TwitchAuthButton() {
   const oauthUrl = apiURL + "api/auth/sign-in"
-  const { data, isLoading } = useAuth()
+  const { data, isLoading, isFetching } = useAuth()
   const signOutMutation = useSignOut()
 
   if (isLoading) {
@@ -32,7 +32,11 @@ export function TwitchAuthButton() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className={"cursor-pointer"}>
+          <Button
+            variant="outline"
+            className={"cursor-pointer"}
+            disabled={isFetching || signOutMutation.isPending}
+          >
             {data.user.avatar ? (
               <img
                 src={data.user.avatar}

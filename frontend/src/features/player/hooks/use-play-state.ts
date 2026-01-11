@@ -23,6 +23,7 @@ export const usePlayState = (
     const drift = Math.abs(serverPlayTime - localTime)
 
     if (drift > MAX_ALLOWED_DRIFT && !isProcessingSeek.current) {
+      // oxlint-disable-next-line no-console
       console.log(`[Sync] Skok z ${localTime.toFixed(2)} do ${serverPlayTime.toFixed(2)}`)
 
       media.currentTime = serverPlayTime

@@ -1,16 +1,16 @@
-import { CurrentSongDropdown } from "@/components/player/current-song-dropdown"
-import { CurrentSongProgressBar } from "@/components/player/current-song-progress-bar"
-import { CurrentSongTitle } from "@/components/player/current-song-title"
-import { DurationIndicator } from "@/components/player/duration-indicator"
-import { LoopIndicator } from "@/components/player/loop-indicator"
-import { PlayIndicator } from "@/components/player/play-indicator"
-import { VolumeIndicator } from "@/components/player/volume-indicator"
+import { DurationIndicator } from "@/features/player/components/duration-indicator"
+import { LoopIndicator } from "@/features/player/components/loop-indicator"
+import { PlayIndicator } from "@/features/player/components/play-indicator"
+import { PlayerManagementDropdown } from "@/features/player/components/player-management-dropdown"
+import { PlayerProgressBar } from "@/features/player/components/player-progress-bar"
+import { SongTitle } from "@/features/player/components/song-title"
+import { VolumeIndicator } from "@/features/player/components/volume-indicator"
 import { useIsManageMode } from "@/hooks/use-is-manage-mode"
 import { cn } from "@/lib/utils"
 import { Loader, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
-type CurrentSongProps = {
+type PlayerProps = {
   thumbnail: string | null
   isLoopEnabled: boolean
   isPlaying: boolean
@@ -23,7 +23,7 @@ type CurrentSongProps = {
   dataStatus: "loading" | "success"
 }
 
-export const CurrentSong = ({
+export const Player = ({
   volume,
   playTime,
   isPlaying,
@@ -34,13 +34,12 @@ export const CurrentSong = ({
   videoId,
   isLoopEnabled,
   dataStatus,
-}: CurrentSongProps) => {
+}: PlayerProps) => {
   const isManagement = useIsManageMode()
 
   return (
     <motion.div
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
-      initial={{ opacity: 0, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
       className="bg-background/95 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-4 py-4 md:h-36 md:flex-row"
     >
@@ -73,18 +72,20 @@ export const CurrentSong = ({
       </a>
       <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-0">
         <div className="relative flex items-center justify-between gap-4">
-          <CurrentSongTitle title={title} isPlaying={isPlaying} />
+          <SongTitle title={title} isPlaying={isPlaying} />
           {isManagement && (
             <div className={cn(!isPlaying && "absolute right-0 z-20")}>
-              <CurrentSongDropdown />
+              <PlayerManagementDropdown />
             </div>
           )}
         </div>
         <div className="flex flex-col gap-3.5">
           <div className="text-muted-foreground flex flex-col items-center justify-between gap-1 text-base md:flex-row md:gap-2">
             <div className="flex items-center gap-3">
-              <PlayIndicator isPlaying={isPlaying} />
-              <DurationIndicator playTime={playTime} duration={duration} />
+              <div className="flex items-center gap-1">
+                <PlayIndicator isPlaying={isPlaying} />
+                <DurationIndicator playTime={playTime} duration={duration} />
+              </div>
               <span className="opacity-70">-</span>
               <VolumeIndicator volume={volume} />
               <span className="opacity-70">-</span>
@@ -95,7 +96,7 @@ export const CurrentSong = ({
               {username}
             </p>
           </div>
-          <CurrentSongProgressBar duration={duration} playTime={playTime} />
+          <PlayerProgressBar duration={duration} playTime={playTime} />
         </div>
       </div>
     </motion.div>

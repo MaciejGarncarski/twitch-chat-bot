@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/hooks/use-auth"
-import { useQueue } from "@/hooks/use-queue"
-import { useRemoveVideo } from "@/hooks/use-remove-video"
+import { useAuth } from "@/features/auth/hooks/use-auth"
+import { useQueue } from "@/features/queue/hooks/use-queue"
+import { useRemoveVideo } from "@/features/queue/hooks/use-remove-video"
 import { cn } from "@/lib/utils"
 import { formatDuration } from "@/utils/format-duration"
 import { Clock3, Trash2, UserIcon } from "lucide-react"
@@ -49,7 +49,6 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
           {queuedCount === 0 && (
             <motion.div
               key="empty"
-              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="text-muted-foreground p-14 text-center"

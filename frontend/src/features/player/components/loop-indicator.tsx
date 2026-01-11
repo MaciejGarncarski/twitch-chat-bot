@@ -1,6 +1,6 @@
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useIsManageMode } from "@/hooks/use-is-manage-mode"
-import { useLoopToggle } from "@/hooks/use-loop-toggle"
+import { useLoopToggle } from "@/features/player/hooks/use-loop-toggle"
 import { cn } from "@/lib/utils"
 import { Repeat } from "lucide-react"
 import { motion } from "motion/react"

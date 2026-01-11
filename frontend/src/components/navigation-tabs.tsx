@@ -17,7 +17,7 @@ export function NavigationTabs() {
   }
 
   return (
-    <Tabs defaultValue={defaultValue} onValueChange={navigateOnSelect}>
+    <Tabs value={defaultValue} onValueChange={navigateOnSelect}>
       <TabsList className={"gap-2 px-2"}>
         <TabsTrigger value="account" className={"cursor-pointer"}>
           Zarządzanie

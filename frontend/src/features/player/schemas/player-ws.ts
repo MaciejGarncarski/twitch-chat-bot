@@ -11,3 +11,21 @@ export const playbackStatusWSSchema = z.object({
 })
 
 export type PlaybackStatusWS = z.infer<typeof playbackStatusWSSchema>
+
+export type PlayerDataReturn =
+  | {
+      volume: number
+      playTime: number
+      isPlaying: boolean
+      songId: string | null
+      isLoopEnabled: boolean
+      status: "loading"
+    }
+  | {
+      volume: number
+      playTime: number
+      isPlaying: boolean
+      songId: string | null
+      isLoopEnabled: boolean
+      status: "success"
+    }

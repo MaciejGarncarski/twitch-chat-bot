@@ -1,19 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useRef } from "react"
-import { useVolume } from "@/hooks/use-volume"
-import { usePlayState } from "@/hooks/use-play-state"
+import { useVolume } from "@/features/player/hooks/use-volume"
+import { usePlayState } from "@/features/player/hooks/use-play-state"
 import { AnimatePresence } from "motion/react"
-import { CurrentSong } from "@/components/player/current-song"
-import { Queue } from "@/components/queue"
-import { usePlayerData } from "@/hooks/use-player-data"
-import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
-import { QueueEmptyMessage } from "@/components/queue-empty-message"
-import { QueueLoadingMessage } from "@/components/queue-loading-message"
-import { useAuth } from "@/hooks/use-auth"
-import { TwitchAuthButton } from "@/components/twitch-auth-button"
+import { Queue } from "@/features/queue/components/queue"
+import { queueQueryOptions, useQueue } from "@/features/queue/hooks/use-queue"
+import { QueueEmptyMessage } from "@/features/queue/components/queue-empty-message"
+import { QueueLoadingMessage } from "@/features/queue/components/queue-loading-message"
+import { useAuth } from "@/features/auth/hooks/use-auth"
 import { NavigationTabs } from "@/components/navigation-tabs"
 import { useDetectTheme } from "@/hooks/use-detect-theme"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { usePlayerData } from "@/features/player/components/player-data-provider"
+import { TwitchAuthButton } from "@/features/auth/components/twitch-auth-button"
+import { Player } from "@/features/player/components/player"
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -50,7 +50,7 @@ function App() {
           {isLoading ? (
             <QueueLoadingMessage />
           ) : currentSong ? (
-            <CurrentSong
+            <Player
               dataStatus={status}
               isLoopEnabled={isLoopEnabled}
               videoId={currentSong.id}

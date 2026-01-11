@@ -1,8 +1,8 @@
-import { playbackStatusWSSchema } from "@/schemas/playback-status-ws"
+import { playbackStatusWSSchema, type PlayerDataReturn } from "@/features/player/schemas/player-ws"
 import { useMemo } from "react"
 import useWebSocket, { ReadyState } from "react-use-websocket"
 
-export function usePlayerData(): PlayerDataReturn {
+export function usePlayerWebsocket(): PlayerDataReturn {
   const { lastJsonMessage, readyState } = useWebSocket(
     import.meta.env.VITE_WS_URL || "ws://localhost:3001/ws",
     {
@@ -51,21 +51,3 @@ export function usePlayerData(): PlayerDataReturn {
     status: isConnected ? "success" : "loading",
   }
 }
-
-type PlayerDataReturn =
-  | {
-      volume: number
-      playTime: number
-      isPlaying: boolean
-      songId: string | null
-      isLoopEnabled: boolean
-      status: "loading"
-    }
-  | {
-      volume: number
-      playTime: number
-      isPlaying: boolean
-      songId: string | null
-      isLoopEnabled: boolean
-      status: "success"
-    }

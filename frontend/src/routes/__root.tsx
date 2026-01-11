@@ -5,8 +5,9 @@ import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools"
 
 import type { QueryClient } from "@tanstack/react-query"
 import { ThemeProvider } from "@/components/theme-provider"
-import { PlayerYT } from "@/components/player-yt"
+import { PlayerYT } from "@/features/player/components/player-yt"
 import { useDetectTheme } from "@/hooks/use-detect-theme"
+import { PlayerDataProvider } from "@/features/player/components/player-data-provider"
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -18,8 +19,10 @@ const RootComponent = () => {
   return (
     <>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <Outlet />
-        <PlayerYT />
+        <PlayerDataProvider>
+          <Outlet />
+          <PlayerYT />
+        </PlayerDataProvider>
       </ThemeProvider>
       <TanStackDevtools
         config={{

@@ -1,13 +1,7 @@
 import { motion } from "motion/react"
 import { useEffect, useState } from "react"
 
-export function CurrentSongProgressBar({
-  duration,
-  playTime,
-}: {
-  duration: number
-  playTime: number
-}) {
+export function PlayerProgressBar({ duration, playTime }: { duration: number; playTime: number }) {
   const [prevPlayTime, setPrevPlayTime] = useState(0)
 
   useEffect(() => {

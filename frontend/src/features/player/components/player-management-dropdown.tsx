@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/features/auth/hooks/use-auth"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,16 +20,16 @@ import {
   Trash,
   type LucideIcon,
 } from "lucide-react"
-import { useSetPlayState } from "@/hooks/use-set-play-state"
-import { useSkip } from "@/hooks/use-skip"
-import { useShuffle } from "@/hooks/use-shuffle"
-import { useLoopToggle } from "@/hooks/use-loop-toggle"
-import { useClearQueue } from "@/hooks/use-clear-queue"
+import { useSetPlayState } from "@/features/player/hooks/use-set-play-state"
+import { useSkip } from "@/features/queue/hooks/use-skip"
+import { useShuffle } from "@/features/queue/hooks/use-shuffle"
+import { useLoopToggle } from "@/features/player/hooks/use-loop-toggle"
+import { useClearQueue } from "@/features/queue/hooks/use-clear-queue"
 import { cn } from "@/lib/utils"
-import { usePlayerData } from "@/hooks/use-player-data"
-import { useQueue } from "@/hooks/use-queue"
+import { useQueue } from "@/features/queue/hooks/use-queue"
+import { usePlayerData } from "@/features/player/components/player-data-provider"
 
-export function CurrentSongDropdown() {
+export function PlayerManagementDropdown() {
   const { isLoopEnabled, isPlaying } = usePlayerData()
   const playStateMutation = useSetPlayState({ isPlaying })
   const skipMutation = useSkip()

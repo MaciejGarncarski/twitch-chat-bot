@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 
-export function CurrentSongTitle({ title, isPlaying }: { title: string; isPlaying: boolean }) {
+export function SongTitle({ title, isPlaying }: { title: string; isPlaying: boolean }) {
   const isLongTitle = title.length >= 30
 
   if (isLongTitle) {

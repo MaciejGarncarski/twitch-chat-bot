@@ -1,17 +1,17 @@
-import { CurrentSong } from "@/components/player/current-song"
 import { NavigationTabs } from "@/components/navigation-tabs"
-import { Queue } from "@/components/queue"
-import { QueueEmptyMessage } from "@/components/queue-empty-message"
-import { QueueLoadingMessage } from "@/components/queue-loading-message"
+import { Queue } from "@/features/queue/components/queue"
+import { QueueEmptyMessage } from "@/features/queue/components/queue-empty-message"
+import { QueueLoadingMessage } from "@/features/queue/components/queue-loading-message"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useDetectTheme } from "@/hooks/use-detect-theme"
-import { usePlayState } from "@/hooks/use-play-state"
-import { usePlayerData } from "@/hooks/use-player-data"
-import { queueQueryOptions, useQueue } from "@/hooks/use-queue"
-import { useVolume } from "@/hooks/use-volume"
+import { usePlayState } from "@/features/player/hooks/use-play-state"
+import { queueQueryOptions, useQueue } from "@/features/queue/hooks/use-queue"
+import { useVolume } from "@/features/player/hooks/use-volume"
 import { createFileRoute } from "@tanstack/react-router"
 import { AnimatePresence } from "motion/react"
 import { useRef } from "react"
+import { usePlayerData } from "@/features/player/components/player-data-provider"
+import { Player } from "@/features/player/components/player"
 
 export const Route = createFileRoute("/player-only")({
   loader: async ({ context }) => {
@@ -41,7 +41,7 @@ function RouteComponent() {
           {isLoading ? (
             <QueueLoadingMessage />
           ) : currentSong ? (
-            <CurrentSong
+            <Player
               dataStatus={status}
               isLoopEnabled={isLoopEnabled}
               videoId={currentSong.id}
