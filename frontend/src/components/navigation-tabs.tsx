@@ -1,10 +1,10 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useIsManagementPage } from "@/hooks/use-is-manage-mode"
+import { useIsManageMode } from "@/hooks/use-is-manage-mode"
 import { useNavigate } from "@tanstack/react-router"
 
 export function NavigationTabs() {
   const navigate = useNavigate()
-  const isManagement = useIsManagementPage()
+  const isManagement = useIsManageMode()
   const defaultValue = isManagement ? "account" : "player"
 
   const navigateOnSelect = (value: string) => {
