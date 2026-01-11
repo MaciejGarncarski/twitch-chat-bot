@@ -17,6 +17,7 @@ import { commandHandlers } from "@/commands/handlers"
 import { unsubscribeAll } from "@/connectors/chat-subscription"
 import { twitchUserResponseSchema } from "@/schemas/user-response"
 import { t as translate } from "@/i18n/i18n"
+import { CyclicMessageService } from "@/services/cyclic-message.service"
 
 async function init() {
   await unsubscribeAll()
@@ -27,7 +28,8 @@ async function init() {
   ])
   songRequestEngine.setupEventListeners()
   const commandProcessor = new CommandProcessor(commandHandlers, twitchAuth)
-  new ChatWebSocket(twitchAuth, commandProcessor)
+  const cyclicMessageService = new CyclicMessageService(twitchAuth)
+  new ChatWebSocket(commandProcessor, cyclicMessageService)
 }
 
 await init()

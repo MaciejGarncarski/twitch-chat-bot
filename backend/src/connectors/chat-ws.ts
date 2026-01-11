@@ -1,43 +1,22 @@
-import { sendChatMessage } from "@/api/send-chat-message"
-import { env } from "@/config/env"
 import { ensureChatSubscription } from "@/connectors/chat-subscription"
 import { logger } from "@/helpers/logger"
 import { CommandProcessor } from "@/processors/command-processor"
-import { ITwitchAuthManager } from "@/types/twitch-auth"
+import { CyclicMessageService } from "@/services/cyclic-message.service"
 import { twitchMessageSchema } from "@/types/twitch-ws-message"
-import { t } from "@/i18n/i18n"
 
 export class ChatWebSocket {
   private ws?: WebSocket
   private missedMessageTimer?: NodeJS.Timeout
-  private readonly reminderIntervalMs = 5 * 60 * 1000 // 5 minutes
-  private reminderIntervalId?: NodeJS.Timeout
   private isTransferring = false
 
   private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws"
   private keepaliveTimeoutSeconds = 30_000
 
   constructor(
-    private twitchAuth: ITwitchAuthManager,
     private commandProcessor: CommandProcessor,
+    private cyclicMessageService: CyclicMessageService,
   ) {
     this.connect()
-  }
-
-  private startRemainderInterval() {
-    if (this.reminderIntervalId) {
-      clearInterval(this.reminderIntervalId)
-    }
-
-    this.reminderIntervalId = setInterval(async () => {
-      const isLive = await this.twitchAuth.isStreamerBroadcasting()
-
-      if (!isLive) {
-        return
-      }
-
-      sendChatMessage(t("reminders.helpPrompt", { prefix: env.COMMAND_PREFIX }))
-    }, this.reminderIntervalMs)
   }
 
   private connect(url: string = this.DEFAULT_WS_URL) {
@@ -46,7 +25,7 @@ export class ChatWebSocket {
     const ws = new WebSocket(url)
     this.ws = ws
 
-    this.startRemainderInterval()
+    this.cyclicMessageService.start()
 
     ws.addEventListener("message", async ({ data }) => {
       this.resetKeepaliveTimer()
@@ -117,6 +96,7 @@ export class ChatWebSocket {
       }
 
       case "notification": {
+        this.cyclicMessageService.onChatMessage()
         await this.commandProcessor.process(parsed)
         break
       }

@@ -3,7 +3,7 @@ import { useIsManageMode } from "@/hooks/use-is-manage-mode"
 import { useSetPlayState } from "@/features/player/hooks/use-set-play-state"
 import { cn } from "@/lib/utils"
 import { Pause, Play } from "lucide-react"
-import { AnimatePresence, motion, type Variants } from "motion/react"
+import { motion, type Variants } from "motion/react"
 
 const MotionPlay = motion(Play)
 const MotionPause = motion(Pause)
@@ -11,7 +11,7 @@ const MotionPause = motion(Pause)
 const btnVariants: Variants = {
   initial: {
     scale: 0.5,
-    opacity: 0.5,
+    opacity: 0,
   },
   animate: {
     scale: 1,
@@ -41,25 +41,23 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
         isMod ? "cursor-pointer" : "cursor-auto",
       )}
     >
-      <AnimatePresence mode="popLayout" initial={false}>
-        {isPlaying ? (
-          <MotionPause
-            key="playing"
-            variants={btnVariants}
-            initial="initial"
-            animate="animate"
-            size={17}
-          />
-        ) : (
-          <MotionPlay
-            key="paused"
-            variants={btnVariants}
-            initial="initial"
-            animate="animate"
-            size={17}
-          />
-        )}
-      </AnimatePresence>
+      {isPlaying ? (
+        <MotionPause
+          key="playing"
+          variants={btnVariants}
+          initial="initial"
+          animate="animate"
+          size={17}
+        />
+      ) : (
+        <MotionPlay
+          key="paused"
+          variants={btnVariants}
+          initial="initial"
+          animate="animate"
+          size={17}
+        />
+      )}
     </button>
   )
 }

@@ -60,7 +60,7 @@ export function PlayerYT() {
   }
 
   if (!songSrc || isQueueLoading || status !== "success") {
-    return <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
+    return null
   }
 
   return (
@@ -70,7 +70,7 @@ export function PlayerYT() {
           key={`${songSrc}-${retryCount}`}
           ref={playerRef}
           src={songSrc}
-          volume={isReady ? volume : 0}
+          volume={isPlaying && isReady ? volume : 0}
           muted={isMuted || !isReady}
           playing={isPlaying && isReady}
           onReady={handleReady}
