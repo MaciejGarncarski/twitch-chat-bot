@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook"
+
 import tseslint from "typescript-eslint"
 import pluginReactHooks from "eslint-plugin-react-hooks"
 import pluginReact from "eslint-plugin-react"
@@ -32,4 +35,5 @@ export default [
       "react/prop-types": 0,
     },
   },
+  ...storybook.configs["flat/recommended"],
 ]

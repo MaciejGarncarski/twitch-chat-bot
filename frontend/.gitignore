@@ -8,3 +8,6 @@ count.txt
 .nitro
 .tanstack
 .wrangler
+storybook-static
+debug-storybook.log
+.storybook-out

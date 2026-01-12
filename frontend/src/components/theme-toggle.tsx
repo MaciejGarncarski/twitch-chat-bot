@@ -15,9 +15,8 @@ type ThemeToggleProps = {
   withText?: boolean
 }
 
-const iconSizeClass = "h-[1.3rem] w-[1.3rem] mr-1"
-
 export function ThemeToggle({ withText = true }: ThemeToggleProps) {
+  const iconSizeClass = cn("h-[1.3rem] w-[1.3rem]", withText && "mr-1")
   const { setTheme, theme } = useTheme()
   const { t } = useTranslate()
 
