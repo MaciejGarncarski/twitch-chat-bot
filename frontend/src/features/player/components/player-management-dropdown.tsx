@@ -20,6 +20,7 @@ import {
   SkipForward,
   Trash,
   Volume1,
+  Volume2,
   VolumeX,
   type LucideIcon,
 } from "lucide-react"
@@ -38,8 +39,13 @@ import {
   shuffleKeyboardShortcut,
   toggleKeyboardShortcut,
   useKeyShortcuts,
+  volumeDownKeyboardShortcut,
+  volumeStep,
+  volumeUpKeyboardShortcut,
 } from "@/features/player/hooks/use-key-shortcuts"
 import { useMuteToggle } from "@/features/player/hooks/use-mute-toggle"
+import { useSetVolume } from "@/features/player/hooks/use-set-volume"
+import { debounce } from "@tanstack/pacer"
 
 export function PlayerManagementDropdown() {
   const { t } = useTranslate()
@@ -48,6 +54,7 @@ export function PlayerManagementDropdown() {
   const skipMutation = useSkip()
   const loopMutation = useLoopToggle()
   const muteMutation = useMuteToggle()
+  const setVolumeMutation = useSetVolume()
   const { data } = useQueue()
   const clearQueueMutation = useClearQueue()
   const shuffleMutation = useShuffle()
@@ -61,6 +68,26 @@ export function PlayerManagementDropdown() {
   }
 
   const isQueueEmpty = (data?.length ?? 0) <= 2
+
+  const volumeUp = debounce(
+    () => {
+      const newDecimal = Math.min(1, volume + volumeStep)
+      const scaledVolume = Math.round(newDecimal * 100)
+
+      setVolumeMutation.mutate(scaledVolume)
+    },
+    { wait: 50 },
+  )
+
+  const volumeDown = debounce(
+    () => {
+      const newDecimal = Math.max(0, volume - volumeStep)
+      const scaledVolume = Math.round(newDecimal * 100)
+
+      setVolumeMutation.mutate(scaledVolume)
+    },
+    { wait: 50 },
+  )
 
   return (
     <DropdownMenu>
@@ -88,6 +115,22 @@ export function PlayerManagementDropdown() {
             loadingText={t("player.loading.loopToggle")}
             text={t("player.loopToggle")}
             keyboardShortcut={toggleKeyboardShortcut}
+          />
+          <DropdownItemWithLoader
+            icon={Volume2}
+            isPending={setVolumeMutation.isPending}
+            onSelect={volumeUp}
+            loadingText={t("player.loading.volume")}
+            text={t("player.increaseVolume")}
+            keyboardShortcut={volumeUpKeyboardShortcut}
+          />
+          <DropdownItemWithLoader
+            icon={Volume1}
+            isPending={setVolumeMutation.isPending}
+            onSelect={volumeDown}
+            loadingText={t("player.loading.volume")}
+            text={t("player.decreaseVolume")}
+            keyboardShortcut={volumeDownKeyboardShortcut}
           />
           <DropdownItemWithLoader
             icon={volume === 0 ? VolumeX : Volume1}

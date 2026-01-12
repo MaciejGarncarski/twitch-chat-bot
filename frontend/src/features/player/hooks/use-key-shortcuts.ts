@@ -12,7 +12,7 @@ import { debounce } from "@tanstack/pacer"
 const forwardSeekAmount = 5
 const backwardSeekAmount = -5
 
-const volumeStep = 0.05
+export const volumeStep = 0.05
 
 const modifier = `${ctrlOsBased}+Shift`
 export const playKeyboardShortcut = `${modifier}+P`

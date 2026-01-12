@@ -18,6 +18,8 @@ export const en: TranslationSchema = {
     seekBackward: "-5 sec.",
     mute: "Mute",
     unmute: "Unmute",
+    decreaseVolume: "- 5%",
+    increaseVolume: "+ 5%",
     loading: {
       seek: "Wait",
       sync: "Syncing...",
@@ -28,6 +30,7 @@ export const en: TranslationSchema = {
       skip: "Skipping",
       shuffle: "Shuffling",
       mute: "Toggling",
+      volume: "Setting",
     },
   },
   theme: {

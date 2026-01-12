@@ -16,6 +16,8 @@ export const pl = {
     seekBackward: "-5 sek.",
     mute: "Wycisz",
     unmute: "Odcisz",
+    increaseVolume: "+ 5%",
+    decreaseVolume: "- 5%",
     loading: {
       seek: "Poczekaj",
       sync: "Synchronizacja...",
@@ -26,6 +28,7 @@ export const pl = {
       shuffle: "Tasuję",
       clearAll: "Poczekaj",
       mute: "Zmieniam",
+      volume: "Ustawiam",
     },
   },
   theme: {
