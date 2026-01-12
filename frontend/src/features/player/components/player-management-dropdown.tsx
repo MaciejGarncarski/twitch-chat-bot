@@ -19,6 +19,8 @@ import {
   Repeat,
   SkipForward,
   Trash,
+  Volume1,
+  VolumeX,
   type LucideIcon,
 } from "lucide-react"
 import { useSetPlayState } from "@/features/player/hooks/use-set-play-state"
@@ -30,57 +32,29 @@ import { cn } from "@/lib/utils"
 import { useQueue } from "@/features/queue/hooks/use-queue"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
-import { ctrlOsBased } from "@/utils/ctrl-os-based"
-import { useHotkeys } from "react-hotkeys-hook"
-
-const modifier = `${ctrlOsBased}+Shift`
-const playKeyboardShortcut = `${modifier}+P`
-const toggleKeyboardShortcut = `${modifier}+L`
-const shuffleKeyboardShortcut = `${modifier}+H`
-
-const hotkeyOptions = {
-  enableOnFormTags: false,
-  preventDefault: true,
-}
+import {
+  muteKeyboardShortcut,
+  playKeyboardShortcut,
+  shuffleKeyboardShortcut,
+  toggleKeyboardShortcut,
+  useKeyShortcuts,
+} from "@/features/player/hooks/use-key-shortcuts"
+import { useMuteToggle } from "@/features/player/hooks/use-mute-toggle"
 
 export function PlayerManagementDropdown() {
   const { t } = useTranslate()
-  const { isLoopEnabled, isPlaying } = usePlayerData()
+  const { isLoopEnabled, isPlaying, volume } = usePlayerData()
   const playStateMutation = useSetPlayState({ isPlaying })
   const skipMutation = useSkip()
   const loopMutation = useLoopToggle()
+  const muteMutation = useMuteToggle()
   const { data } = useQueue()
   const clearQueueMutation = useClearQueue()
   const shuffleMutation = useShuffle()
   const auth = useAuth()
   const isMod = auth.data?.isMod || false
 
-  useHotkeys(
-    playKeyboardShortcut,
-    () => {
-      playStateMutation.mutate()
-    },
-    hotkeyOptions,
-    [isPlaying, playStateMutation],
-  )
-
-  useHotkeys(
-    toggleKeyboardShortcut,
-    () => {
-      loopMutation.mutate()
-    },
-    hotkeyOptions,
-    [isLoopEnabled, loopMutation],
-  )
-
-  useHotkeys(
-    shuffleKeyboardShortcut,
-    () => {
-      shuffleMutation.mutate()
-    },
-    hotkeyOptions,
-    [shuffleMutation],
-  )
+  useKeyShortcuts()
 
   if (!isMod) {
     return null
@@ -114,6 +88,14 @@ export function PlayerManagementDropdown() {
             loadingText={t("player.loading.loopToggle")}
             text={t("player.loopToggle")}
             keyboardShortcut={toggleKeyboardShortcut}
+          />
+          <DropdownItemWithLoader
+            icon={volume === 0 ? VolumeX : Volume1}
+            isPending={muteMutation.isPending}
+            onSelect={() => muteMutation.mutate()}
+            loadingText={t("player.loading.mute")}
+            text={volume === 0 ? t("player.unmute") : t("player.mute")}
+            keyboardShortcut={muteKeyboardShortcut}
           />
           <DropdownItemWithLoader
             icon={SkipForward}
@@ -193,7 +175,7 @@ function DropdownItemWithLoader({
       )}
       {keyboardShortcut && (
         <DropdownMenuShortcut
-          className={cn(variant === "destructive" && "text-destructive/80", "hidden lg:inline")}
+          className={cn(variant === "destructive" && "text-destructive/80", "hidden md:inline")}
         >
           {keyboardShortcut}
         </DropdownMenuShortcut>

@@ -14,8 +14,12 @@ export const en: TranslationSchema = {
     skip: "Skip",
     shuffle: "Shuffle",
     clearAll: "Clear All",
-
+    seekForward: "+5 sec.",
+    seekBackward: "-5 sec.",
+    mute: "Mute",
+    unmute: "Unmute",
     loading: {
+      seek: "Wait",
       sync: "Syncing...",
       clearAll: "Wait",
       pause: "Pausing",
@@ -23,6 +27,7 @@ export const en: TranslationSchema = {
       loopToggle: "Toggling",
       skip: "Skipping",
       shuffle: "Shuffling",
+      mute: "Toggling",
     },
   },
   theme: {

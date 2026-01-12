@@ -17,6 +17,8 @@ export interface IPlaybackManager extends EventEmitter {
   getIsPlaying(): boolean
   getIsLoopEnabled(): boolean
   toggleLoopEnabled(): boolean
+  mute(): void
+  unmute(): void
 
   on(event: "song-ended", listener: () => void): this
 }
@@ -30,6 +32,7 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
   private songId: string | null = null
   private currentSongDuration = 0
   private isLoopEnabled = false
+  private volumeBeforeMute: number = 20
 
   constructor() {
     super()
@@ -138,6 +141,18 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
 
   public setVolume(volume: number) {
     this.volume = Math.min(Math.max(volume, 0), 100)
+    this.broadcastStatus()
+  }
+
+  public mute() {
+    if (this.volume === 0) return
+    this.volumeBeforeMute = this.volume
+    this.setVolume(0)
+  }
+
+  public unmute() {
+    if (this.volume !== 0) return
+    this.setVolume(this.volumeBeforeMute)
   }
 
   public toggleLoopEnabled() {

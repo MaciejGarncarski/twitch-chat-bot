@@ -12,7 +12,12 @@ export const pl = {
     skip: "Pomiń",
     shuffle: "Przetasuj",
     clearAll: "Wyczyść wszystko",
+    seekForward: "+5 sek.",
+    seekBackward: "-5 sek.",
+    mute: "Wycisz",
+    unmute: "Odcisz",
     loading: {
+      seek: "Poczekaj",
       sync: "Synchronizacja...",
       play: "Odtwarzam",
       pause: "Zatrzymuję",
@@ -20,6 +25,7 @@ export const pl = {
       skip: "Pomijam",
       shuffle: "Tasuję",
       clearAll: "Poczekaj",
+      mute: "Zmieniam",
     },
   },
   theme: {

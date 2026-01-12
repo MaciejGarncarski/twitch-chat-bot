@@ -229,6 +229,19 @@ export const app = new Elysia()
               }),
             },
           )
+          .post("/muteToggle", async ({ user, status }) => {
+            if (user?.role !== "MOD") {
+              return status(401, { status: "Unauthorized" })
+            }
+
+            const playbackManager = songRequestEngine.getPlaybackManager()
+            if (playbackManager.getVolume() === 0) {
+              playbackManager.unmute()
+            } else {
+              playbackManager.mute()
+            }
+            return status(204, null)
+          })
           .post("/clear-queue", async ({ user, status }) => {
             if (user?.role !== "MOD") {
               return status(401, { status: "Unauthorized" })
