@@ -2,7 +2,7 @@ import { EventEmitter } from "node:events"
 
 import { getBunServer } from "@/helpers/init-ws"
 import { logger } from "@/helpers/logger"
-import { PlaybackStatusWS } from "@/types/playback-status-ws"
+import { PlaybackStatusWS } from "@/schemas/playback-status"
 
 export interface IPlaybackManager extends EventEmitter {
   play(): void

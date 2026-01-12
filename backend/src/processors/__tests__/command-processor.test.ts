@@ -41,48 +41,48 @@ mock.module("@/core/song-request-engine", () => ({
 import { CommandContext, CommandHandler } from "@/commands/command"
 import { CommandProcessor } from "@/processors/command-processor"
 import { CommandError, CommandErrorCode } from "@/types/errors"
-import { TwitchWSMessage } from "@/types/twitch-ws-message"
 import { env } from "@/config/env"
-import { ITwitchAuthManager } from "@/types/twitch-auth"
+import { TwitchWSMessage } from "@/schemas/twitch-websocket"
+import { ITwitchAuthManager } from "@/core/twitch-auth-manager"
 
 const createMockMessage = (
   text: string,
   overrides: Partial<{
-    messageType: string
+    messageType:
+      | "session_welcome"
+      | "session_keepalive"
+      | "notification"
+      | "session_reconnect"
+      | "revocation"
     username: string
     chatterId: string
     broadcasterId: string
   }> = {},
 ): TwitchWSMessage => ({
   metadata: {
+    message_id: "msg123",
     message_type: overrides.messageType ?? "notification",
+    message_timestamp: "2026-01-01T00:00:00Z",
   },
   payload: {
     event: {
       broadcaster_user_id: overrides.broadcasterId ?? "broadcaster123",
       broadcaster_user_login: "broadcaster",
       broadcaster_user_name: "Broadcaster",
-      source_broadcaster_user_id: null,
-      source_broadcaster_user_login: null,
-      source_broadcaster_user_name: null,
       chatter_user_id: overrides.chatterId ?? "user123",
       chatter_user_login: overrides.username ?? "testuser",
       chatter_user_name: overrides.username ?? "TestUser",
       message_id: "msg123",
-      source_message_id: null,
-      is_source_only: null,
       message: {
         text,
         fragments: [],
       },
       badges: [],
       color: "#FFFFFF",
-      source_badges: null,
-      message_type: "chat_message",
+      message_type: "text",
       cheer: null,
       reply: null,
       channel_points_custom_reward_id: null,
-      channel_points_animation_id: null,
     },
   },
 })

@@ -1,11 +1,28 @@
 import { env } from "@/config/env"
 import { logger } from "@/helpers/logger"
 import {
-  ITwitchAuthManager,
   refreshResponseSchema,
   tokenResponseSchema,
   userResponseSchema,
-} from "@/types/twitch-auth"
+} from "@/schemas/twitch-auth"
+
+export interface ITwitchAuthManager {
+  accessToken: string | null
+  refreshToken: string
+  scopes: string
+  authUrl: string
+  broadcasterId: string
+  userId: string
+  userBotUsername: string
+
+  refresh(): Promise<string>
+  fetchBroadcasterId(): Promise<string>
+  fetchBotUsername(): Promise<void>
+  fetchUserId(): Promise<{ userId: string; username: string; scopes: string[] }>
+  fetch(url: string, options?: RequestInit): Promise<Response>
+  handleCallback(req: Request): Promise<string>
+  isStreamerBroadcasting(): Promise<boolean>
+}
 
 export class TwitchAuthManager implements ITwitchAuthManager {
   public accessToken: string | null = null

@@ -2,7 +2,7 @@ import { describe, test, expect, mock } from "bun:test"
 
 import { MAX_QUEUE_LENGTH } from "@/config/queue"
 import { SongQueue } from "@/core/song-queue"
-import { QueuedItem } from "@/types/queue"
+import { QueuedItem } from "@/schemas/queue"
 
 const createMockItem = (id: string, username: string = "user1"): QueuedItem => ({
   id,

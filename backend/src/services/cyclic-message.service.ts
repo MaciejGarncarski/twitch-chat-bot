@@ -1,8 +1,8 @@
 import { sendChatMessage } from "@/api/send-chat-message"
 import { CyclicMessageConfig, cyclicMessages } from "@/config/cyclic-messages"
+import { ITwitchAuthManager } from "@/core/twitch-auth-manager"
 import { logger } from "@/helpers/logger"
 import { t } from "@/i18n/i18n"
-import { ITwitchAuthManager } from "@/types/twitch-auth"
 
 interface MessageState {
   lastSentAt: number

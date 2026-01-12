@@ -2,7 +2,7 @@ import { mock } from "bun:test"
 
 import { CommandContext } from "@/commands/command"
 import { env } from "@/config/env"
-import { TwitchMessagePayload } from "@/types/twitch-ws-message"
+import { TwitchWSPayload } from "@/schemas/twitch-websocket"
 
 const createTextFragment = (text: string) => ({
   type: "text" as const,
@@ -12,34 +12,27 @@ const createTextFragment = (text: string) => ({
   mention: null,
 })
 
-const defaultEvent = {
+const defaultEvent: NonNullable<TwitchWSPayload["event"]> = {
   broadcaster_user_id: "12345",
   broadcaster_user_login: "test_broadcaster",
   broadcaster_user_name: "Test_Broadcaster",
-  source_broadcaster_user_id: null,
-  source_broadcaster_user_login: null,
-  source_broadcaster_user_name: null,
   chatter_user_id: "67890",
   chatter_user_login: "test_chatter",
   chatter_user_name: "Test_Chatter",
   message_id: "test-message-id",
-  source_message_id: null,
-  is_source_only: null,
   message: {
     text: "!sr test song",
     fragments: [createTextFragment("!sr test song")],
   },
   badges: [],
   color: "#FF0000",
-  source_badges: null,
   message_type: "text",
   cheer: null,
   reply: null,
   channel_points_custom_reward_id: null,
-  channel_points_animation_id: null,
 }
 
-export const defaultTwitchMessagePayload: TwitchMessagePayload = {
+export const defaultTwitchMessagePayload: TwitchWSPayload = {
   session: {
     id: "test-session-id",
     reconnect_url: null,
@@ -51,7 +44,7 @@ export const defaultTwitchMessagePayload: TwitchMessagePayload = {
     type: "channel.chat.message",
     version: "1",
     condition: {},
-    transport: {},
+    transport: { method: "websocket", session_id: "test-session-id" },
     created_at: "2026-01-01T00:00:00Z",
     cost: 0,
   },
@@ -112,12 +105,11 @@ export function createMockContext(overrides: CreateMockContextOptions = {}): Com
   const { message, deps: depsOverrides, ...rest } = overrides
   const messageText = message ?? createCommand("sr test song")
 
-  // Strip the command prefix to get sanitizedCommand (like the real processor does)
   const sanitizedCommand = messageText.startsWith(env.COMMAND_PREFIX)
     ? messageText.slice(env.COMMAND_PREFIX.length)
     : messageText
 
-  const payload: TwitchMessagePayload = rest.payload ?? {
+  const payload: TwitchWSPayload = rest.payload ?? {
     ...defaultTwitchMessagePayload,
     event: {
       ...defaultEvent,

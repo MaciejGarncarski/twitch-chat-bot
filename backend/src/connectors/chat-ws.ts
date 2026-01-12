@@ -1,8 +1,8 @@
 import { ensureChatSubscription } from "@/connectors/chat-subscription"
 import { logger } from "@/helpers/logger"
 import { CommandProcessor } from "@/processors/command-processor"
+import { twitchMessageSchema } from "@/schemas/twitch-websocket"
 import { CyclicMessageService } from "@/services/cyclic-message.service"
-import { twitchMessageSchema } from "@/types/twitch-ws-message"
 
 export class ChatWebSocket {
   private ws?: WebSocket

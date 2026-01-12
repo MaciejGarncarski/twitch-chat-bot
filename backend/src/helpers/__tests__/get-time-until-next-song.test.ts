@@ -1,5 +1,5 @@
 import { getTimeUntilNextSong } from "@/helpers/get-time-until-next-song"
-import { QueuedItem } from "@/types/queue"
+import { QueuedItem } from "@/schemas/queue"
 import { describe, test, expect } from "bun:test"
 
 describe("get-time-until-next-song", () => {

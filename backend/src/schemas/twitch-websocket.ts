@@ -1,10 +1,8 @@
-import z from "zod"
+import { z } from "zod"
 
 const mentionFragment = z.object({
   type: z.literal("mention"),
   text: z.string(),
-  cheermote: z.object().nullable(),
-  emote: z.null(),
   mention: z.object({
     user_id: z.string(),
     user_login: z.string(),
@@ -15,28 +13,37 @@ const mentionFragment = z.object({
 const textFragment = z.object({
   type: z.literal("text"),
   text: z.string(),
-  cheermote: z.object().nullable(),
-  mention: z.object().nullable(),
-  emote: z.null(),
 })
 
 const emoteFragment = z.object({
   type: z.literal("emote"),
   text: z.string(),
-  cheermote: z.object().nullable(),
-  emote: z
-    .object({
-      id: z.string(),
-      emote_set_id: z.string(),
-      owner_id: z.string(),
-      format: z.array(z.string()),
-    })
-    .nullable(),
-  mention: z.object().nullable(),
+  emote: z.object({
+    id: z.string(),
+    emote_set_id: z.string(),
+    owner_id: z.string(),
+    format: z.array(z.string()),
+  }),
 })
 
-const messageFragments = z.union([emoteFragment, textFragment, mentionFragment])
-export type MessageFragments = z.infer<typeof messageFragments>
+const cheermoteFragment = z.object({
+  type: z.literal("cheermote"),
+  text: z.string(),
+  cheermote: z.object({
+    prefix: z.string(),
+    bits: z.number(),
+    tier: z.number(),
+  }),
+})
+
+const messageFragments = z.discriminatedUnion("type", [
+  textFragment,
+  emoteFragment,
+  mentionFragment,
+  cheermoteFragment,
+])
+
+export type MessageFragment = z.infer<typeof messageFragments>
 
 const replySchema = z.object({
   parent_message_id: z.string(),
@@ -56,8 +63,6 @@ export const chatBadgeSchema = z.object({
   info: z.string().optional(),
 })
 
-export const badgesSchema = z.array(chatBadgeSchema).nullable().optional()
-
 export const twitchMessagePayloadSchema = z.object({
   session: z
     .object({
@@ -66,54 +71,66 @@ export const twitchMessagePayloadSchema = z.object({
       keepalive_timeout_seconds: z.number().nullable(),
     })
     .optional(),
+
   subscription: z
     .object({
       id: z.string(),
       status: z.string(),
       type: z.string(),
       version: z.string(),
-      condition: z.object(),
-      transport: z.object(),
+      condition: z
+        .object({
+          broadcaster_user_id: z.string(),
+          user_id: z.string(),
+        })
+        .partial(),
+      transport: z.object({
+        method: z.string(),
+        callback: z.string().optional(),
+        session_id: z.string().optional(),
+      }),
       created_at: z.iso.datetime(),
       cost: z.number(),
     })
     .optional(),
+
   event: z
     .object({
       broadcaster_user_id: z.string(),
       broadcaster_user_login: z.string(),
       broadcaster_user_name: z.string(),
-      source_broadcaster_user_id: z.null(),
-      source_broadcaster_user_login: z.null(),
-      source_broadcaster_user_name: z.null(),
       chatter_user_id: z.string(),
       chatter_user_login: z.string(),
       chatter_user_name: z.string(),
       message_id: z.string(),
-      source_message_id: z.null(),
-      is_source_only: z.null(),
       message: z.object({
         text: z.string(),
         fragments: z.array(messageFragments),
       }),
-      badges: badgesSchema,
+      badges: z.array(chatBadgeSchema).default([]),
       color: z.string(),
-      source_badges: z.null(),
-      message_type: z.string(),
-      cheer: z.null(),
-      reply: replySchema.nullable(),
-      channel_points_custom_reward_id: z.null(),
-      channel_points_animation_id: z.null(),
+      message_type: z.enum(["text", "whisper"]),
+      cheer: z.object({ bits: z.number() }).nullable().optional(),
+      reply: replySchema.nullable().optional(),
+      channel_points_custom_reward_id: z.string().nullable().optional(),
     })
     .optional(),
 })
 
 export const twitchMessageSchema = z.object({
   metadata: z.object({
-    message_type: z.string(),
+    message_id: z.string(),
+    message_type: z.enum([
+      "session_welcome",
+      "session_keepalive",
+      "notification",
+      "session_reconnect",
+      "revocation",
+    ]),
+    message_timestamp: z.iso.datetime(),
   }),
   payload: twitchMessagePayloadSchema,
 })
 
-export type TwitchMessagePayload = z.infer<typeof twitchMessagePayloadSchema>
+export type TwitchWSPayload = z.infer<typeof twitchMessagePayloadSchema>
 export type TwitchWSMessage = z.infer<typeof twitchMessageSchema>

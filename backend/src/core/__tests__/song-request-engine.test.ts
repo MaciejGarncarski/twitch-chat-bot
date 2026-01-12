@@ -4,7 +4,7 @@ import { PlaybackManager } from "@/core/playback-manager"
 import { SongQueue } from "@/core/song-queue"
 import { SongRequestEngine } from "@/core/song-request-engine"
 import { VoteManager } from "@/core/vote-manager"
-import { QueuedItem } from "@/types/queue"
+import { QueuedItem } from "@/schemas/queue"
 
 const createMockItem = (id: string, username: string = "user1"): QueuedItem => ({
   id,

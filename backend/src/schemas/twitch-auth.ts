@@ -22,21 +22,3 @@ export const tokenResponseSchema = z.object({
   scope: z.array(z.string()),
   token_type: z.string(),
 })
-
-export interface ITwitchAuthManager {
-  accessToken: string | null
-  refreshToken: string
-  scopes: string
-  authUrl: string
-  broadcasterId: string
-  userId: string
-  userBotUsername: string
-
-  refresh(): Promise<string>
-  fetchBroadcasterId(): Promise<string>
-  fetchBotUsername(): Promise<void>
-  fetchUserId(): Promise<{ userId: string; username: string; scopes: string[] }>
-  fetch(url: string, options?: RequestInit): Promise<Response>
-  handleCallback(req: Request): Promise<string>
-  isStreamerBroadcasting(): Promise<boolean>
-}

@@ -6,7 +6,7 @@ import { IPlaybackManager } from "@/core/playback-manager"
 import { ISongQueue } from "@/core/song-queue"
 import { IVoteManager } from "@/core/vote-manager"
 import { RateLimitConfig } from "@/helpers/rate-limit"
-import { TwitchMessagePayload } from "@/types/twitch-ws-message"
+import { TwitchWSPayload } from "@/schemas/twitch-websocket"
 
 export type ContextDeps = {
   songQueue: ISongQueue
@@ -18,7 +18,7 @@ export type ContextDeps = {
 }
 
 export type CommandContext = {
-  payload: TwitchMessagePayload
+  payload: TwitchWSPayload
   deps: ContextDeps
   messageId: string | undefined
   userId: string | undefined

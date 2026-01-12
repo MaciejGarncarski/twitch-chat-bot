@@ -8,9 +8,9 @@ import { logger } from "@/helpers/logger"
 import { rateLimiter } from "@/helpers/rate-limit"
 import { sanitizeMessage } from "@/helpers/sanitize-message"
 import { CommandError, CommandErrorCode } from "@/types/errors"
-import { ITwitchAuthManager } from "@/types/twitch-auth"
-import { MessageFragments, TwitchWSMessage } from "@/types/twitch-ws-message"
 import { t } from "@/i18n/i18n"
+import { ITwitchAuthManager } from "@/core/twitch-auth-manager"
+import { MessageFragment, TwitchWSMessage, TwitchWSPayload } from "@/schemas/twitch-websocket"
 
 type CommandInfo = {
   sanitizedCommand: string
@@ -248,7 +248,7 @@ export class CommandProcessor {
     return message[0] === this.COMMAND_PREFIX
   }
 
-  private extractCommandFromMention(fragments: MessageFragments[]): string | null {
+  private extractCommandFromMention(fragments: MessageFragment[]): string | null {
     const twitchBotUsername = this.twitchAuth.userBotUsername
 
     if (twitchBotUsername.trim() === "") {

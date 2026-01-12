@@ -4,10 +4,11 @@ const pinoEnvOptions: Record<"development" | "production", pino.Logger> = {
   development: pino({
     enabled: true,
     useOnlyCustomLevels: false,
+    timestamp: pino.stdTimeFunctions.isoTime,
     transport: {
       target: "pino-pretty",
       options: {
-        translateTime: "HH:MM:ss Z",
+        translateTime: "SYS:HH:MM:ss",
         ignore: "pid,hostname,headers,log,set",
       },
     },
