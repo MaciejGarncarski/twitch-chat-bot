@@ -58,6 +58,24 @@ interface CreateMockContextOptions extends Omit<Partial<CommandContext>, "deps">
 
 export function createMockDeps(): CommandContext["deps"] {
   return {
+    youtubeSearchService: {
+      searchVideos: mock(() => Promise.resolve([])),
+      extractVideoId: mock(() => null),
+      mapYTNodeToMetadata: mock(() => ({
+        title: "Test Video",
+        duration: 120,
+        thumbnail: null,
+      })),
+      getVideoMetadata: mock(() =>
+        Promise.resolve({
+          title: "Test Video",
+          duration: 120,
+          thumbnail: null,
+        }),
+      ),
+      isYouTubeLink: mock(() => false),
+      searchVideo: mock(() => Promise.resolve(null)),
+    },
     sendChatMessage: mock(() => Promise.resolve()),
     timeoutUser: mock(() => Promise.resolve()),
     logger: {

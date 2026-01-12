@@ -1,10 +1,9 @@
 import { CommandContext, CommandHandler } from "@/commands/command"
-import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata"
 import { formatDuration } from "@/helpers/format-duration"
 import { getTimeUntilAddedSong } from "@/helpers/get-time-until-added-song"
 import { getVideoUrl } from "@/helpers/get-video-url"
 import { RateLimitConfig } from "@/helpers/rate-limit"
-import { youtubeSearchService } from "@/services/youtube-search.service"
+import { SongMetadata } from "@/services/youtube-search.service"
 import { QueueError } from "@/types/queue-errors"
 import { t } from "@/i18n/i18n"
 
@@ -21,7 +20,7 @@ export class YoutubeSrHandler extends CommandHandler {
   }
 
   async execute({
-    deps: { logger, songQueue, sendChatMessage, playbackManager },
+    deps: { logger, youtubeSearchService, songQueue, sendChatMessage, playbackManager },
     sanitizedCommand,
     messageId,
     username,
@@ -43,13 +42,15 @@ export class YoutubeSrHandler extends CommandHandler {
     try {
       if (isYoutubeLink) {
         const newVideoId = youtubeSearchService.extractVideoId(userInput)
+
         if (!newVideoId) {
+          logger.error("[COMMAND] [SR] Failed to extract video ID from YouTube link.")
           throw new Error("Invalid YouTube link.")
         }
 
         logger.info(`[COMMAND] [SR] Extracted video ID: ${newVideoId}`)
 
-        const videoInfo = await getVideoMetadata(newVideoId)
+        const videoInfo = await youtubeSearchService.getVideoMetadata(newVideoId)
         videoId = newVideoId
         metadata = videoInfo
       }

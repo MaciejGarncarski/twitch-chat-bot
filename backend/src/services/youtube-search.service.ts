@@ -1,10 +1,19 @@
 import { YTNodes } from "youtubei.js/agnostic"
 
 import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config/video"
-import { SongMetadata } from "@/data/get-video-metadata"
 import { innertube } from "@/data/innertube"
+import { logger } from "@/helpers/logger"
 
-export class YouTubeSearchService {
+export interface IYouTubeSearchService {
+  extractVideoId(url: string): string | null
+  isYouTubeLink(input: string): boolean
+  searchVideo(query: string): Promise<{ videoId: string; metadata: SongMetadata } | null>
+  searchVideos(query: string): Promise<Array<{ videoId: string; metadata: SongMetadata }>>
+  getVideoMetadata(videoId: string): Promise<SongMetadata>
+  mapYTNodeToMetadata(video: YTNodes.Video | YTNodes.PlaylistVideo): SongMetadata
+}
+
+export class YouTubeSearchService implements IYouTubeSearchService {
   private readonly ytLinkRegex =
     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]{11})/
 
@@ -56,6 +65,33 @@ export class YouTubeSearchService {
       }))
   }
 
+  public async getVideoMetadata(videoId: string): Promise<SongMetadata> {
+    try {
+      const info = await innertube.getBasicInfo(videoId)
+      const thumbnails = info.basic_info.thumbnail
+
+      if (!info.basic_info.duration || !info.basic_info.title) {
+        logger.error(
+          `[DATA] [GET-VIDEO-METADATA] Missing duration or title for video ID: ${videoId}`,
+        )
+        throw new Error("Could not retrieve video metadata.")
+      }
+
+      return {
+        duration: info.basic_info.duration,
+        title: info.basic_info.title,
+        thumbnail:
+          thumbnails && thumbnails.length > 0 ? thumbnails[thumbnails.length - 1].url : null,
+      }
+    } catch (error) {
+      logger.error(
+        error,
+        `[DATA] [GET-VIDEO-METADATA] Error retrieving metadata for video ID: ${videoId} - ${error}`,
+      )
+      throw new Error("Could not retrieve video metadata.")
+    }
+  }
+
   public mapYTNodeToMetadata(video: YTNodes.Video | YTNodes.PlaylistVideo): SongMetadata {
     return {
       duration: video.duration?.seconds ?? 0,
@@ -66,3 +102,9 @@ export class YouTubeSearchService {
 }
 
 export const youtubeSearchService = new YouTubeSearchService()
+
+export type SongMetadata = {
+  title: string
+  duration: number
+  thumbnail: string | null
+}

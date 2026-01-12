@@ -3,12 +3,12 @@ import { EventEmitter } from "node:events"
 import z from "zod"
 
 import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config/video"
-import { getVideoMetadata, SongMetadata } from "@/data/get-video-metadata"
 import { getVideoUrl } from "@/helpers/get-video-url"
 import { shuffle } from "@/helpers/shuffle"
 import { MAX_QUEUE_LENGTH } from "@/config/queue"
 import { QueuedItem, songRequestInputSchema } from "@/schemas/queue"
 import { QueueError } from "@/types/queue-errors"
+import { SongMetadata, youtubeSearchService } from "@/services/youtube-search.service"
 
 export interface ISongQueue extends EventEmitter {
   getCurrent(): QueuedItem | null
@@ -82,7 +82,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
       thumbnail = metadata.thumbnail
       duration = metadata.duration
     } else {
-      const fetchedMetadata = await getVideoMetadata(validatedInput.videoId)
+      const fetchedMetadata = await youtubeSearchService.getVideoMetadata(validatedInput.videoId)
       title = fetchedMetadata.title
       thumbnail = fetchedMetadata.thumbnail
       duration = fetchedMetadata.duration

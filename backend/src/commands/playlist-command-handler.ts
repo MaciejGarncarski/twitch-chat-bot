@@ -2,11 +2,10 @@ import { YTNodes } from "youtubei.js/agnostic"
 
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { MAX_VIDEO_DURATION_SECONDS } from "@/config/video"
-import { SongMetadata } from "@/data/get-video-metadata"
 import { innertube } from "@/data/innertube"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { shuffle } from "@/helpers/shuffle"
-import { youtubeSearchService } from "@/services/youtube-search.service"
+import { SongMetadata, youtubeSearchService } from "@/services/youtube-search.service"
 import { t } from "@/i18n/i18n"
 
 export class PlaylistCommandHandler extends CommandHandler {

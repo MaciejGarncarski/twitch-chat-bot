@@ -7,12 +7,14 @@ import { ISongQueue } from "@/core/song-queue"
 import { IVoteManager } from "@/core/vote-manager"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { TwitchWSPayload } from "@/schemas/twitch-websocket"
+import { IYouTubeSearchService } from "@/services/youtube-search.service"
 
 export type ContextDeps = {
   songQueue: ISongQueue
   voteManager: IVoteManager
   logger: Logger
   playbackManager: IPlaybackManager
+  youtubeSearchService: IYouTubeSearchService
   timeoutUser: typeof timeoutUser
   sendChatMessage: typeof sendChatMessage
 }

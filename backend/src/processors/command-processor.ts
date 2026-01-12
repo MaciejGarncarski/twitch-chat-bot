@@ -11,6 +11,7 @@ import { CommandError, CommandErrorCode } from "@/types/errors"
 import { t } from "@/i18n/i18n"
 import { ITwitchAuthManager } from "@/core/twitch-auth-manager"
 import { MessageFragment, TwitchWSMessage, TwitchWSPayload } from "@/schemas/twitch-websocket"
+import { youtubeSearchService } from "@/services/youtube-search.service"
 
 type CommandInfo = {
   sanitizedCommand: string
@@ -134,6 +135,7 @@ export class CommandProcessor {
       songQueue: songRequestEngine.getSongQueue(),
       playbackManager: songRequestEngine.getPlaybackManager(),
       voteManager: songRequestEngine.getVoteManager(),
+      youtubeSearchService: youtubeSearchService,
       logger,
       sendChatMessage,
       timeoutUser: timeoutUser,
