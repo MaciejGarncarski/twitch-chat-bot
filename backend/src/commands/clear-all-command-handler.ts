@@ -1,7 +1,7 @@
 import { CommandContext, CommandHandler } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
 import { t } from "@/i18n/i18n"
-import { CommandError, CommandErrorCode } from "@/types/errors"
+import { CommandError, CommandErrorCode } from "@/types/command-errors"
 
 export class ClearAllCommandHandler extends CommandHandler {
   private readonly command = "clearall"

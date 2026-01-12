@@ -3,7 +3,7 @@ import { describe, test, expect } from "bun:test"
 import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { VolumeCommandHandler } from "@/commands/volume-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
-import { CommandErrorCode } from "@/types/errors"
+import { CommandErrorCode } from "@/types/command-errors"
 
 const COMMAND_BASE = createCommand("volume")
 const COMMAND = `${COMMAND_BASE} 50`

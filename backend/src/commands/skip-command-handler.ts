@@ -1,6 +1,6 @@
 import { CommandHandler, CommandContext } from "@/commands/command"
 import { RateLimitConfig } from "@/helpers/rate-limit"
-import { CommandError, CommandErrorCode } from "@/types/errors"
+import { CommandError, CommandErrorCode } from "@/types/command-errors"
 import { t } from "@/i18n/i18n"
 
 export class SkipCommandHandler extends CommandHandler {

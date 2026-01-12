@@ -3,7 +3,7 @@ import { describe, test, expect } from "bun:test"
 import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { PauseCommandHandler } from "@/commands/pause-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
-import { CommandErrorCode } from "@/types/errors"
+import { CommandErrorCode } from "@/types/command-errors"
 
 const COMMAND = createCommand("pause")
 

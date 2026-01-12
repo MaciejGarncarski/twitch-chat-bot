@@ -10,6 +10,9 @@ export const en: TranslationSchema = {
     helpPrompt: "Type {prefix}help to see available commands.",
     songRequestPrompt: "You can request a song by typing {prefix}sr <link_or_phrase>!",
   },
+  ytSearchErrors: {
+    metadataRetrievalFailed: "Failed to retrieve song metadata.",
+  },
   commands: {
     errors: {
       notAMod: "Only moderators can use this command.",

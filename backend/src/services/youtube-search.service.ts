@@ -3,6 +3,7 @@ import { YTNodes } from "youtubei.js/agnostic"
 import { MAX_VIDEO_DURATION_SECONDS, MIN_VIDEO_DURATION_SECONDS } from "@/config/video"
 import { innertube } from "@/data/innertube"
 import { logger } from "@/helpers/logger"
+import { YtError, YtErrorCode } from "@/types/yt-errors"
 
 export interface IYouTubeSearchService {
   extractVideoId(url: string): string | null
@@ -67,28 +68,31 @@ export class YouTubeSearchService implements IYouTubeSearchService {
 
   public async getVideoMetadata(videoId: string): Promise<SongMetadata> {
     try {
-      const info = await innertube.getBasicInfo(videoId)
-      const thumbnails = info.basic_info.thumbnail
+      const {
+        basic_info: { duration, title, thumbnail },
+      } = await innertube.getBasicInfo(videoId)
 
-      if (!info.basic_info.duration || !info.basic_info.title) {
+      if (!duration || !title) {
         logger.error(
           `[DATA] [GET-VIDEO-METADATA] Missing duration or title for video ID: ${videoId}`,
         )
         throw new Error("Could not retrieve video metadata.")
       }
 
+      const hasThumbnail = thumbnail && thumbnail.length > 0
+
       return {
-        duration: info.basic_info.duration,
-        title: info.basic_info.title,
-        thumbnail:
-          thumbnails && thumbnails.length > 0 ? thumbnails[thumbnails.length - 1].url : null,
+        duration: duration,
+        title: title,
+        thumbnail: hasThumbnail ? thumbnail[thumbnail.length - 1].url : null,
       }
     } catch (error) {
       logger.error(
         error,
         `[DATA] [GET-VIDEO-METADATA] Error retrieving metadata for video ID: ${videoId} - ${error}`,
       )
-      throw new Error("Could not retrieve video metadata.")
+
+      throw new YtError(YtErrorCode.METADATA_RETRIEVAL_FAILED, "Could not retrieve video metadata.")
     }
   }
 

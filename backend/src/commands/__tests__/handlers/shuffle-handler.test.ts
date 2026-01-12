@@ -3,7 +3,7 @@ import { describe, test, expect } from "bun:test"
 import { createMockContext, createCommand } from "@/commands/__tests__/helpers/create-mock-context"
 import { ShuffleCommandHandler } from "@/commands/shuffle-command-handler"
 import { SongQueue } from "@/core/song-queue"
-import { CommandErrorCode } from "@/types/errors"
+import { CommandErrorCode } from "@/types/command-errors"
 
 const COMMAND = createCommand("shuffle")
 

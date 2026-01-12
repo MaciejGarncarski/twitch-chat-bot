@@ -4,7 +4,7 @@ import { createMockContext, createCommand } from "@/commands/__tests__/helpers/c
 import { SeekCommandHandler } from "@/commands/seek-command-handler"
 import { PlaybackManager } from "@/core/playback-manager"
 import { SongQueue } from "@/core/song-queue"
-import { CommandErrorCode } from "@/types/errors"
+import { CommandErrorCode } from "@/types/command-errors"
 
 const COMMAND_SECONDS = createCommand("seek 30")
 const COMMAND_TIME = createCommand("seek 1:30")

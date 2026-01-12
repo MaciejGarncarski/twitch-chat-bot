@@ -40,7 +40,7 @@ mock.module("@/core/song-request-engine", () => ({
 
 import { CommandContext, CommandHandler } from "@/commands/command"
 import { CommandProcessor } from "@/processors/command-processor"
-import { CommandError, CommandErrorCode } from "@/types/errors"
+import { CommandError, CommandErrorCode } from "@/types/command-errors"
 import { env } from "@/config/env"
 import { TwitchWSMessage } from "@/schemas/twitch-websocket"
 import { ITwitchAuthManager } from "@/core/twitch-auth-manager"

@@ -8,6 +8,9 @@ export const pl = {
     helpPrompt: "Wpisz {prefix}help, aby zobaczyć dostępne komendy.",
     songRequestPrompt: "Możesz poprosić o piosenkę, wpisując {prefix}sr <link_lub_fraza>!",
   },
+  ytSearchErrors: {
+    metadataRetrievalFailed: "Nie udało się pobrać utworu.",
+  },
   commands: {
     errors: {
       notAMod: "Tylko moderatorzy mogą używać tej komendy.",

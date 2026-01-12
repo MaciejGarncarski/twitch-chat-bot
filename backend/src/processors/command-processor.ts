@@ -7,11 +7,13 @@ import { ChatBadge, checkIsMod } from "@/helpers/check-is-mod"
 import { logger } from "@/helpers/logger"
 import { rateLimiter } from "@/helpers/rate-limit"
 import { sanitizeMessage } from "@/helpers/sanitize-message"
-import { CommandError, CommandErrorCode } from "@/types/errors"
+import { CommandError, CommandErrorCode } from "@/types/command-errors"
 import { t } from "@/i18n/i18n"
 import { ITwitchAuthManager } from "@/core/twitch-auth-manager"
-import { MessageFragment, TwitchWSMessage, TwitchWSPayload } from "@/schemas/twitch-websocket"
+import { MessageFragment, TwitchWSMessage } from "@/schemas/twitch-websocket"
 import { youtubeSearchService } from "@/services/youtube-search.service"
+import { YtError, YtErrorCode } from "@/types/yt-errors"
+import { QueueError, QueueErrorCodes } from "@/types/queue-errors"
 
 type CommandInfo = {
   sanitizedCommand: string
@@ -212,6 +214,50 @@ export class CommandProcessor {
     handler: CommandHandler,
     messageId: string | undefined,
   ): Promise<void> {
+    if (error instanceof YtError) {
+      switch (error.code) {
+        case YtErrorCode.METADATA_RETRIEVAL_FAILED:
+          await sendChatMessage(t("ytSearchErrors.metadataRetrievalFailed"), messageId)
+          break
+
+        case YtErrorCode.INVALID_VIDEO_ID:
+          await sendChatMessage(t("ytSearchErrors.metadataRetrievalFailed"), messageId)
+          break
+
+        default:
+          logger.error(
+            `[COMMAND] [ERROR] ${handler.constructor.name} Unhandled YtError: ${error.code}`,
+          )
+      }
+      return
+    }
+
+    if (error instanceof QueueError) {
+      logger.error(`[COMMAND] [SR] QueueError: ${error.code}`)
+
+      switch (error.code) {
+        case QueueErrorCodes.ALREADY_EXISTS:
+          await sendChatMessage(t("commands.sr.alreadyExists"), messageId)
+          break
+        case QueueErrorCodes.QUEUE_FULL:
+          await sendChatMessage(t("commands.sr.queueFull"), messageId)
+          break
+        case QueueErrorCodes.TOO_SHORT:
+          await sendChatMessage(t("commands.sr.tooShort"), messageId)
+          break
+        case QueueErrorCodes.TOO_LONG:
+          await sendChatMessage(t("commands.sr.tooLong"), messageId)
+          break
+
+        default:
+          logger.error(
+            `[COMMAND] [ERROR] ${handler.constructor.name} Unhandled QueueError: ${error.code}`,
+          )
+      }
+
+      return
+    }
+
     if (error instanceof CommandError) {
       switch (error.code) {
         case CommandErrorCode.INVALID_COMMAND_FORMAT:
