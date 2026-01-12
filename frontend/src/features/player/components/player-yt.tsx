@@ -64,27 +64,25 @@ export function PlayerYT() {
   }
 
   return (
-    <>
-      <div className="pointer-events-none fixed right-0 bottom-0 cursor-not-allowed opacity-100">
-        <ReactPlayer
-          key={`${songSrc}-${retryCount}`}
-          ref={playerRef}
-          src={songSrc}
-          volume={isPlaying && isReady ? volume : 0}
-          muted={isMuted || !isReady}
-          playing={isPlaying && isReady}
-          onReady={handleReady}
-          onError={handleError}
-          config={{
-            youtube: {
-              disablekb: 1,
-              enablejsapi: 1,
-              iv_load_policy: 3,
-            },
-          }}
-        />
-        <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
-      </div>
-    </>
+    <div className="pointer-events-none fixed right-0 bottom-0 cursor-not-allowed opacity-100">
+      <ReactPlayer
+        key={`${songSrc}-${retryCount}`}
+        ref={playerRef}
+        src={songSrc}
+        volume={hasInteracted && isPlaying && isReady ? volume : 0}
+        muted={isMuted || !isReady}
+        playing={isPlaying && isReady}
+        onReady={handleReady}
+        onError={handleError}
+        config={{
+          youtube: {
+            disablekb: 1,
+            enablejsapi: 1,
+            iv_load_policy: 3,
+          },
+        }}
+      />
+      <InteractionNotification hasInteracted={hasInteracted} onInteract={handleInteract} />
+    </div>
   )
 }
