@@ -2,8 +2,10 @@ import type { TranslationSchema } from "@/i18n/types"
 
 export const en: TranslationSchema = {
   navigation: {
-    manageMode: "Manage",
-    playerMode: "Player",
+    modMode: "Mod mode",
+  },
+  settings: {
+    title: "Settings",
   },
   player: {
     play: "Play",

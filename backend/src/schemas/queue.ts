@@ -9,6 +9,7 @@ export type QueuedItem = {
   id: string
   username: string
   videoUrl: string
+  videoAuthor: string | null
   duration: number
   title: string
   requestedAt: Date

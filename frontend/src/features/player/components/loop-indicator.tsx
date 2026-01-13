@@ -1,5 +1,4 @@
-import { useAuth } from "@/features/auth/hooks/use-auth"
-import { useIsManageMode } from "@/hooks/use-is-manage-mode"
+import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { useLoopToggle } from "@/features/player/hooks/use-loop-toggle"
 import { cn } from "@/lib/utils"
 import { Repeat } from "lucide-react"
@@ -9,12 +8,10 @@ const MotionRepeat = motion(Repeat)
 
 export function LoopIndicator({ isLoopEnabled }: { isLoopEnabled: boolean }) {
   const loopMutation = useLoopToggle()
-  const { data } = useAuth()
-  const isMod = data?.isMod ?? false
-  const isManagement = useIsManageMode()
+  const { isModMode } = useIsModMode()
 
   const toggleLoop = () => {
-    if (isMod) {
+    if (isModMode) {
       loopMutation.mutate()
     }
   }
@@ -22,9 +19,12 @@ export function LoopIndicator({ isLoopEnabled }: { isLoopEnabled: boolean }) {
   return (
     <button
       type="button"
-      disabled={!isMod || !isManagement}
+      disabled={isModMode}
       onClick={toggleLoop}
-      className={cn("flex h-6 items-center gap-1 px-1", isMod ? "cursor-pointer" : "cursor-auto")}
+      className={cn(
+        "flex h-6 items-center gap-1 px-1",
+        isModMode ? "cursor-pointer" : "cursor-auto",
+      )}
     >
       <MotionRepeat
         key="loop-enabled"

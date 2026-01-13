@@ -23,5 +23,5 @@ export type QueueTrackedItem = {
   requestedAt: Date
   thumbnail: string | null
   timeUntilPlay: number
-  formattedTimeUntilPlay: string
+  videoAuthor: string | null
 }

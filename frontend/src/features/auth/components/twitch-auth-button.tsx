@@ -14,8 +14,15 @@ import { useSignOut } from "@/features/auth/hooks/use-sign-out"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
 import { cn } from "@/lib/utils"
 import { Loader, LogOut, User } from "lucide-react"
+import { motion, type Variants } from "motion/react"
 
 const oauthUrl = apiURL + "api/auth/sign-in"
+
+const authButtonVariants: Variants = {
+  hidden: { opacity: 0, y: 5 },
+  visible: { opacity: 1, y: 0, transition: { delay: 0.3 } },
+  exit: { opacity: 0, y: 5 },
+}
 
 export function TwitchAuthButton() {
   const { t } = useTranslate()
@@ -24,55 +31,79 @@ export function TwitchAuthButton() {
 
   if (isLoading) {
     return (
-      <Button type="button" variant={"outline"} disabled className={"cursor-pointer"}>
-        <Loader size={16} className="mr-2 animate-spin" />
-        {t("auth.loading.login")}
-      </Button>
+      <motion.div
+        layout
+        layoutId="auth-button"
+        variants={authButtonVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <Button type="button" variant={"outline"} disabled className={"cursor-pointer"}>
+          <Loader size={16} className="mr-2 animate-spin" />
+          {t("auth.loading.login")}
+        </Button>
+      </motion.div>
     )
   }
 
   if (data?.user?.login) {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            className={"cursor-pointer"}
-            disabled={isFetching || signOutMutation.isPending}
-          >
-            {data.user.avatar ? (
-              <img
-                src={data.user.avatar}
-                alt={`${data.user.login}'s avatar`}
-                className="mr-1 h-5 w-5"
-              />
-            ) : (
-              <User size={18} className="mr-2" />
-            )}
-            {data.user.login}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuLabel>{t("auth.account")}</DropdownMenuLabel>
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault()
-                signOutMutation.mutate()
-              }}
-              variant="destructive"
+      <motion.div
+        layout
+        layoutId="auth-button"
+        variants={authButtonVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className={"cursor-pointer"}
+              disabled={isFetching || signOutMutation.isPending}
             >
-              <LogOut />
-              {signOutMutation.isPending ? t("auth.loading.logout") : t("auth.logout")}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+              {data.user.avatar ? (
+                <img
+                  src={data.user.avatar}
+                  alt={`${data.user.login}'s avatar`}
+                  className="mr-1 h-5 w-5"
+                />
+              ) : (
+                <User size={18} className="mr-2" />
+              )}
+              {data.user.login}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuLabel>{t("auth.account")}</DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault()
+                  signOutMutation.mutate()
+                }}
+                variant="destructive"
+              >
+                <LogOut />
+                {signOutMutation.isPending ? t("auth.loading.logout") : t("auth.logout")}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </motion.div>
     )
   }
 
   return (
-    <a
+    <motion.a
+      layout
+      layoutId="auth-button"
+      variants={authButtonVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
       href={oauthUrl}
       className={cn(
         buttonVariants({
@@ -83,6 +114,6 @@ export function TwitchAuthButton() {
     >
       <TwitchIcon className="mr-1" />
       {t("auth.login")}
-    </a>
+    </motion.a>
   )
 }

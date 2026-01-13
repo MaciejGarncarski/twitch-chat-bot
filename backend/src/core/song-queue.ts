@@ -73,21 +73,22 @@ export class SongQueue extends EventEmitter implements ISongQueue {
   ): Promise<QueuedItem> {
     const validatedInput = songRequestInputSchema.parse(input)
 
-    let title = "Unknown Title"
-    let thumbnail: string | null = null
-    let duration = 0
-
-    if (metadata) {
-      title = metadata.title
-      thumbnail = metadata.thumbnail
-      duration = metadata.duration
-    } else {
-      const fetchedMetadata = await youtubeSearchService.getVideoMetadata(validatedInput.videoId)
-      title = fetchedMetadata.title
-      thumbnail = fetchedMetadata.thumbnail
-      duration = fetchedMetadata.duration
+    const finalMetadata: SongMetadata = {
+      title: "Unknown",
+      duration: 0,
+      thumbnail: null,
+      author: null,
     }
 
+    if (metadata) {
+      Object.assign(finalMetadata, metadata)
+    }
+
+    if (!metadata) {
+      const fetchedMetadata = await youtubeSearchService.getVideoMetadata(validatedInput.videoId)
+      Object.assign(finalMetadata, fetchedMetadata)
+    }
+    const { duration, title, thumbnail, author } = finalMetadata
     const videoUrl = getVideoUrl(validatedInput.videoId)
 
     if (this.checkIfExists(videoUrl)) {
@@ -113,6 +114,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
       title: title,
       thumbnail: thumbnail,
       requestedAt: new Date(),
+      videoAuthor: author,
     }
 
     this.queue.push(newItem)

@@ -2,7 +2,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { useSeekPosition } from "@/features/player/hooks/use-seek-position"
 import { useQueue } from "@/features/queue/hooks/use-queue"
-import { useIsManageMode } from "@/hooks/use-is-manage-mode"
+import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { motion, useMotionValue, useTransform } from "motion/react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
@@ -15,10 +15,10 @@ export function PlayerProgressBar() {
   const seekMutation = useSeekPosition()
 
   const { data } = useAuth()
-  const isManageMode = useIsManageMode()
+  const { isModMode } = useIsModMode()
   const isMod = data?.isMod ?? false
 
-  const canSeek = isManageMode && isMod
+  const canSeek = isModMode && isMod
   const containerRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
   const [isDragging, setIsDragging] = useState(false)

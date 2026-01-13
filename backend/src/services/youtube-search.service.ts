@@ -69,7 +69,7 @@ export class YouTubeSearchService implements IYouTubeSearchService {
   public async getVideoMetadata(videoId: string): Promise<SongMetadata> {
     try {
       const {
-        basic_info: { duration, title, thumbnail },
+        basic_info: { duration, title, thumbnail, author },
       } = await innertube.getBasicInfo(videoId)
 
       if (!duration || !title) {
@@ -85,6 +85,7 @@ export class YouTubeSearchService implements IYouTubeSearchService {
         duration: duration,
         title: title,
         thumbnail: hasThumbnail ? thumbnail[thumbnail.length - 1].url : null,
+        author: author || null,
       }
     } catch (error) {
       logger.error(
@@ -101,6 +102,7 @@ export class YouTubeSearchService implements IYouTubeSearchService {
       duration: video.duration?.seconds ?? 0,
       title: video.title.toString(),
       thumbnail: video.thumbnails.at(-1)?.url ?? null,
+      author: video.author?.name.toString() ?? null,
     }
   }
 }
@@ -111,4 +113,5 @@ export type SongMetadata = {
   title: string
   duration: number
   thumbnail: string | null
+  author: string | null
 }

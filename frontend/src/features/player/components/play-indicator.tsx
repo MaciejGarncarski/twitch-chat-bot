@@ -1,5 +1,4 @@
-import { useAuth } from "@/features/auth/hooks/use-auth"
-import { useIsManageMode } from "@/hooks/use-is-manage-mode"
+import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { useSetPlayState } from "@/features/player/hooks/use-set-play-state"
 import { cn } from "@/lib/utils"
 import { Pause, Play } from "lucide-react"
@@ -21,12 +20,10 @@ const btnVariants: Variants = {
 
 export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
   const playStateMutation = useSetPlayState({ isPlaying })
-  const { data } = useAuth()
-  const isMod = data?.isMod ?? false
-  const isManagement = useIsManageMode()
+  const { isModMode } = useIsModMode()
 
   const togglePlayState = () => {
-    if (isMod) {
+    if (isModMode) {
       playStateMutation.mutate()
     }
   }
@@ -34,11 +31,11 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
   return (
     <button
       type="button"
-      disabled={!isMod || !isManagement}
+      disabled={isModMode}
       onClick={togglePlayState}
       className={cn(
         "relative flex h-6 items-center gap-1 px-1",
-        isMod ? "cursor-pointer" : "cursor-auto",
+        isModMode ? "cursor-pointer" : "cursor-auto",
       )}
     >
       {isPlaying ? (

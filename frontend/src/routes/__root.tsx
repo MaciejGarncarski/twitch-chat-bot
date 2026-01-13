@@ -22,8 +22,8 @@ const RootComponent = () => {
       <I18nProvider defaultLanguage="pl" storageKey="bot-ui-language">
         <ThemeProvider defaultTheme="system" storageKey="bot-ui-theme">
           <PlayerDataProvider>
-            <Outlet />
             <PlayerYT />
+            <Outlet />
           </PlayerDataProvider>
         </ThemeProvider>
       </I18nProvider>

@@ -88,9 +88,14 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
                   />
                 </a>
               )}
-              <div className="flex w-full flex-col gap-3 text-left">
-                <h3 className="max-w-[40ch] truncate font-semibold md:text-lg">{item.title}</h3>
-                <div className="text-muted-foreground flex items-center gap-4 text-sm md:text-base">
+              <div className="flex w-full flex-col gap-2 text-left">
+                <div>
+                  <h3 className="max-w-[40ch] truncate font-semibold md:text-lg">{item.title}</h3>
+                  <h4 className="text-muted-foreground max-w-[20ch] truncate text-base">
+                    {item.videoAuthor || ""}
+                  </h4>
+                </div>
+                <div className="text-muted-foreground flex h-8 items-center gap-4 text-sm md:text-base">
                   <span className="flex items-center gap-2">
                     <Clock3 size={16} /> {formatDuration(item.duration)}
                   </span>

@@ -1,7 +1,9 @@
 export const pl = {
   navigation: {
-    manageMode: "Zarządzaj",
-    playerMode: "Odtwarzacz",
+    modMode: "Tryb moda",
+  },
+  settings: {
+    title: "Ustawienia",
   },
   player: {
     play: "Odtwórz",

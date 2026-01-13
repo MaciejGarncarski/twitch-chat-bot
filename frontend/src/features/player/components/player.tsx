@@ -6,7 +6,7 @@ import { PlayerManagementDropdown } from "@/features/player/components/player-ma
 import { PlayerProgressBar } from "@/features/player/components/player-progress-bar"
 import { SongTitle } from "@/features/player/components/song-title"
 import { VolumeIndicator } from "@/features/player/components/volume-indicator"
-import { useIsManageMode } from "@/hooks/use-is-manage-mode"
+import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { cn } from "@/lib/utils"
 import { Loader, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
@@ -16,6 +16,7 @@ type PlayerProps = {
   isLoopEnabled: boolean
   isPlaying: boolean
   volume: number
+  author: string | null
   videoId: string
   playTime: number
   title: string
@@ -29,6 +30,7 @@ export const Player = ({
   playTime,
   isPlaying,
   title,
+  author,
   duration,
   username,
   thumbnail,
@@ -36,14 +38,14 @@ export const Player = ({
   isLoopEnabled,
   dataStatus,
 }: PlayerProps) => {
-  const isManagement = useIsManageMode()
+  const { isModMode } = useIsModMode()
   const { t } = useTranslate()
 
   return (
     <motion.div
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
-      className="bg-background/95 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-4 py-4 md:h-36 md:flex-row"
+      className="bg-background/95 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-6 py-4 md:flex-row"
     >
       <AnimatePresence>
         {dataStatus === "loading" ? (
@@ -72,16 +74,21 @@ export const Player = ({
           className="block h-full w-full rounded border border-neutral-800 object-cover"
         />
       </a>
-      <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-0">
-        <div className="relative flex items-center justify-between gap-4">
-          <SongTitle title={title} isPlaying={isPlaying} />
-          {isManagement && (
+      <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-4">
+        <div className="relative flex items-center justify-between gap-2 md:items-start md:gap-4">
+          <div className="max-w-[27ch] px-0 text-left md:px-1">
+            <SongTitle title={title} isPlaying={isPlaying} />
+            <h4 className="text-muted-foreground max-w-[20ch] truncate text-base">
+              {author || ""}
+            </h4>
+          </div>
+          {isModMode && (
             <div className={cn(!isPlaying && "absolute right-0 z-20")}>
               <PlayerManagementDropdown />
             </div>
           )}
         </div>
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           <div className="text-muted-foreground flex flex-col items-center justify-between gap-1 text-base md:flex-row md:gap-2">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
@@ -93,12 +100,12 @@ export const Player = ({
               <span className="opacity-70">-</span>
               <LoopIndicator isLoopEnabled={isLoopEnabled} />
             </div>
-            <p className="flex items-center gap-2">
+            <p className="mr-1 flex items-center gap-2">
               <UserIcon size={18} />
               {username}
             </p>
           </div>
-          <PlayerProgressBar duration={duration} playTime={playTime} />
+          <PlayerProgressBar />
         </div>
       </div>
     </motion.div>
