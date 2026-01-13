@@ -40,7 +40,7 @@ function RouteComponent() {
 
         <div className="flex gap-4">
           <LayoutGroup>
-            <AnimatePresence mode="popLayout">{isModMode && <TwitchAuthButton />}</AnimatePresence>
+            <TwitchAuthButton />
             <SettingsDropdown />
           </LayoutGroup>
         </div>
