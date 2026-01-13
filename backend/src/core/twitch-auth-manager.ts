@@ -56,6 +56,14 @@ export class TwitchAuthManager implements ITwitchAuthManager {
     const data = await response.json().catch(() => ({}))
 
     if (!response.ok) {
+      const error = data as { message: string }
+
+      if (error.message === "Invalid refresh token") {
+        throw new Error(
+          "Twitch refresh token is invalid or has been revoked. Please update the token. See README for more information.",
+        )
+      }
+
       throw new Error(`Refresh failed: ${JSON.stringify(data)}`)
     }
 
@@ -171,6 +179,7 @@ export class TwitchAuthManager implements ITwitchAuthManager {
     if (!res.ok) {
       const error = await res.json().catch(() => ({}))
       logger.error({ url, status: res.status, error }, "[TWITCH AUTH] Twitch API request failed")
+
       throw new Error(`Twitch API request failed: ${JSON.stringify(error)}`)
     }
 
