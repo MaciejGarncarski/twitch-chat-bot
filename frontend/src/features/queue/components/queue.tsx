@@ -38,6 +38,7 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
 
   return (
     <motion.div
+      layout
       className={cn("bg-background flex flex-col gap-1 rounded-md border px-4 py-4 pb-10")}
     >
       <h2 className="text-muted-foreground mr-auto ml-1 pb-2 text-xl font-semibold">
