@@ -76,7 +76,7 @@ export const Player = ({
       </a>
       <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-4">
         <div className="relative flex items-center justify-between gap-2 md:items-start md:gap-4">
-          <div className="max-w-[27ch] px-0 text-left md:px-1">
+          <div className="md:max-w-auto max-w-[27ch] px-0 text-left md:px-1">
             <SongTitle title={title} isPlaying={isPlaying} />
             <h4 className="text-muted-foreground max-w-[20ch] truncate text-base">
               {author || ""}
