@@ -30,7 +30,6 @@ export function InteractionNotification({ hasInteracted, onInteract }: Props) {
             className="bg-card/90 text-card-foreground ring-border flex cursor-pointer flex-col items-center gap-4 rounded-2xl p-6 shadow-2xl ring-1 select-none md:p-8"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={(e) => e.stopPropagation()}
           >
             <motion.div
               animate={{ y: [0, -8, 0] }}
