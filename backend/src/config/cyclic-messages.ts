@@ -27,7 +27,7 @@ export const cyclicMessages: CyclicMessageConfig[] = [
     id: "help-reminder",
     messageKey: "reminders.helpPrompt",
     messageParams: { prefix: env.COMMAND_PREFIX },
-    intervalMs: 5 * 60 * 1000, // 5 minutes
+    intervalMs: 15 * 60 * 1000, // 15 minutes
     minMessagesBetween: 20,
     requireLive: true,
   },
@@ -35,7 +35,7 @@ export const cyclicMessages: CyclicMessageConfig[] = [
     id: "song-request-reminder",
     messageKey: "reminders.songRequestPrompt",
     messageParams: { prefix: env.COMMAND_PREFIX },
-    intervalMs: 7 * 60 * 1000, // 7 minutes
+    intervalMs: 20 * 60 * 1000, // 20 minutes
     minMessagesBetween: 20,
     requireLive: true,
   },
