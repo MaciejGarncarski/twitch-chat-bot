@@ -1,14 +1,11 @@
 import { useEffect } from "react"
 import { motion, useMotionValue, useTransform, animate } from "motion/react"
-import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useMuteToggle } from "@/features/player/hooks/use-mute-toggle"
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useIsModMode } from "@/hooks/use-is-mod-mode"
 
 export function VolumeIndicator({ volume }: { volume: number }) {
-  const { data } = useAuth()
-  const isMod = data?.isMod || false
   const muteMutation = useMuteToggle()
   const motionVolume = useMotionValue(volume)
   const displayValue = useTransform(motionVolume, (latest) => Math.round(latest * 100))
@@ -26,8 +23,8 @@ export function VolumeIndicator({ volume }: { volume: number }) {
     <div className="flex items-center gap-1">
       <button
         type="button"
-        className={cn("flex items-center gap-1", isMod && isModMode && "cursor-pointer")}
-        disabled={!isMod || !isModMode}
+        className={cn("flex items-center gap-1", isModMode && "cursor-pointer")}
+        disabled={!isModMode}
         onClick={() => {
           if (isModMode) {
             muteMutation.mutate()

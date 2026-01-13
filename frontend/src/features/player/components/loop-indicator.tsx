@@ -19,7 +19,7 @@ export function LoopIndicator({ isLoopEnabled }: { isLoopEnabled: boolean }) {
   return (
     <button
       type="button"
-      disabled={isModMode}
+      disabled={!isModMode}
       onClick={toggleLoop}
       className={cn(
         "flex h-6 items-center gap-1 px-1",

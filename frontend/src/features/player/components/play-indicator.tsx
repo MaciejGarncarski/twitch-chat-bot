@@ -31,7 +31,7 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
   return (
     <button
       type="button"
-      disabled={isModMode}
+      disabled={!isModMode}
       onClick={togglePlayState}
       className={cn(
         "relative flex h-6 items-center gap-1 px-1",
