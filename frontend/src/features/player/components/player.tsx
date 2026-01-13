@@ -45,7 +45,7 @@ export const Player = ({
     <motion.div
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
-      className="bg-background/95 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-6 py-4 md:flex-row"
+      className="bg-background/97 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-6 py-4 md:flex-row"
     >
       <AnimatePresence>
         {dataStatus === "loading" ? (
