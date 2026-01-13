@@ -68,7 +68,7 @@ export function TwitchAuthButton() {
                 <img
                   src={data.user.avatar}
                   alt={`${data.user.login}'s avatar`}
-                  className="mr-1 h-5 w-5"
+                  className="mr-1 h-5.5 w-5.5 rounded-sm border"
                 />
               ) : (
                 <User size={18} className="mr-2" />
