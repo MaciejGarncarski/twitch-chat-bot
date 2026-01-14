@@ -34,7 +34,7 @@ function RouteComponent() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-3xl flex-col gap-4 px-4 py-4 text-center md:py-8">
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+      <div className="flex flex-row items-center justify-between gap-4">
         <LayoutGroup>
           <TwitchAuthButton />
           <SettingsDropdown />

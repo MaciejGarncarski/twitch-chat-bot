@@ -19,8 +19,6 @@ export function SettingsDropdown() {
   const { setTheme, theme } = useTheme()
   const { setLanguage, language } = useI18n()
 
-  console.log(theme)
-
   return (
     <motion.div layout>
       <DropdownMenu>
