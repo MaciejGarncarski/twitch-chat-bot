@@ -6,7 +6,6 @@ import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools"
 import type { QueryClient } from "@tanstack/react-query"
 import { ThemeProvider } from "@/components/theme-provider"
 import { PlayerYT } from "@/features/player/components/player-yt"
-import { useDetectTheme } from "@/hooks/use-detect-theme"
 import { PlayerDataProvider } from "@/features/player/components/player-data-provider"
 import { I18nProvider } from "@/features/i18n/components/i18n-provider"
 
@@ -15,8 +14,6 @@ interface MyRouterContext {
 }
 
 const RootComponent = () => {
-  useDetectTheme()
-
   return (
     <>
       <I18nProvider defaultLanguage="pl" storageKey="bot-ui-language">
