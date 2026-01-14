@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   const { isLoading, data: queueData } = useQueue()
-  const { isPlaying, playTime, volume, isLoopEnabled, status } = usePlayerData()
+  const { isPlaying, playTime, volume, status } = usePlayerData()
   const playerRef = useRef<HTMLVideoElement>(null)
   const currentSong = queueData?.[0] ?? null
   const { isModMode } = useIsModMode()
@@ -47,7 +47,6 @@ function RouteComponent() {
           ) : currentSong ? (
             <Player
               dataStatus={status}
-              isLoopEnabled={isLoopEnabled}
               videoId={currentSong.id}
               author={currentSong.videoAuthor}
               duration={currentSong.duration}

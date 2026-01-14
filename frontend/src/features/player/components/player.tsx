@@ -13,7 +13,6 @@ import { AnimatePresence, motion } from "motion/react"
 
 type PlayerProps = {
   thumbnail: string | null
-  isLoopEnabled: boolean
   isPlaying: boolean
   volume: number
   author: string | null
@@ -35,7 +34,6 @@ export const Player = ({
   username,
   thumbnail,
   videoId,
-  isLoopEnabled,
   dataStatus,
 }: PlayerProps) => {
   const { isModMode } = useIsModMode()
@@ -71,7 +69,7 @@ export const Player = ({
         <img
           src={thumbnail || undefined}
           alt={title}
-          className="block h-full w-full rounded border border-neutral-800 object-cover"
+          className="border-border block h-full w-full rounded border object-cover"
         />
       </a>
       <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-4">
@@ -98,7 +96,7 @@ export const Player = ({
               <span className="opacity-70">-</span>
               <VolumeIndicator volume={volume} />
               <span className="opacity-70">-</span>
-              <LoopIndicator isLoopEnabled={isLoopEnabled} />
+              <LoopIndicator />
             </div>
 
             <p className="mr-1 flex items-center gap-2 md:ml-auto">

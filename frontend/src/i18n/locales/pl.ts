@@ -6,6 +6,7 @@ export const pl = {
     title: "Ustawienia",
   },
   player: {
+    needsAuthorization: "Musisz posiadać uprawnienia moda",
     play: "Odtwórz",
     pause: "Pauza",
     loopToggle: "Powtarzanie",

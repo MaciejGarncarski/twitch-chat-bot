@@ -3,6 +3,8 @@ import { useSetPlayState } from "@/features/player/hooks/use-set-play-state"
 import { cn } from "@/lib/utils"
 import { Pause, Play } from "lucide-react"
 import { motion, type Variants } from "motion/react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { useTranslate } from "@/features/i18n/hooks/use-translate"
 
 const MotionPlay = motion(Play)
 const MotionPause = motion(Pause)
@@ -20,6 +22,7 @@ const btnVariants: Variants = {
 
 export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
   const playStateMutation = useSetPlayState({ isPlaying })
+  const { t } = useTranslate()
   const { isModMode } = useIsModMode()
 
   const togglePlayState = () => {
@@ -29,32 +32,39 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
   }
 
   return (
-    <button
-      type="button"
-      disabled={!isModMode}
-      onClick={togglePlayState}
-      className={cn(
-        "relative flex h-6 items-center gap-1 px-1",
-        isModMode ? "cursor-pointer" : "cursor-not-allowed opacity-70",
-      )}
-    >
-      {isPlaying ? (
-        <MotionPause
-          key="playing"
-          variants={btnVariants}
-          initial="initial"
-          animate="animate"
-          size={17}
-        />
-      ) : (
-        <MotionPlay
-          key="paused"
-          variants={btnVariants}
-          initial="initial"
-          animate="animate"
-          size={17}
-        />
-      )}
-    </button>
+    <Tooltip>
+      <TooltipContent>
+        {t(isModMode ? (isPlaying ? "player.pause" : "player.play") : "player.needsAuthorization")}
+      </TooltipContent>
+      <TooltipTrigger>
+        <button
+          type="button"
+          disabled={!isModMode}
+          onClick={togglePlayState}
+          className={cn(
+            "relative flex h-6 items-center gap-1 px-1",
+            isModMode ? "cursor-pointer" : "cursor-not-allowed opacity-70",
+          )}
+        >
+          {isPlaying ? (
+            <MotionPause
+              key="playing"
+              variants={btnVariants}
+              initial="initial"
+              animate="animate"
+              size={17}
+            />
+          ) : (
+            <MotionPlay
+              key="paused"
+              variants={btnVariants}
+              initial="initial"
+              animate="animate"
+              size={17}
+            />
+          )}
+        </button>
+      </TooltipTrigger>
+    </Tooltip>
   )
 }

@@ -46,20 +46,20 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
       </h2>
       <motion.ul
         className={cn(
-          "bg-secondary/30 min-h-26 overflow-hidden rounded-lg border",
+          "bg-secondary/30 border-border min-h-26 overflow-hidden rounded-lg border",
           queuedCount === 0 && "border-transparent bg-transparent",
         )}
       >
         <AnimatePresence mode="popLayout">
           {queuedCount === 0 && (
-            <motion.div
+            <motion.p
               key="empty"
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-muted-foreground p-14 text-center"
+              className="p-14 text-center"
             >
               {t("queue.empty")}
-            </motion.div>
+            </motion.p>
           )}
           {filteredCurrent?.map((item, idx) => (
             <motion.li

@@ -8,6 +8,7 @@ export const en: TranslationSchema = {
     title: "Settings",
   },
   player: {
+    needsAuthorization: "You need mod authorization",
     play: "Play",
     pause: "Pause",
     loopToggle: "Loop",

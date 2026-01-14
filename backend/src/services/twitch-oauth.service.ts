@@ -7,7 +7,7 @@ import z from "zod"
 
 const clientId = env.TWITCH_CLIENT_ID
 const redirectUri = env.APP_REDIRECT_URI
-const scopes = ["user:read:email", "user:read:moderated_channels"].join(" ")
+const scopes = ["user:read:moderated_channels"].join(" ")
 
 const authParams = new URLSearchParams({
   client_id: clientId,

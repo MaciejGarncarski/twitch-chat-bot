@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 
 export function PlayerProgressBar() {
   const { playTime } = usePlayerData()
-  const { data: queueData, isPending } = useQueue()
+  const { data: queueData } = useQueue()
   const currentSong = queueData?.[0] ?? null
   const duration = currentSong ? currentSong.duration : 0
   const progress = playTime / duration
@@ -24,17 +24,10 @@ export function PlayerProgressBar() {
   const [isDragging, setIsDragging] = useState(false)
 
   const containerWidth = useRef(0)
-  const [prevProgress, setPrevProgress] = useState(progress)
   const dragX = useMotionValue(0)
   const dragProgress = useTransform(dragX, (x) =>
     containerWidth.current > 0 ? x / containerWidth.current : 0,
   )
-
-  const isLargeJump = Math.abs(progress - prevProgress) > 0.02
-
-  useEffect(() => {
-    setPrevProgress(progress)
-  }, [progress])
 
   useEffect(() => {
     if (!isDragging && containerRef.current) {
@@ -87,10 +80,7 @@ export function PlayerProgressBar() {
             scaleX: isDragging ? dragProgress : progress,
           }}
           animate={isDragging ? undefined : { scaleX: progress }}
-          transition={{
-            duration: isPending || isDragging || isLargeJump ? 0 : 1,
-            ease: "linear",
-          }}
+          transition={{ duration: 0 }}
         />
       </div>
 
