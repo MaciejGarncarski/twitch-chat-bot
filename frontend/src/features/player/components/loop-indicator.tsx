@@ -23,7 +23,7 @@ export function LoopIndicator({ isLoopEnabled }: { isLoopEnabled: boolean }) {
       onClick={toggleLoop}
       className={cn(
         "flex h-6 items-center gap-1 px-1",
-        isModMode ? "cursor-pointer" : "cursor-auto",
+        isModMode ? "cursor-pointer" : "cursor-not-allowed opacity-70",
       )}
     >
       <MotionRepeat

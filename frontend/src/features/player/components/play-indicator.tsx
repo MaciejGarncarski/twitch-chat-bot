@@ -35,7 +35,7 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
       onClick={togglePlayState}
       className={cn(
         "relative flex h-6 items-center gap-1 px-1",
-        isModMode ? "cursor-pointer" : "cursor-auto",
+        isModMode ? "cursor-pointer" : "cursor-not-allowed opacity-70",
       )}
     >
       {isPlaying ? (

@@ -23,7 +23,10 @@ export function VolumeIndicator({ volume }: { volume: number }) {
     <div className="flex items-center gap-1">
       <button
         type="button"
-        className={cn("flex items-center gap-1", isModMode && "cursor-pointer")}
+        className={cn(
+          "flex items-center gap-1",
+          isModMode ? "cursor-pointer" : "cursor-not-allowed opacity-70",
+        )}
         disabled={!isModMode}
         onClick={() => {
           if (isModMode) {
@@ -41,7 +44,7 @@ export function VolumeIndicator({ volume }: { volume: number }) {
           <Volume2 size={17} className="mr-1 inline-block" />
         )}
       </button>
-      <p className="inline-block w-8">
+      <p className={cn("text-sm select-none", !isModMode && "cursor-not-allowed opacity-70")}>
         <motion.span>{displayValue}</motion.span>%
       </p>
     </div>

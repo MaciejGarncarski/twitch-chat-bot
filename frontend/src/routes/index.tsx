@@ -10,7 +10,6 @@ import { AnimatePresence, LayoutGroup } from "motion/react"
 import { useRef } from "react"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { Player } from "@/features/player/components/player"
-import { Navigation } from "@/components/navigation"
 import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { TwitchAuthButton } from "@/features/auth/components/twitch-auth-button"
 import { SettingsDropdown } from "@/components/settings-dropdown"
@@ -36,14 +35,10 @@ function RouteComponent() {
   return (
     <div className="mx-auto flex min-h-screen max-w-3xl flex-col gap-4 px-4 py-4 text-center md:py-8">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <Navigation />
-
-        <div className="flex gap-4">
-          <LayoutGroup>
-            <TwitchAuthButton />
-            <SettingsDropdown />
-          </LayoutGroup>
-        </div>
+        <LayoutGroup>
+          <TwitchAuthButton />
+          <SettingsDropdown />
+        </LayoutGroup>
       </div>
       <div className="flex min-h-40 flex-col items-center gap-4">
         <AnimatePresence mode="popLayout">

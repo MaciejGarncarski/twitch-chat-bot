@@ -45,7 +45,7 @@ export const Player = ({
     <motion.div
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
-      className="bg-background/97 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-6 py-4 md:flex-row"
+      className="bg-background/98 relative flex w-full flex-col items-center justify-center gap-6 rounded-md border px-4 py-3 md:flex-row"
     >
       <AnimatePresence>
         {dataStatus === "loading" ? (
@@ -89,7 +89,7 @@ export const Player = ({
           )}
         </div>
         <div className="flex flex-col gap-3">
-          <div className="text-muted-foreground flex flex-col items-center justify-between gap-1 text-base md:flex-row md:gap-2">
+          <div className="text-muted-foreground flex flex-col items-center justify-center gap-1 text-base md:flex-row md:justify-between md:gap-2">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
                 <PlayIndicator isPlaying={isPlaying} />
@@ -100,7 +100,8 @@ export const Player = ({
               <span className="opacity-70">-</span>
               <LoopIndicator isLoopEnabled={isLoopEnabled} />
             </div>
-            <p className="mr-1 flex items-center gap-2">
+
+            <p className="mr-1 flex items-center gap-2 md:ml-auto">
               <UserIcon size={18} />
               {username}
             </p>
