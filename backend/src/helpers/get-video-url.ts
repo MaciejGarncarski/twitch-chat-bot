@@ -3,5 +3,5 @@ export function getVideoUrl(videoId: string): string {
     throw new Error("videoId is required")
   }
 
-  return `https://www.youtube.com/watch?v=${videoId}`
+  return `https://youtu.be/${videoId}`
 }

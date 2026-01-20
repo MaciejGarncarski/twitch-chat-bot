@@ -13,6 +13,7 @@ const createMockItem = (id: string, username: string = "user1"): QueuedItem => (
   videoUrl: `https://www.youtube.com/watch?v=${id}`,
   username,
   thumbnail: null,
+  videoAuthor: "Artist",
   duration: 180,
 })
 

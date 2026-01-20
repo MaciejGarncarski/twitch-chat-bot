@@ -112,8 +112,7 @@ export const pl = {
       link: "UI: https://bot.maciej-garncarski.pl/",
     },
     sr: {
-      added:
-        "Dodano do kolejki {title} przez @{username} (długość: {duration}). Pozycja w kolejce {position}. Odtwarzanie {playTime}.",
+      added: `Dodano do kolejki {title} przez @{username} (długość: {duration}) na miejscu {position}. Odtwarzanie {playTime}. {link}`,
       failed:
         "FootYellow Nie udało się dodać do kolejki. Tytuł: {title}, Długość: {duration}, Link: {link}",
       alreadyExists: "FootYellow Ten filmik jest już w kolejce!",

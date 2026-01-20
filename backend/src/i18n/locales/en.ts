@@ -113,7 +113,7 @@ export const en: TranslationSchema = {
     },
     sr: {
       added:
-        "Added to queue {title} by @{username} (length: {duration}). Queue position {position}. Playing {playTime}.",
+        "Added to queue {title} by @{username} (length: {duration}) at position {position}. Playing {playTime}. {link}",
       failed: "FootYellow Failed to add to queue. Title: {title}, Length: {duration}, Link: {link}",
       alreadyExists: "FootYellow This video is already in the queue!",
       queueFull: "PoroSad The queue is full! Try again later.",

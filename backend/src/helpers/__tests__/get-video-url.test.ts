@@ -4,7 +4,7 @@ import { describe, test, expect } from "bun:test"
 describe("get-video-url", () => {
   test("should return the correct video URL", () => {
     const videoId = "dQw4w9WgXcQ"
-    const expectedUrl = `https://www.youtube.com/watch?v=${videoId}`
+    const expectedUrl = `https://youtu.be/${videoId}`
 
     const actualUrl = getVideoUrl(videoId)
 

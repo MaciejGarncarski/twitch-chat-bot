@@ -85,6 +85,7 @@ export class YoutubeSrHandler extends CommandHandler {
         duration: durationFormatted,
         position: position || 0,
         playTime,
+        link: `https://youtu.be/${videoId}`,
       }),
       messageId,
     )

@@ -10,6 +10,7 @@ const createMockItem = (id: string, username: string = "user1"): QueuedItem => (
   title: `Song ${id}`,
   videoUrl: `https://www.youtube.com/watch?v=${id}`,
   username,
+  videoAuthor: "Artist",
   thumbnail: null,
   duration: 180,
 })
@@ -18,6 +19,7 @@ const createMockMetadata = (duration: number = 180) => ({
   title: "Test Song",
   thumbnail: "https://example.com/thumb.jpg",
   duration,
+  author: "Artist",
 })
 
 describe("SongQueue", () => {

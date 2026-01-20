@@ -61,7 +61,7 @@ export const Player = ({
         ) : null}
       </AnimatePresence>
       <a
-        href={`https://www.youtube.com/watch?v=${videoId}`}
+        href={`https://youtu.be/${videoId}`}
         target="_blank"
         rel="noopener noreferrer"
         className="focus:ring-ring relative block h-28 w-48 shrink-0 rounded focus:ring-2 focus:ring-offset-3 focus:outline-none"
