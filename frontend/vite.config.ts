@@ -16,7 +16,7 @@ const dirname =
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   server: {
-    port: 3301,
+    port: 3000,
     allowedHosts: true,
   },
   plugins: [

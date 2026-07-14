@@ -34,6 +34,4 @@ COPY backend ./backend
 
 WORKDIR /app/backend
 
-EXPOSE 3302
-
 CMD ["bun", "run", "src/index.ts"]
