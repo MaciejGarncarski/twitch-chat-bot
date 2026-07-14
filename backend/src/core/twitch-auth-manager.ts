@@ -1,5 +1,6 @@
 import { env } from "@/config/env"
 import { logger } from "@/helpers/logger"
+import { twitchFetch } from "@/helpers/twitch-retry"
 import {
   refreshResponseSchema,
   tokenResponseSchema,
@@ -42,7 +43,7 @@ export class TwitchAuthManager implements ITwitchAuthManager {
   async refresh() {
     logger.info("[TWITCH AUTH] Refreshing Twitch token")
 
-    const response = await fetch("https://id.twitch.tv/oauth2/token", {
+    const response = await twitchFetch("https://id.twitch.tv/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -80,7 +81,7 @@ export class TwitchAuthManager implements ITwitchAuthManager {
   }
 
   async fetchBroadcasterId() {
-    const response = await fetch(
+    const response = await twitchFetch(
       `https://api.twitch.tv/helix/users?login=${encodeURIComponent(env.TWITCH_BROADCASTER_NAME)}`,
       {
         method: "GET",
@@ -106,7 +107,7 @@ export class TwitchAuthManager implements ITwitchAuthManager {
   }
 
   async fetchBotUsername() {
-    const response = await fetch(`https://api.twitch.tv/helix/users`, {
+    const response = await twitchFetch(`https://api.twitch.tv/helix/users`, {
       method: "GET",
       headers: {
         "Client-ID": env.TWITCH_CLIENT_ID,
@@ -128,7 +129,7 @@ export class TwitchAuthManager implements ITwitchAuthManager {
   }
 
   async fetchUserId() {
-    const response = await fetch("https://id.twitch.tv/oauth2/validate", {
+    const response = await twitchFetch("https://id.twitch.tv/oauth2/validate", {
       method: "GET",
       headers: {
         Authorization: `OAuth ${this.accessToken}`,
@@ -160,7 +161,7 @@ export class TwitchAuthManager implements ITwitchAuthManager {
     if (!this.accessToken) await this.refresh()
 
     const execute = () =>
-      fetch(url, {
+      twitchFetch(url, {
         ...options,
         headers: {
           ...options.headers,
@@ -194,7 +195,7 @@ export class TwitchAuthManager implements ITwitchAuthManager {
       throw new Error("No code provided in callback URL")
     }
 
-    const response = await fetch("https://id.twitch.tv/oauth2/token", {
+    const response = await twitchFetch("https://id.twitch.tv/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({

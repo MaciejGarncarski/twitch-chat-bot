@@ -1,6 +1,7 @@
 import { env } from "@/config/env"
 import { twitchAuth } from "@/core/twitch-auth-manager"
 import { logger } from "@/helpers/logger"
+import { twitchFetch } from "@/helpers/twitch-retry"
 import { twitchUserResponseSchema } from "@/schemas/user-response"
 import { JWTPayload } from "@ttv-song-request/types"
 import z from "zod"
@@ -40,7 +41,7 @@ export async function handleAppAuthCallback(request: Request): Promise<JWTPayloa
 
   if (!code) throw new Error("No code provided")
 
-  const tokenResponse = await fetch("https://id.twitch.tv/oauth2/token", {
+  const tokenResponse = await twitchFetch("https://id.twitch.tv/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -61,7 +62,7 @@ export async function handleAppAuthCallback(request: Request): Promise<JWTPayloa
   const tokenData = await tokenResponse.json()
   const accessToken = tokenData.access_token
 
-  const userResponse = await fetch("https://api.twitch.tv/helix/users", {
+  const userResponse = await twitchFetch("https://api.twitch.tv/helix/users", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Client-Id": env.TWITCH_CLIENT_ID,
@@ -111,7 +112,7 @@ export async function handleAppAuthCallback(request: Request): Promise<JWTPayloa
       url.searchParams.set("after", cursor)
     }
 
-    const modCheckResponse = await fetch(url.toString(), {
+    const modCheckResponse = await twitchFetch(url.toString(), {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Client-Id": env.TWITCH_CLIENT_ID,
