@@ -1,6 +1,7 @@
 import { playbackStatusWSSchema, type PlayerDataReturn } from "@/features/player/schemas/player-ws"
 import { useMemo } from "react"
-import useWebSocket, { ReadyState } from "react-use-websocket"
+import { ReadyState } from "react-use-websocket"
+import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket"
 
 export function usePlayerWebsocket(): PlayerDataReturn {
   const { lastJsonMessage, readyState } = useWebSocket(
