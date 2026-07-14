@@ -5,6 +5,7 @@ import { jwt } from "@elysiajs/jwt"
 import { sendChatMessage } from "@/api/send-chat-message"
 import { env } from "@/config/env"
 import { ChatWebSocket } from "@/connectors/chat-ws"
+import { backupPlaylistManager } from "@/core/backup-playlist-manager"
 import { songRequestEngine } from "@/core/song-request-engine"
 import { twitchAuth } from "@/core/twitch-auth-manager"
 import { setBunServer } from "@/helpers/init-ws"
@@ -26,6 +27,8 @@ async function init() {
     twitchAuth.fetchUserId(),
     twitchAuth.fetchBroadcasterId(),
   ])
+  backupPlaylistManager.load()
+  songRequestEngine.setBackupPlaylistManager(backupPlaylistManager)
   songRequestEngine.setupEventListeners()
   const commandProcessor = new CommandProcessor(commandHandlers, twitchAuth)
   const cyclicMessageService = new CyclicMessageService(twitchAuth)
@@ -282,6 +285,61 @@ export const app = new Elysia()
               }),
             },
           )
+      })
+      .group("/backup", (backupRoutes) => {
+        return backupRoutes
+          .get("/", async ({ user }) => {
+            if (user?.role !== "MOD") {
+              return {
+                playlistUrl: null,
+                playlistId: null,
+                videoIds: [],
+                createdAt: null,
+                remaining: 0,
+              }
+            }
+
+            return backupPlaylistManager.getStatus()
+          })
+          .get("/videos", async ({ user, status }) => {
+            if (user?.role !== "MOD") {
+              return status(401, { status: "Unauthorized" })
+            }
+
+            return backupPlaylistManager.getVideos()
+          })
+          .post(
+            "/set",
+            async ({ user, status, body: { url } }) => {
+              if (user?.role !== "MOD") {
+                return status(401, { status: "Unauthorized" })
+              }
+
+              const total = await backupPlaylistManager.setPlaylist(url)
+              return { total }
+            },
+            {
+              body: t.Object({
+                url: t.String(),
+              }),
+            },
+          )
+          .post("/clear", async ({ user, status }) => {
+            if (user?.role !== "MOD") {
+              return status(401, { status: "Unauthorized" })
+            }
+
+            backupPlaylistManager.clear()
+            return status(204, null)
+          })
+          .post("/refill", async ({ user, status }) => {
+            if (user?.role !== "MOD") {
+              return status(401, { status: "Unauthorized" })
+            }
+
+            const total = await backupPlaylistManager.refill()
+            return { total }
+          })
       })
       .ws("/ws", {
         open(ws) {

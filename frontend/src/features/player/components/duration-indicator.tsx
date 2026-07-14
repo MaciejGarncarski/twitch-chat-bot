@@ -6,7 +6,12 @@ export function DurationIndicator({ playTime, duration }: { playTime: number; du
   const { isModMode } = useIsModMode()
 
   return (
-    <p className={cn("flex items-center gap-2", !isModMode && "cursor-not-allowed opacity-70")}>
+    <p
+      className={cn(
+        "flex items-center gap-2 text-sm",
+        !isModMode && "cursor-not-allowed opacity-70",
+      )}
+    >
       {formatDuration(playTime || 0)} / {formatDuration(duration)}
     </p>
   )

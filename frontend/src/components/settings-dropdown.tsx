@@ -1,3 +1,5 @@
+import { BackupPlaylistDialog } from "@/features/backup-playlist/components/backup-playlist-dialog"
+import { useAuth } from "@/features/auth/hooks/use-auth"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -18,19 +20,20 @@ export function SettingsDropdown() {
   const { t } = useTranslate()
   const { setTheme, theme } = useTheme()
   const { setLanguage, language } = useI18n()
+  const auth = useAuth()
+  const isMod = auth.data?.isMod || false
 
   return (
-    <motion.div layout>
+    <motion.div layout className="flex items-center gap-2">
+      {isMod && <BackupPlaylistDialog />}
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="default" variant="outline">
-            <Settings size={12} />
-            <span>{t("settings.title")}</span>
-          </Button>
+        <DropdownMenuTrigger render={<Button size="default" variant="outline" />}>
+          <Settings size={12} />
+          <span>{t("settings.title")}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-38" align="start">
-          <DropdownMenuLabel>{t("common.theme")}</DropdownMenuLabel>
           <DropdownMenuGroup>
+            <DropdownMenuLabel>{t("common.theme")}</DropdownMenuLabel>
             <DropdownMenuCheckboxItem
               checked={theme === "light"}
               onCheckedChange={() => setTheme("light")}
@@ -54,8 +57,8 @@ export function SettingsDropdown() {
             </DropdownMenuCheckboxItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>{t("common.language")}</DropdownMenuLabel>
           <DropdownMenuGroup>
+            <DropdownMenuLabel>{t("common.language")}</DropdownMenuLabel>
             <DropdownMenuCheckboxItem
               checked={language === "en"}
               onCheckedChange={() => setLanguage("en")}

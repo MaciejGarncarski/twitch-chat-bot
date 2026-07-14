@@ -91,14 +91,12 @@ export function PlayerManagementDropdown() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="outline">
-          <Menu size={12} />
-        </Button>
+      <DropdownMenuTrigger render={<Button size="sm" variant="outline" />}>
+        <Menu size={12} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-34 lg:w-60" align="start">
-        <DropdownMenuLabel>{t("common.song")}</DropdownMenuLabel>
         <DropdownMenuGroup>
+          <DropdownMenuLabel>{t("common.song")}</DropdownMenuLabel>
           <DropdownItemWithLoader
             icon={isPlaying ? Pause : Play}
             isPending={playStateMutation.isPending}
@@ -150,8 +148,8 @@ export function PlayerManagementDropdown() {
           />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>{t("common.queue")}</DropdownMenuLabel>
         <DropdownMenuGroup>
+          <DropdownMenuLabel>{t("common.queue")}</DropdownMenuLabel>
           <DropdownItemWithLoader
             icon={Dices}
             isPending={shuffleMutation.isPending}
@@ -187,7 +185,7 @@ function DropdownItemWithLoader({
   keyboardShortcut,
 }: {
   isPending: boolean
-  onSelect: (e: Event) => void
+  onSelect: () => void
   loadingText: string
   text: string
   icon: LucideIcon
@@ -197,14 +195,7 @@ function DropdownItemWithLoader({
   keyboardShortcut?: string
 }) {
   return (
-    <DropdownMenuItem
-      onSelect={(e) => {
-        e.preventDefault()
-        onSelect(e)
-      }}
-      variant={variant}
-      disabled={isPending || disabled}
-    >
+    <DropdownMenuItem onClick={onSelect} variant={variant} disabled={isPending || disabled}>
       {isPending ? (
         <>
           <Loader className="animation-duration-[2s] animate-spin" />

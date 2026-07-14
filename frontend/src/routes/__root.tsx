@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { PlayerYT } from "@/features/player/components/player-yt"
 import { PlayerDataProvider } from "@/features/player/components/player-data-provider"
 import { I18nProvider } from "@/features/i18n/components/i18n-provider"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -18,10 +19,12 @@ const RootComponent = () => {
     <>
       <I18nProvider defaultLanguage="pl" storageKey="bot-ui-language">
         <ThemeProvider defaultTheme="system" storageKey="bot-ui-theme">
-          <PlayerDataProvider>
-            <PlayerYT />
-            <Outlet />
-          </PlayerDataProvider>
+          <TooltipProvider>
+            <PlayerDataProvider>
+              <PlayerYT />
+              <Outlet />
+            </PlayerDataProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </I18nProvider>
       <TanStackDevtools

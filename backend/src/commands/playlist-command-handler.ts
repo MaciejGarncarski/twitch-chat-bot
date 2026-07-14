@@ -124,19 +124,38 @@ export class PlaylistCommandHandler extends CommandHandler {
   private async fetchPlaylistVideos(playlistId: string, limit: number): Promise<PlaylistSong[]> {
     const playlist = await innertube.getPlaylist(playlistId)
 
-    const validVideos = playlist.items
-      .filter((item): item is YTNodes.PlaylistVideo => item.type === "PlaylistVideo")
-      .filter((video) => {
+    const videoIds: string[] = []
+
+    for (const item of playlist.items) {
+      if (item.type === "PlaylistVideo") {
+        const video = item as YTNodes.PlaylistVideo
         const duration = video.duration?.seconds
-        return video.id && duration && duration <= MAX_VIDEO_DURATION_SECONDS
-      })
+        if (video.id && duration && duration <= MAX_VIDEO_DURATION_SECONDS) {
+          videoIds.push(video.id)
+        }
+      } else if (
+        item.type === "LockupView" &&
+        (item as { content_type: string }).content_type === "VIDEO"
+      ) {
+        videoIds.push((item as { content_id: string }).content_id)
+      }
+    }
 
-    shuffle(validVideos)
+    shuffle(videoIds)
 
-    return validVideos.slice(0, limit).map((video) => ({
-      videoId: video.id,
-      metadata: youtubeSearchService.mapYTNodeToMetadata(video),
-    }))
+    const songs: PlaylistSong[] = []
+    for (const videoId of videoIds.slice(0, limit)) {
+      try {
+        const metadata = await youtubeSearchService.getVideoMetadata(videoId)
+        if (metadata.duration <= MAX_VIDEO_DURATION_SECONDS) {
+          songs.push({ videoId, metadata })
+        }
+      } catch {
+        // skip failed
+      }
+    }
+
+    return songs
   }
 }
 

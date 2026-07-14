@@ -1,3 +1,4 @@
+import { BackupCommandHandler } from "@/commands/backup-command-handler"
 import { ClearAllCommandHandler } from "@/commands/clear-all-command-handler"
 import { CurrentSongCommandHandler } from "@/commands/current-song-command-handler"
 import { FillCommandHandler } from "@/commands/fill-command-handler"
@@ -22,6 +23,7 @@ import { WrongSongAllCommandHandler } from "@/commands/wrong-song-all-command-ha
 import { WrongSongCommandHandler } from "@/commands/wrong-song-command-handler"
 
 export const commandHandlers = [
+  new BackupCommandHandler(),
   new SkipCommandHandler(),
   new CurrentSongCommandHandler(),
   new QueueCommandHandler(),

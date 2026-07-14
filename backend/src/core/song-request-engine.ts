@@ -1,3 +1,4 @@
+import { IBackupPlaylistManager } from "@/core/backup-playlist-manager"
 import { IPlaybackManager, PlaybackManager } from "@/core/playback-manager"
 import { ISongQueue, SongQueue } from "@/core/song-queue"
 import { IVoteManager, VoteManager } from "@/core/vote-manager"
@@ -7,11 +8,16 @@ export class SongRequestEngine {
   private readonly songQueue: ISongQueue
   private readonly voteManager: IVoteManager
   private readonly playbackManager: IPlaybackManager
+  private backupPlaylistManager: IBackupPlaylistManager | null = null
 
   constructor(songQueue: ISongQueue, voteManager: IVoteManager, playbackManager: IPlaybackManager) {
     this.songQueue = songQueue
     this.voteManager = voteManager
     this.playbackManager = playbackManager
+  }
+
+  public setBackupPlaylistManager(manager: IBackupPlaylistManager) {
+    this.backupPlaylistManager = manager
   }
 
   public getSongQueue() {
@@ -24,6 +30,13 @@ export class SongRequestEngine {
 
   public getPlaybackManager() {
     return this.playbackManager
+  }
+
+  public getBackupPlaylistManager(): IBackupPlaylistManager {
+    if (!this.backupPlaylistManager) {
+      throw new Error("BackupPlaylistManager not set")
+    }
+    return this.backupPlaylistManager
   }
 
   public setupEventListeners() {
@@ -55,15 +68,26 @@ export class SongRequestEngine {
           return
         }
 
+        if (this.backupPlaylistManager) {
+          const added = await this.backupPlaylistManager.addSongToQueue(this.songQueue)
+          if (added) return
+        }
+
         this.playbackManager.stop()
       } catch (error) {
         logger.error(error, `[QUEUE] Error handling song-remove-current for [${item?.title}]`)
       }
     })
 
-    this.songQueue.on("clear-queue", () => {
+    this.songQueue.on("clear-queue", async () => {
       logger.info("[QUEUE] Queue cleared")
       this.voteManager.reset()
+
+      if (this.backupPlaylistManager) {
+        const added = await this.backupPlaylistManager.addSongToQueue(this.songQueue)
+        if (added) return
+      }
+
       this.playbackManager.stop()
     })
 

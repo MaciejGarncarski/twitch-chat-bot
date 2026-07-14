@@ -35,6 +35,18 @@ export const en: TranslationSchema = {
       mute: "Toggling",
       volume: "Setting",
     },
+    backup: {
+      title: "Backup Playlist",
+      changePlaylist: "Change Playlist",
+      save: "Save",
+      clear: "Clear",
+      refill: "Refill",
+      urlPlaceholder: "YouTube playlist URL...",
+      songsRemaining: "{remaining}/{total} songs remaining",
+      notSet: "No backup playlist set.",
+      saved: "Backup playlist saved! {total} songs loaded.",
+      cleared: "Backup playlist cleared.",
+    },
   },
   theme: {
     light: "Light",

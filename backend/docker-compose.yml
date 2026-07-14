@@ -27,6 +27,7 @@ services:
       - .env
     volumes:
       - yt-cache:/app/yt-metadata-cache
+      - backup-data:/app/data
     healthcheck:
       test:
         [
@@ -42,3 +43,4 @@ services:
 
 volumes:
   yt-cache:
+  backup-data:

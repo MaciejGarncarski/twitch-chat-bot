@@ -13,6 +13,7 @@ import { Player } from "@/features/player/components/player"
 import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { TwitchAuthButton } from "@/features/auth/components/twitch-auth-button"
 import { SettingsDropdown } from "@/components/settings-dropdown"
+import { BackupPlaylistSection } from "@/features/backup-playlist/components/backup-playlist-section"
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -34,7 +35,7 @@ function RouteComponent() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-3xl flex-col gap-4 px-4 py-4 text-center md:py-8">
-      <div className="flex flex-row items-center justify-between gap-4">
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <LayoutGroup>
           <TwitchAuthButton />
           <SettingsDropdown />
@@ -62,6 +63,8 @@ function RouteComponent() {
           )}
         </AnimatePresence>
       </div>
+
+      {isModMode && <BackupPlaylistSection />}
 
       <AnimatePresence mode="popLayout">
         {isLoading || queueData?.length === 0 ? null : <Queue showRemoveButton={isModMode} />}

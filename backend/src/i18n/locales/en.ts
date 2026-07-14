@@ -13,6 +13,19 @@ export const en: TranslationSchema = {
   ytSearchErrors: {
     metadataRetrievalFailed: "Failed to retrieve song metadata.",
   },
+  player: {
+    backup: {
+      title: "Backup Playlist",
+      save: "Save",
+      clear: "Clear",
+      refill: "Refill",
+      urlPlaceholder: "YouTube playlist URL...",
+      songsRemaining: "{remaining}/{total} songs",
+      notSet: "No backup playlist set.",
+      saved: "Backup playlist saved! {total} songs loaded.",
+      cleared: "Backup playlist cleared.",
+    },
+  },
   commands: {
     errors: {
       notAMod: "Only moderators can use this command.",
@@ -97,6 +110,7 @@ export const en: TranslationSchema = {
         remove: "<position>",
         shuffle: "",
         clearall: "",
+        backup: "<url_or_clear_or_refill>",
       },
     },
     next: {
@@ -112,8 +126,7 @@ export const en: TranslationSchema = {
       link: "UI: https://bot.maciej-garncarski.pl/",
     },
     sr: {
-      added:
-        "Added to queue {title} by @{username} (length: {duration}) at position {position}. Playing {playTime}. {link}",
+      added: `@{username}, added {title} to the queue at position {position}. Playing {playTime}. {link}`,
       failed: "FootYellow Failed to add to queue. Title: {title}, Length: {duration}, Link: {link}",
       alreadyExists: "FootYellow This video is already in the queue!",
       queueFull: "PoroSad The queue is full! Try again later.",
@@ -128,6 +141,15 @@ export const en: TranslationSchema = {
     voteskip: {
       voteReceived: "[VOTESKIP] [{votes}/{needed}] @{username} voted to skip the song.",
       skipped: "[VOTESKIP] [{votes}/{needed}] Skipped {title} (added by @{username}).",
+    },
+    backup: {
+      set: "Backup playlist set! {total} songs loaded.",
+      cleared: "Backup playlist cleared.",
+      status: "Backup playlist: {url} ({remaining}/{total} songs remaining)",
+      empty: "No backup playlist set.",
+      invalidUrl: "Invalid YouTube playlist URL.",
+      noUrl: "No backup playlist URL is set. Use !backup <url> first.",
+      refilled: "Backup playlist refilled with {total} songs.",
     },
   },
   common: {

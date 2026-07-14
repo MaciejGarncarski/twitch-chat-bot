@@ -33,6 +33,18 @@ export const pl = {
       mute: "Zmieniam",
       volume: "Ustawiam",
     },
+    backup: {
+      title: "Playlista zapasowa",
+      changePlaylist: "Zmień playlistę",
+      save: "Zapisz",
+      clear: "Wyczyść",
+      refill: "Odśwież",
+      urlPlaceholder: "URL playlisty YouTube...",
+      songsRemaining: "{remaining}/{total} utworów pozostało",
+      notSet: "Nie ustawiono playlisty zapasowej.",
+      saved: "Playlista zapasowa zapisana! Załadowano {total} utworów.",
+      cleared: "Playlista zapasowa wyczyszczona.",
+    },
   },
   theme: {
     light: "Jasny",

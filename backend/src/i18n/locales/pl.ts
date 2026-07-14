@@ -11,6 +11,19 @@ export const pl = {
   ytSearchErrors: {
     metadataRetrievalFailed: "Nie udało się pobrać utworu.",
   },
+  player: {
+    backup: {
+      title: "Playlista zapasowa",
+      save: "Zapisz",
+      clear: "Wyczyść",
+      refill: "Odśwież",
+      urlPlaceholder: "URL playlisty YouTube...",
+      songsRemaining: "{remaining}/{total} utworów",
+      notSet: "Nie ustawiono playlisty zapasowej.",
+      saved: "Playlista zapasowa zapisana! Załadowano {total} utworów.",
+      cleared: "Playlista zapasowa wyczyszczona.",
+    },
+  },
   commands: {
     errors: {
       notAMod: "Tylko moderatorzy mogą używać tej komendy.",
@@ -97,6 +110,7 @@ export const pl = {
         remove: "<pozycja>",
         shuffle: "",
         clearall: "",
+        backup: "<url_lub_clear_lub_refill>",
       },
     },
     next: {
@@ -112,7 +126,7 @@ export const pl = {
       link: "UI: https://bot.maciej-garncarski.pl/",
     },
     sr: {
-      added: `Dodano do kolejki {title} przez @{username} (długość: {duration}) na miejscu {position}. Odtwarzanie {playTime}. {link}`,
+      added: `@{username}, dodano {title} do kolejki na miejscu {position}. Odtwarzanie {playTime}. {link}`,
       failed:
         "FootYellow Nie udało się dodać do kolejki. Tytuł: {title}, Długość: {duration}, Link: {link}",
       alreadyExists: "FootYellow Ten filmik jest już w kolejce!",
@@ -128,6 +142,15 @@ export const pl = {
     voteskip: {
       voteReceived: "[VOTESKIP] [{votes}/{needed}] @{username} zagłosował za pominięciem utworu.",
       skipped: "[VOTESKIP] [{votes}/{needed}] Pominięto utwór {title} (dodany przez @{username}).",
+    },
+    backup: {
+      set: "Playlista zapasowa ustawiona! Załadowano {total} utworów.",
+      cleared: "Playlista zapasowa wyczyszczona.",
+      status: "Playlista zapasowa: {url} ({remaining}/{total} utworów pozostało)",
+      empty: "Nie ustawiono playlisty zapasowej.",
+      invalidUrl: "Nieprawidłowy URL playlisty YouTube.",
+      noUrl: "Nie ustawiono URL playlisty zapasowej. Użyj !backup <url>.",
+      refilled: "Playlista zapasowa odświeżona z {total} utworami.",
     },
   },
   common: {
