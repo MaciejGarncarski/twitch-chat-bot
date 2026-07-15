@@ -6,6 +6,12 @@ import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { motion, useMotionValue, useTransform } from "motion/react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+function formatTime(seconds: number) {
+  const m = Math.floor(seconds / 60)
+  const s = Math.floor(seconds % 60)
+  return `${m}:${s.toString().padStart(2, "0")}`
+}
+
 export function PlayerProgressBar() {
   const { playTime } = usePlayerData()
   const { data: queueData } = useQueue()
@@ -22,6 +28,9 @@ export function PlayerProgressBar() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+  const [hoverProgress, setHoverProgress] = useState(0)
+  const [dragDisplayTime, setDragDisplayTime] = useState<number | null>(null)
+  const [hoverTime, setHoverTime] = useState<number | null>(null)
 
   const containerWidth = useRef(0)
   const dragX = useMotionValue(0)
@@ -42,12 +51,18 @@ export function PlayerProgressBar() {
     setIsDragging(true)
   }, [canSeek])
 
+  const handleDrag = useCallback(() => {
+    const p = dragX.get() / containerWidth.current
+    setDragDisplayTime(Math.floor(Math.max(0, Math.min(1, p)) * duration))
+  }, [dragX, duration])
+
   const handleDragEnd = useCallback(() => {
     if (!canSeek) return
     const finalProgress = dragX.get() / containerWidth.current
     const newPosition = Math.floor(finalProgress * duration)
     seekMutation.mutate(newPosition)
     setIsDragging(false)
+    setDragDisplayTime(null)
   }, [canSeek, dragX, duration, seekMutation])
 
   const handleBarClick = useCallback(
@@ -62,14 +77,32 @@ export function PlayerProgressBar() {
     [canSeek, isDragging, duration, seekMutation],
   )
 
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const p = Math.max(0, Math.min(1, x / rect.width))
+      setHoverProgress(p)
+      setHoverTime(Math.floor(p * duration))
+    },
+    [duration],
+  )
+
   const showHandle = canSeek && (isHovering || isDragging)
+  const floatingTime = isDragging ? dragDisplayTime : hoverTime
+  const floatingLeft = isDragging ? dragX.get() : hoverProgress * (containerWidth.current || 1)
 
   return (
     <div
       ref={containerRef}
       className={`relative ${canSeek ? "cursor-pointer" : ""}`}
       onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      onMouseLeave={() => {
+        setIsHovering(false)
+        setHoverTime(null)
+      }}
+      onMouseMove={handleMouseMove}
       onClick={handleBarClick}
     >
       <div className="bg-secondary relative h-2 w-full overflow-hidden rounded-sm border">
@@ -97,6 +130,7 @@ export function PlayerProgressBar() {
           dragElastic={0}
           dragMomentum={false}
           onDragStart={handleDragStart}
+          onDrag={handleDrag}
           onDragEnd={handleDragEnd}
           whileHover={{ scale: 1.2 }}
           whileDrag={{ scale: 1.3 }}
@@ -112,6 +146,15 @@ export function PlayerProgressBar() {
             transition={{ duration: 0.15 }}
           />
         </motion.div>
+      )}
+
+      {canSeek && floatingTime !== null && (isHovering || isDragging) && (
+        <div
+          className="pointer-events-none absolute -top-7 z-20 -translate-x-1/2 rounded bg-black/80 px-1.5 py-0.5 text-xs text-white"
+          style={{ left: floatingLeft }}
+        >
+          {formatTime(floatingTime)}
+        </div>
       )}
     </div>
   )
