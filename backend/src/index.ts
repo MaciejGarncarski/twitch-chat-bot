@@ -7,7 +7,7 @@ import { env } from "@/config/env"
 import { ChatWebSocket } from "@/connectors/chat-ws"
 import { backupPlaylistManager } from "@/core/backup-playlist-manager"
 import { songRequestEngine } from "@/core/song-request-engine"
-import { twitchAuth } from "@/core/twitch-auth-manager"
+import { hasRequiredScopes, twitchAuth } from "@/core/twitch-auth-manager"
 import { setBunServer } from "@/helpers/init-ws"
 import { logger } from "@/helpers/logger"
 import { JWTPayload, JWTPayloadSchema } from "@ttv-song-request/types"
@@ -22,11 +22,19 @@ import { CyclicMessageService } from "@/services/cyclic-message.service"
 
 async function init() {
   await unsubscribeAll()
-  await Promise.all([
+  const [, user] = await Promise.all([
     twitchAuth.fetchBotUsername(),
     twitchAuth.fetchUserId(),
     twitchAuth.fetchBroadcasterId(),
   ])
+
+  if (!hasRequiredScopes(user.scopes)) {
+    logger.error(
+      { reconnectUrl: twitchAuth.reconnectUrl },
+      "[TWITCH AUTH] Token is missing required scopes. Reconnect with the URL above.",
+    )
+  }
+
   backupPlaylistManager.load()
   songRequestEngine.setBackupPlaylistManager(backupPlaylistManager)
   songRequestEngine.setupEventListeners()
@@ -151,7 +159,7 @@ export const app = new Elysia()
             return new Response(null, { status: 204 })
           })
           .get("/tokens", async ({ redirect }) => {
-            return redirect(twitchAuth.authUrl)
+            return redirect(twitchAuth.reconnectUrl)
           })
           .get("/callback/setup", async ({ request }) => {
             const tokens = await twitchAuth.handleCallback(request)

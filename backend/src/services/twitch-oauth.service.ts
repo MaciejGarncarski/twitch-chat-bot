@@ -6,9 +6,15 @@ import { twitchUserResponseSchema } from "@/schemas/user-response"
 import { JWTPayload } from "@ttv-song-request/types"
 import z from "zod"
 
+const REQUIRED_USER_SCOPES = ["user:read:moderated_channels"]
+
+export function hasRequiredUserScopes(userScopes: string[]): boolean {
+  return REQUIRED_USER_SCOPES.every((scope) => userScopes.includes(scope))
+}
+
 const clientId = env.TWITCH_CLIENT_ID
 const redirectUri = env.APP_REDIRECT_URI
-const scopes = ["user:read:moderated_channels"].join(" ")
+const scopes = REQUIRED_USER_SCOPES.join(" ")
 
 const authParams = new URLSearchParams({
   client_id: clientId,
@@ -18,6 +24,7 @@ const authParams = new URLSearchParams({
 })
 
 export const authUrl = `https://id.twitch.tv/oauth2/authorize?${authParams.toString()}`
+export const reconnectUrl = `${authUrl}&force_verify=true`
 
 const twitchModChannelSchema = z.object({
   broadcaster_id: z.string(),

@@ -9,7 +9,7 @@ import { t } from "@/i18n/i18n"
 export const app = new Elysia()
   .onStart(async () => {
     logger.info("[SERVER] Starting bot auth server...")
-    logger.info(`GO TO: ${twitchAuth.authUrl}`)
+    logger.info(`GO TO: ${twitchAuth.reconnectUrl}`)
   })
   .onStop(async () => {
     await sendChatMessage(t("bot.stopMessage"))
@@ -17,7 +17,7 @@ export const app = new Elysia()
   .group("/api", (app) => {
     return app
       .get("/auth/tokens", async ({ redirect }) => {
-        return redirect(twitchAuth.authUrl)
+        return redirect(twitchAuth.reconnectUrl)
       })
       .get("/auth/callback/setup", async ({ request }) => {
         const refreshToken = await twitchAuth.handleCallback(request)

@@ -7,11 +7,25 @@ import {
   userResponseSchema,
 } from "@/schemas/twitch-auth"
 
+const REQUIRED_SCOPES = [
+  "chat:read",
+  "chat:edit",
+  "channel:bot",
+  "user:read:chat",
+  "user:write:chat",
+  "moderator:manage:banned_users",
+]
+
+export function hasRequiredScopes(userScopes: string[]): boolean {
+  return REQUIRED_SCOPES.every((scope) => userScopes.includes(scope))
+}
+
 export interface ITwitchAuthManager {
   accessToken: string | null
   refreshToken: string
   scopes: string
   authUrl: string
+  reconnectUrl: string
   broadcasterId: string
   userId: string
   userBotUsername: string
@@ -28,10 +42,11 @@ export interface ITwitchAuthManager {
 export class TwitchAuthManager implements ITwitchAuthManager {
   public accessToken: string | null = null
   public refreshToken: string
-  public readonly scopes =
-    "chat:read chat:edit channel:bot user:read:chat user:write:chat moderator:manage:banned_users"
+  public readonly scopes = REQUIRED_SCOPES.join(" ")
 
   public authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${env.TWITCH_CLIENT_ID}&redirect_uri=${env.SETUP_REDIRECT_URI}&response_type=code&scope=${encodeURIComponent(this.scopes)}`
+
+  public reconnectUrl = `${this.authUrl}&force_verify=true`
   public broadcasterId: string = ""
   public userId: string = ""
   public userBotUsername: string = ""
@@ -164,9 +179,9 @@ export class TwitchAuthManager implements ITwitchAuthManager {
       twitchFetch(url, {
         ...options,
         headers: {
-          ...options.headers,
           "Client-ID": env.TWITCH_CLIENT_ID,
           Authorization: `Bearer ${this.accessToken}`,
+          ...options.headers,
         },
       })
 

@@ -269,7 +269,6 @@ export class CommandProcessor {
           break
 
         case CommandErrorCode.NOT_A_MOD:
-          await sendChatMessage(t("commands.errors.notAMod"), messageId)
           break
 
         case CommandErrorCode.EVENT_NOT_FOUND:

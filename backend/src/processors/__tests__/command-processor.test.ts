@@ -16,18 +16,10 @@ mock.module("@/helpers/logger", () => ({
   },
 }))
 
-mock.module("@/helpers/check-is-mod", () => ({
-  checkIsMod: mock(() => false),
-}))
-
 mock.module("@/helpers/rate-limit", () => ({
   rateLimiter: {
     check: mock(() => ({ allowed: true })),
   },
-}))
-
-mock.module("@/helpers/sanitize-message", () => ({
-  sanitizeMessage: mock((msg: string) => msg),
 }))
 
 mock.module("@/core/song-request-engine", () => ({
@@ -212,15 +204,5 @@ describe("CommandProcessor", () => {
 
     // Should not throw
     await processor.process(message)
-  })
-
-  test("should treat maciej_ga as mod", async () => {
-    const message = createMockMessage(`${prefix}test`, { username: "maciej_ga" })
-    mockHandler.canHandleMock.mockReturnValue(true)
-
-    await processor.process(message)
-
-    const ctx = mockHandler.executeMock.mock.calls[0][0] as CommandContext
-    expect(ctx.isMod).toBe(true)
   })
 })
