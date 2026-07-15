@@ -98,7 +98,7 @@ export class PlaybackManager extends EventEmitter implements IPlaybackManager {
     this.startedAt = null
     this.broadcastStatus()
 
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     this.isPlaying = true
     this.startedAt = Date.now()

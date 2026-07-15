@@ -97,9 +97,9 @@ export async function handleAppAuthCallback(request: Request): Promise<JWTPayloa
   const user = parsedData.data.data[0]
 
   const isBroadcaster = user.id === twitchAuth.broadcasterId
-  const isExtraMod = env.USERS_TREATED_AS_MODERATORS.includes(user.id)
-  console.log(env.USERS_TREATED_AS_MODERATORS, "USERS_TREATED_AS_MODERATORS")
-  console.log(isExtraMod, "isExtraMod")
+  const isExtraMod = env.USERS_TREATED_AS_MODERATORS.includes(
+    parsedData.data.data[0].login.toLowerCase(),
+  )
   const isMod = isBroadcaster || isExtraMod
 
   if (isMod) {
