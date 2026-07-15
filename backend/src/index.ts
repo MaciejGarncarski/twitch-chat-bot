@@ -224,6 +224,18 @@ export const app = new Elysia()
               return status(401, { status: "Unauthorized" })
             }
 
+            const queue = songRequestEngine.getSongQueue()
+
+            if (!queue.getCurrent()) {
+              try {
+                const backupManager = songRequestEngine.getBackupPlaylistManager()
+                const added = await backupManager.addSongToQueue(queue)
+                if (added) return status(204, null)
+              } catch {
+                // no backup playlist manager configured
+              }
+            }
+
             songRequestEngine.getPlaybackManager().play()
             return status(204, null)
           })
