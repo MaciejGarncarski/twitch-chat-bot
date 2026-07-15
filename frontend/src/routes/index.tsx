@@ -55,7 +55,6 @@ function RouteComponent() {
               username={currentSong.username}
               thumbnail={currentSong.thumbnail}
               isPlaying={isPlaying}
-              volume={volume}
               playTime={playTime}
             />
           ) : (

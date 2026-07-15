@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Loader } from "lucide-react"
+import { Loader, Shuffle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,6 +15,7 @@ import {
   useBackupStatus,
   useClearBackupPlaylist,
   useRefillBackupPlaylist,
+  useReshuffleBackupPlaylist,
   useSetBackupPlaylist,
 } from "@/features/backup-playlist/hooks/use-backup-playlist"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
@@ -25,6 +26,7 @@ export function BackupPlaylistDialog() {
   const setMutation = useSetBackupPlaylist()
   const clearMutation = useClearBackupPlaylist()
   const refillMutation = useRefillBackupPlaylist()
+  const reshuffleMutation = useReshuffleBackupPlaylist()
 
   const [url, setUrl] = useState("")
   const [open, setOpen] = useState(false)
@@ -43,7 +45,11 @@ export function BackupPlaylistDialog() {
     refillMutation.mutate()
   }
 
-  const isPending = setMutation.isPending || clearMutation.isPending || refillMutation.isPending
+  const isPending =
+    setMutation.isPending ||
+    clearMutation.isPending ||
+    refillMutation.isPending ||
+    reshuffleMutation.isPending
   const statusNotEmpty = status && status.playlistUrl
 
   return (
@@ -87,6 +93,20 @@ export function BackupPlaylistDialog() {
                 <Loader className="animation-duration-[2s] animate-spin" />
               ) : null}
               {t("player.backup.refill")}
+            </Button>
+          )}
+          {statusNotEmpty && (
+            <Button
+              variant="outline"
+              onClick={() => reshuffleMutation.mutate()}
+              disabled={isPending}
+            >
+              {reshuffleMutation.isPending ? (
+                <Loader className="animation-duration-[2s] animate-spin" />
+              ) : (
+                <Shuffle />
+              )}
+              {t("player.backup.reshuffle")}
             </Button>
           )}
           {statusNotEmpty && (

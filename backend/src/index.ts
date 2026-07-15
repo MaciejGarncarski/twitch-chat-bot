@@ -348,6 +348,14 @@ export const app = new Elysia()
             const total = await backupPlaylistManager.refill()
             return { total }
           })
+          .post("/reshuffle", async ({ user, status }) => {
+            if (user?.role !== "MOD") {
+              return status(401, { status: "Unauthorized" })
+            }
+
+            backupPlaylistManager.reshuffle()
+            return status(204, null)
+          })
       })
       .ws("/ws", {
         open(ws) {

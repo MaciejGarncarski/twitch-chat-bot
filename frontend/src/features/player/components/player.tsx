@@ -1,20 +1,14 @@
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
-import { DurationIndicator } from "@/features/player/components/duration-indicator"
-import { LoopIndicator } from "@/features/player/components/loop-indicator"
-import { PlayIndicator } from "@/features/player/components/play-indicator"
-import { PlayerManagementDropdown } from "@/features/player/components/player-management-dropdown"
+import { PlayerManagement } from "@/features/player/components/player-management"
 import { PlayerProgressBar } from "@/features/player/components/player-progress-bar"
 import { SongTitle } from "@/features/player/components/song-title"
-import { VolumeIndicator } from "@/features/player/components/volume-indicator"
 import { useIsModMode } from "@/hooks/use-is-mod-mode"
-import { cn } from "@/lib/utils"
 import { Loader, UserIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 type PlayerProps = {
   thumbnail: string | null
   isPlaying: boolean
-  volume: number
   author: string | null
   videoId: string
   playTime: number
@@ -25,7 +19,6 @@ type PlayerProps = {
 }
 
 export const Player = ({
-  volume,
   playTime,
   isPlaying,
   title,
@@ -73,37 +66,22 @@ export const Player = ({
         />
       </a>
       <div className="flex h-full w-full flex-1 flex-col justify-between gap-4 py-2 md:gap-4">
-        <div className="relative flex items-center justify-between gap-2 md:items-start md:gap-4">
-          <div className="max-w-[22ch] px-0 text-left md:max-w-none md:px-1">
+        <div className="flex items-center justify-between gap-2 md:items-start md:gap-4">
+          <div className="w-full px-0 text-left md:max-w-none md:px-1">
             <SongTitle title={title} isPlaying={isPlaying} />
-            <h4 className="text-muted-foreground max-w-[20ch] truncate text-base">
-              {author || ""}
-            </h4>
-          </div>
-          {isModMode && (
-            <div className={cn(!isPlaying && "absolute right-0 z-20")}>
-              <PlayerManagementDropdown />
+            <div className="flex justify-between">
+              <h4 className="text-muted-foreground max-w-[20ch] truncate text-base">
+                {author || ""}
+              </h4>
+              <p className="text-muted-foreground flex items-center gap-2">
+                <UserIcon size={18} />
+                {username}
+              </p>
             </div>
-          )}
+          </div>
         </div>
         <div className="flex flex-col gap-3">
-          <div className="text-muted-foreground flex flex-col items-center justify-center gap-1 text-base md:flex-row md:justify-between md:gap-2">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <PlayIndicator isPlaying={isPlaying} />
-                <DurationIndicator playTime={playTime} duration={duration} />
-              </div>
-              <span className="opacity-70">-</span>
-              <VolumeIndicator volume={volume} />
-              <span className="opacity-70">-</span>
-              <LoopIndicator />
-            </div>
-
-            <p className="mr-1 flex items-center gap-2 md:ml-auto">
-              <UserIcon size={18} />
-              {username}
-            </p>
-          </div>
+          {isModMode && <PlayerManagement playTime={playTime} duration={duration} />}
           <PlayerProgressBar />
         </div>
       </div>

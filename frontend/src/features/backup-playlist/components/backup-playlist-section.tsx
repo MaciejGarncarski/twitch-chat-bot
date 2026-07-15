@@ -2,10 +2,13 @@ import {
   useBackupStatus,
   useBackupVideos,
 } from "@/features/backup-playlist/hooks/use-backup-playlist"
+import { Button } from "@/components/ui/button"
+import { usePlayerData } from "@/features/player/components/player-data-provider"
+import { useSetPlayState } from "@/features/player/hooks/use-set-play-state"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
 import { cn } from "@/lib/utils"
 import { formatDuration } from "@/utils/format-duration"
-import { ChevronDown, Clock3, Loader } from "lucide-react"
+import { ChevronDown, Clock3, Loader, Pause, Play } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
 
@@ -14,6 +17,8 @@ export function BackupPlaylistSection() {
   const { data: status } = useBackupStatus()
   const [isOpen, setIsOpen] = useState(false)
   const { data: videos, isLoading } = useBackupVideos()
+  const { isPlaying } = usePlayerData()
+  const playStateMutation = useSetPlayState({ isPlaying })
 
   const count = status?.videoIds.length ?? 0
   const isEmpty = count === 0
@@ -24,23 +29,41 @@ export function BackupPlaylistSection() {
     <motion.div
       className={cn("bg-background flex flex-col gap-1 rounded-md border px-4 py-4 pb-4")}
     >
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex cursor-pointer items-center gap-2 text-left"
-      >
-        <ChevronDown
-          size={18}
-          className={cn(
-            "text-muted-foreground transition-transform duration-200",
-            !isOpen && "-rotate-90",
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex cursor-pointer items-center gap-2 text-left"
+        >
+          <ChevronDown
+            size={18}
+            className={cn(
+              "text-muted-foreground transition-transform duration-200",
+              !isOpen && "-rotate-90",
+            )}
+          />
+          <h2 className="text-muted-foreground mr-auto text-xl font-semibold">
+            {t("player.backup.title")}
+            <span className="text-muted-foreground/60 ml-2 text-base font-normal">({count})</span>
+          </h2>
+        </button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => playStateMutation.mutate()}
+          disabled={playStateMutation.isPending}
+          className="ml-auto shrink-0"
+        >
+          {playStateMutation.isPending ? (
+            <Loader className="animate-spin" />
+          ) : isPlaying ? (
+            <Pause />
+          ) : (
+            <Play />
           )}
-        />
-        <h2 className="text-muted-foreground mr-auto text-xl font-semibold">
-          {t("player.backup.title")}
-          <span className="text-muted-foreground/60 ml-2 text-base font-normal">({count})</span>
-        </h2>
-      </button>
+          {isPlaying ? t("player.pause") : t("player.play")}
+        </Button>
+      </div>
 
       <AnimatePresence initial={false}>
         {isOpen && (

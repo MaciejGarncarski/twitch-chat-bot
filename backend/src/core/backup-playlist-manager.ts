@@ -33,6 +33,7 @@ export interface IBackupPlaylistManager {
   getVideos(): Promise<BackupVideoInfo[]>
   setPlaylist(url: string): Promise<number>
   clear(): void
+  reshuffle(): void
   refill(): Promise<number>
   addSongToQueue(songQueue: ISongQueue): Promise<boolean>
 }
@@ -177,6 +178,16 @@ export class BackupPlaylistManager implements IBackupPlaylistManager {
     logger.info("[BACKUP PLAYLIST] Cleared")
   }
 
+  public reshuffle() {
+    shuffle(this.data.videoIds)
+    this.data.videos.sort(
+      (a, b) => this.data.videoIds.indexOf(a.id) - this.data.videoIds.indexOf(b.id),
+    )
+    this.index = 0
+    this.save()
+    logger.info("[BACKUP PLAYLIST] Reshuffled")
+  }
+
   public async refill(): Promise<number> {
     if (!this.data.playlistId) {
       throw new Error("No backup playlist URL is set")
@@ -238,12 +249,7 @@ export class BackupPlaylistManager implements IBackupPlaylistManager {
 
     const videoIds: string[] = []
 
-    console.log({ playlist })
-    console.log({ playlistVideos: playlist.videos })
-
     for (const item of playlist.items) {
-      console.log({ item })
-
       const itemId = (item as { id?: string }).id ?? (item as { content_id?: string }).content_id
       if (itemId) {
         videoIds.push(itemId)

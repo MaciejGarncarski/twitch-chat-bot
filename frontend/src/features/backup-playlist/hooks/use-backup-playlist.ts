@@ -1,5 +1,5 @@
 import { api } from "@/api/api-treaty"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryOptions } from "@tanstack/react-query"
 
 export type BackupStatus = {
@@ -45,40 +45,56 @@ export function useBackupVideos() {
 }
 
 export function useSetBackupPlaylist() {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (url: string) => {
       const { data } = await api.api.backup.set.post({ url })
       return data as unknown as { total: number }
     },
-    onSettled: (_, __, ___, ____, ctx) => {
-      ctx.client.invalidateQueries({ queryKey: ["backup"] })
-      ctx.client.invalidateQueries({ queryKey: ["backup", "videos"] })
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["backup"] })
+      queryClient.invalidateQueries({ queryKey: ["backup", "videos"] })
     },
   })
 }
 
 export function useClearBackupPlaylist() {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => {
       await api.api.backup.clear.post()
-      return new Promise((resolve) => setTimeout(resolve, 200))
+      await new Promise((resolve) => setTimeout(resolve, 200))
     },
-    onSettled: (_, __, ___, ____, ctx) => {
-      ctx.client.invalidateQueries({ queryKey: ["backup"] })
-      ctx.client.invalidateQueries({ queryKey: ["backup", "videos"] })
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["backup"] })
+      queryClient.invalidateQueries({ queryKey: ["backup", "videos"] })
     },
   })
 }
 
 export function useRefillBackupPlaylist() {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => {
       const { data } = await api.api.backup.refill.post()
       return data as unknown as { total: number }
     },
-    onSettled: (_, __, ___, ____, ctx) => {
-      ctx.client.invalidateQueries({ queryKey: ["backup"] })
-      ctx.client.invalidateQueries({ queryKey: ["backup", "videos"] })
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["backup"] })
+      queryClient.invalidateQueries({ queryKey: ["backup", "videos"] })
+    },
+  })
+}
+
+export function useReshuffleBackupPlaylist() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.api.backup.reshuffle.post()
+      return data
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["backup"] })
     },
   })
 }

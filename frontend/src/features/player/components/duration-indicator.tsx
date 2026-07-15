@@ -8,7 +8,7 @@ export function DurationIndicator({ playTime, duration }: { playTime: number; du
   return (
     <p
       className={cn(
-        "flex items-center gap-2 text-sm",
+        "flex items-center gap-2 text-base tabular-nums",
         !isModMode && "cursor-not-allowed opacity-70",
       )}
     >
