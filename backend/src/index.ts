@@ -13,6 +13,7 @@ import { logger } from "@/helpers/logger"
 import { JWTPayload, JWTPayloadSchema } from "@ttv-song-request/types"
 import { jwtConfig } from "@/config/jwt"
 import { authUrl, handleAppAuthCallback } from "@/services/twitch-oauth.service"
+import { getModStatus } from "@/helpers/mod-cache"
 import { CommandProcessor } from "@/processors/command-processor"
 import { commandHandlers } from "@/commands/handlers"
 import { unsubscribeAll } from "@/connectors/chat-subscription"
@@ -116,6 +117,31 @@ export const app = new Elysia()
               const data = await jwt.verify(token)
               const parsedData = JWTPayloadSchema.parse(data)
 
+              const cachedMod = getModStatus(parsedData.sub)
+              const currentRole = parsedData.role
+              let resolvedRole = currentRole
+
+              if (cachedMod !== undefined) {
+                resolvedRole = cachedMod ? "MOD" : "USER"
+              }
+
+              if (resolvedRole !== currentRole) {
+                const newPayload: JWTPayload = {
+                  sub: parsedData.sub,
+                  login: parsedData.login,
+                  role: resolvedRole,
+                }
+                const newToken = await jwt.sign(newPayload)
+                auth.set({
+                  value: newToken,
+                  httpOnly: true,
+                  maxAge: 7 * 86400,
+                  path: "/",
+                  sameSite: "lax",
+                  secure: env.NODE_ENV === "production",
+                })
+              }
+
               const userResponse = await twitchAuth.fetch(
                 `https://api.twitch.tv/helix/users?id=${parsedData.sub}`,
                 {
@@ -134,6 +160,7 @@ export const app = new Elysia()
                 authenticated: true,
                 user: {
                   ...parsedData,
+                  role: resolvedRole,
                   avatar: parsedUserData.data[0].profile_image_url,
                 },
               }

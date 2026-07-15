@@ -4,6 +4,7 @@ import { CommandHandler, ContextDeps } from "@/commands/command"
 import { env } from "@/config/env"
 import { songRequestEngine } from "@/core/song-request-engine"
 import { ChatBadge, checkIsMod } from "@/helpers/check-is-mod"
+import { updateModCache } from "@/helpers/mod-cache"
 import { logger } from "@/helpers/logger"
 import { rateLimiter } from "@/helpers/rate-limit"
 import { sanitizeMessage } from "@/helpers/sanitize-message"
@@ -87,6 +88,10 @@ export class CommandProcessor {
 
     const normalizedUser = username.toLowerCase()
     const isMod = this.checkUserPermissions(badges, chatterId, broadcasterId, normalizedUser)
+
+    if (userId) {
+      updateModCache(userId, isMod)
+    }
 
     const sanitizedMessage = sanitizeMessage(commandFromMention || messageText).toLowerCase()
     const sanitizedCommand = sanitizedMessage.slice(env.COMMAND_PREFIX.length).trim()
