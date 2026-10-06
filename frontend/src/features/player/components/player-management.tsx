@@ -71,7 +71,11 @@ function ActionButton({
       onClick={onClick}
       disabled={isPending || disabled}
       aria-label={label}
-      className={cn(active && "border-green-500 text-green-500")}
+      aria-pressed={active}
+      className={cn(
+        active &&
+          "border-green-600! bg-green-500/10! text-green-700! hover:bg-green-500/20! dark:border-green-400! dark:bg-green-500/15! dark:text-green-400! dark:hover:bg-green-500/25!",
+      )}
     >
       {isPending ? <Loader className="animate-spin" /> : <Icon />}
     </Button>
@@ -138,7 +142,7 @@ export function PlayerManagement({ playTime, duration }: PlayerManagementProps) 
         onClick={() => playStateMutation.mutate()}
         label={isPlaying ? t("player.pause") : t("player.play")}
       />
-      <DurationIndicator playTime={playTime} duration={duration} />
+      {duration > 0 && <DurationIndicator playTime={playTime} duration={duration} />}
       <ActionButton
         icon={Repeat}
         isPending={loopMutation.isPending}
@@ -151,6 +155,7 @@ export function PlayerManagement({ playTime, duration }: PlayerManagementProps) 
           icon={SkipForward}
           isPending={skipMutation.isPending}
           label={t("player.skip")}
+          disabled={duration === 0}
           dialogTrigger
         />
         <DialogContent>

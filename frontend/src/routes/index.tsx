@@ -1,4 +1,3 @@
-import { QueueEmptyMessage } from "@/features/queue/components/queue-empty-message"
 import { QueueLoadingMessage } from "@/features/queue/components/queue-loading-message"
 import { useDetectTheme } from "@/hooks/use-detect-theme"
 import { usePlayState } from "@/features/player/hooks/use-play-state"
@@ -78,20 +77,18 @@ function RouteComponent() {
             <AnimatePresence mode="popLayout">
               {isLoading ? (
                 <QueueLoadingMessage />
-              ) : currentSong ? (
+              ) : (
                 <Player
                   dataStatus={status}
-                  videoId={currentSong.id}
-                  author={currentSong.videoAuthor}
-                  duration={currentSong.duration}
-                  title={currentSong.title}
-                  username={currentSong.username}
-                  thumbnail={currentSong.thumbnail}
+                  videoId={currentSong?.id ?? null}
+                  author={currentSong?.videoAuthor ?? null}
+                  duration={currentSong?.duration ?? 0}
+                  title={currentSong?.title ?? ""}
+                  username={currentSong?.username ?? ""}
+                  thumbnail={currentSong?.thumbnail ?? null}
                   isPlaying={isPlaying}
                   playTime={playTime}
                 />
-              ) : (
-                <QueueEmptyMessage />
               )}
             </AnimatePresence>
           </section>
