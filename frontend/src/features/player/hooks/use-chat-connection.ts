@@ -3,7 +3,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query"
 
 export const chatConnectionQueryOptions = queryOptions({
   queryKey: ["chat-connection"],
-  queryFn: async () => {
+  queryFn: async (): Promise<boolean> => {
     const response = await api.api["chat-connection"].get()
     return response.data?.isConnected ?? false
   },

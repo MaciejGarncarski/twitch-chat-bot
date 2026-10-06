@@ -19,9 +19,9 @@ import { motion, type Variants } from "motion/react"
 const oauthUrl = apiURL + "api/auth/sign-in"
 
 const authButtonVariants: Variants = {
-  hidden: { opacity: 0, y: 5 },
-  visible: { opacity: 1, y: 0, transition: { delay: 0.3 } },
-  exit: { opacity: 0, y: 5 },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { delay: 0.3 } },
+  exit: { opacity: 0 },
 }
 
 export function TwitchAuthButton() {

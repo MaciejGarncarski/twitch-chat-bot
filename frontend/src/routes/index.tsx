@@ -76,10 +76,10 @@ function RouteComponent() {
                   className={buttonVariants({
                     variant: "outline",
                     size: "default",
-                    className: `ml-2 duration-200 sm:ml-3 ${
+                    className: `duration-200 ${
                       isChatConnected
-                        ? "bg-primary text-primary-foreground hover:bg-primary/80"
-                        : "bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+                        ? "bg-primary/60 dark:bg-primary/70 hover:dark:bg-primary/0 text-primary-foreground hover:bg-primary/80"
+                        : "bg-red-600/70 text-white hover:bg-red-700/85 dark:bg-red-700/70 dark:hover:bg-red-800/85"
                     }`,
                   })}
                   role="status"
