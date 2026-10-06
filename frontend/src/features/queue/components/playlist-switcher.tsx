@@ -16,6 +16,10 @@ export function PlaylistSwitcher() {
   const upcomingCount = Math.max(0, (queueData?.length ?? 0) - 1)
   const backupCount = backupStatus?.videoIds.length ?? 0
 
+  if (!isModMode) {
+    return <Queue showRemoveButton={false} embedded />
+  }
+
   return (
     <Tabs
       defaultValue="queue"
@@ -26,14 +30,11 @@ export function PlaylistSwitcher() {
           <h2 className="text-foreground m-0 text-lg font-semibold tracking-tight">
             {t("common.playlists")}
           </h2>
-          <p className="text-muted-foreground mt-1 mb-0 text-xs">
-            {t("common.playlistDescription")}
-          </p>
         </div>
         <TabsList
           className={cn(
             "border-border bg-muted/75 flex h-auto w-auto flex-none items-center justify-center gap-1 rounded-xl border p-1 max-sm:grid max-sm:w-full",
-            isModMode ? "max-sm:grid-cols-2" : "max-sm:grid-cols-1",
+            "max-sm:grid-cols-2",
           )}
         >
           <TabsTrigger
@@ -46,28 +47,24 @@ export function PlaylistSwitcher() {
               {upcomingCount}
             </span>
           </TabsTrigger>
-          {isModMode && (
-            <TabsTrigger
-              value="backup"
-              className="text-muted-foreground hover:text-foreground data-active:border-primary/30 data-active:bg-primary/15 data-active:text-foreground dark:data-active:text-foreground relative flex min-w-0 items-center justify-center gap-1 rounded-lg border border-transparent px-2 py-2 text-xs font-medium transition after:hidden data-active:shadow-none max-sm:w-full md:gap-2 md:px-3"
-            >
-              <ListMusic className="text-primary dark:text-primary size-4 shrink-0" />
-              <span className="whitespace-nowrap">{t("player.backup.titleShort")}</span>
-              <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
-                {backupCount}
-              </span>
-            </TabsTrigger>
-          )}
+          <TabsTrigger
+            value="backup"
+            className="text-muted-foreground hover:text-foreground data-active:border-primary/30 data-active:bg-primary/15 data-active:text-foreground dark:data-active:text-foreground relative flex min-w-0 items-center justify-center gap-1 rounded-lg border border-transparent px-2 py-2 text-xs font-medium transition after:hidden data-active:shadow-none max-sm:w-full md:gap-2 md:px-3"
+          >
+            <ListMusic className="text-primary dark:text-primary size-4 shrink-0" />
+            <span className="whitespace-nowrap">{t("player.backup.titleShort")}</span>
+            <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
+              {backupCount}
+            </span>
+          </TabsTrigger>
         </TabsList>
       </div>
       <TabsContent value="queue" className="min-w-0 outline-none">
         <Queue showRemoveButton={isModMode} embedded />
       </TabsContent>
-      {isModMode && (
-        <TabsContent value="backup" className="min-w-0 outline-none">
-          <BackupPlaylistSection />
-        </TabsContent>
-      )}
+      <TabsContent value="backup" className="min-w-0 outline-none">
+        <BackupPlaylistSection />
+      </TabsContent>
     </Tabs>
   )
 }

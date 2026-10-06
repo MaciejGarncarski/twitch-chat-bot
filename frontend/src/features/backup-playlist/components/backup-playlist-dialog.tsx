@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ListMusic, Loader, Shuffle } from "lucide-react"
+import { Loader, Shuffle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   useBackupStatus,
@@ -20,7 +19,13 @@ import {
 } from "@/features/backup-playlist/hooks/use-backup-playlist"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
 
-export function BackupPlaylistDialog() {
+export function BackupPlaylistDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
   const { t } = useTranslate()
   const { data: status, isLoading } = useBackupStatus()
   const setMutation = useSetBackupPlaylist()
@@ -29,7 +34,6 @@ export function BackupPlaylistDialog() {
   const reshuffleMutation = useReshuffleBackupPlaylist()
 
   const [url, setUrl] = useState("")
-  const [open, setOpen] = useState(false)
 
   const handleSave = () => {
     const finalUrl = url.trim() || status?.playlistUrl || ""
@@ -53,15 +57,7 @@ export function BackupPlaylistDialog() {
   const statusNotEmpty = status && status.playlistUrl
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button variant="outline" size="default" className="border-border text-foreground" />
-        }
-      >
-        <ListMusic className="size-4 sm:hidden" />
-        <span className="hidden sm:inline">{t("player.backup.title")}</span>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-border bg-popover/95 text-foreground rounded-2xl border shadow-2xl backdrop-blur-2xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t("player.backup.title")}</DialogTitle>

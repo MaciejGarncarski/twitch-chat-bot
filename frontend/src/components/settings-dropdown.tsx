@@ -6,6 +6,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -13,8 +14,9 @@ import {
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
 import { useTheme } from "@/components/theme-provider"
 import { useI18n } from "@/features/i18n/components/i18n-provider"
-import { Monitor, Moon, Settings, Sun } from "lucide-react"
+import { ListMusic, Monitor, Moon, Settings, Sun } from "lucide-react"
 import { motion } from "motion/react"
+import { useState } from "react"
 
 export function SettingsDropdown() {
   const { t } = useTranslate()
@@ -22,16 +24,19 @@ export function SettingsDropdown() {
   const { setLanguage, language } = useI18n()
   const auth = useAuth()
   const isMod = auth.data?.isMod || false
+  const [isBackupDialogOpen, setIsBackupDialogOpen] = useState(false)
 
   return (
     <motion.div layout className="flex items-center gap-2">
-      {isMod && <BackupPlaylistDialog />}
+      {isMod && (
+        <BackupPlaylistDialog open={isBackupDialogOpen} onOpenChange={setIsBackupDialogOpen} />
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button size="default" variant="outline" />}>
           <Settings className="size-4 sm:size-3" />
           <span className="hidden sm:inline">{t("settings.title")}</span>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-38" align="start">
+        <DropdownMenuContent className="w-56" align="end">
           <DropdownMenuGroup>
             <DropdownMenuLabel>{t("common.theme")}</DropdownMenuLabel>
             <DropdownMenuCheckboxItem
@@ -56,6 +61,17 @@ export function SettingsDropdown() {
               <Monitor className="ml-auto h-4 w-4" />
             </DropdownMenuCheckboxItem>
           </DropdownMenuGroup>
+          {isMod && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={() => setIsBackupDialogOpen(true)}>
+                  <ListMusic />
+                  {t("player.backup.title")}
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuLabel>{t("common.language")}</DropdownMenuLabel>
