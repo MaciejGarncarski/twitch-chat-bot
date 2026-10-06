@@ -100,6 +100,17 @@ YT_COOKIE="OPTIONAL BUT RECOMMENDED https://ytjs.dev/guide/authentication.html#c
 
 ## 3. Installation & Running
 
+### Deploy with Docker Compose
+
+From the repository root, run:
+
+```bash
+./deploy.sh
+```
+
+The script stops the Compose services, builds the backend image, and starts the
+services in the background. It uses `backend/.env`; named volumes are preserved.
+
 ### Install dependencies
 
 Run `bun install` in project root
