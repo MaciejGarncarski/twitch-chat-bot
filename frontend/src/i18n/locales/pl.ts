@@ -3,8 +3,8 @@ export const pl = {
     modMode: "Tryb moda",
   },
   chat: {
-    connected: "Bot działa",
-    disconnected: "Bot nie działa",
+    connected: "Bot online",
+    disconnected: "Bot offline",
   },
   settings: {
     title: "Ustawienia",

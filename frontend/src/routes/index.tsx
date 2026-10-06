@@ -76,8 +76,11 @@ function RouteComponent() {
                   className={buttonVariants({
                     variant: "outline",
                     size: "default",
-                    className:
-                      "bg-primary/40 dark:bg-primary/50 text-foreground hover:bg-primary/60 dark:hover:bg-primary/70 duration-200",
+                    className: `ml-2 duration-200 sm:ml-3 ${
+                      isChatConnected
+                        ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                        : "bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+                    }`,
                   })}
                   role="status"
                   aria-label={t(isChatConnected ? "chat.connected" : "chat.disconnected")}

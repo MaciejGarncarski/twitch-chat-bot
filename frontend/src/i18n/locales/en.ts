@@ -5,8 +5,8 @@ export const en: TranslationSchema = {
     modMode: "Mod mode",
   },
   chat: {
-    connected: "Bot is running",
-    disconnected: "Bot is offline",
+    connected: "Bot online",
+    disconnected: "Bot offline",
   },
   settings: {
     title: "Settings",
