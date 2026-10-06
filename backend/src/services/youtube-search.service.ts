@@ -84,7 +84,7 @@ export class YouTubeSearchService implements IYouTubeSearchService {
       return {
         duration: duration,
         title: title,
-        thumbnail: hasThumbnail ? thumbnail[thumbnail.length - 1].url : null,
+        thumbnail: hasThumbnail ? thumbnail[thumbnail.length - 2].url : null,
         author: author || null,
       }
     } catch (error) {

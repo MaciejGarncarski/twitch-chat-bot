@@ -1,4 +1,4 @@
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router"
+import { Outlet, createRootRouteWithContext, useRouterState } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools"
@@ -15,13 +15,15 @@ interface MyRouterContext {
 }
 
 const RootComponent = () => {
+  const isObsRoute = useRouterState({ select: (state) => state.location.pathname === "/obs" })
+
   return (
     <>
       <I18nProvider defaultLanguage="pl" storageKey="bot-ui-language">
         <ThemeProvider defaultTheme="system" storageKey="bot-ui-theme">
           <TooltipProvider>
             <PlayerDataProvider>
-              <PlayerYT />
+              {!isObsRoute && <PlayerYT />}
               <Outlet />
             </PlayerDataProvider>
           </TooltipProvider>

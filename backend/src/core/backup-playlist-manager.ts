@@ -141,6 +141,7 @@ export class BackupPlaylistManager implements IBackupPlaylistManager {
 
     for (let i = 0; i < this.data.videoIds.length; i += batchSize) {
       const batch = this.data.videoIds.slice(i, i + batchSize)
+
       const batchResults = await Promise.all(
         batch.map(async (id) => {
           try {
@@ -149,7 +150,7 @@ export class BackupPlaylistManager implements IBackupPlaylistManager {
             return {
               id,
               title: info.basic_info.title ?? "Unknown",
-              thumbnail: thumbnails?.[thumbnails.length - 1]?.url ?? null,
+              thumbnail: thumbnails?.at(-1)?.url ?? null,
               duration: info.basic_info.duration ?? 0,
               author: info.basic_info.author ?? null,
             }

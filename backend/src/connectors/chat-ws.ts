@@ -2,9 +2,9 @@ import { ensureChatSubscription } from "@/connectors/chat-subscription"
 import { logger } from "@/helpers/logger"
 import { CommandProcessor } from "@/processors/command-processor"
 import { twitchMessageSchema } from "@/schemas/twitch-websocket"
-import { CyclicMessageService } from "@/services/cyclic-message.service"
 
 export class ChatWebSocket {
+  public isConnected = false
   private ws?: WebSocket
   private missedMessageTimer?: NodeJS.Timeout
   private isTransferring = false
@@ -12,10 +12,7 @@ export class ChatWebSocket {
   private readonly DEFAULT_WS_URL = "wss://eventsub.wss.twitch.tv/ws"
   private keepaliveTimeoutSeconds = 30_000
 
-  constructor(
-    private commandProcessor: CommandProcessor,
-    private cyclicMessageService: CyclicMessageService,
-  ) {
+  constructor(private commandProcessor: CommandProcessor) {
     this.connect()
   }
 
@@ -24,8 +21,6 @@ export class ChatWebSocket {
 
     const ws = new WebSocket(url)
     this.ws = ws
-
-    this.cyclicMessageService.start()
 
     ws.addEventListener("message", async ({ data }) => {
       this.resetKeepaliveTimer()
@@ -40,6 +35,7 @@ export class ChatWebSocket {
         return
       }
 
+      this.isConnected = false
       logger.info("[CHAT WS] Connection lost. Retrying in 3s...")
 
       this.isTransferring = false
@@ -69,6 +65,7 @@ export class ChatWebSocket {
 
         if (!newSessionId) return
         this.ws = socketContext
+        this.isConnected = true
         logger.info(`[CHAT WS] Connected. Session ID: ${newSessionId}`)
 
         this.resetKeepaliveTimer()
@@ -96,7 +93,6 @@ export class ChatWebSocket {
       }
 
       case "notification": {
-        this.cyclicMessageService.onChatMessage()
         await this.commandProcessor.process(parsed)
         break
       }

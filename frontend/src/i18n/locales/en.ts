@@ -4,6 +4,10 @@ export const en: TranslationSchema = {
   navigation: {
     modMode: "Mod mode",
   },
+  chat: {
+    connected: "Bot is running",
+    disconnected: "Bot is offline",
+  },
   settings: {
     title: "Settings",
   },
@@ -64,6 +68,9 @@ export const en: TranslationSchema = {
   queue: {
     empty: "No songs in the queue.",
     loading: "Loading queue...",
+  },
+  obs: {
+    nextUp: "Up next",
   },
   auth: {
     login: "Log In",

@@ -8,11 +8,13 @@ import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "motion/react
 import { useRef } from "react"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { Player } from "@/features/player/components/player"
-import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { TwitchAuthButton } from "@/features/auth/components/twitch-auth-button"
 import { SettingsDropdown } from "@/components/settings-dropdown"
 import { PlaylistSwitcher } from "@/features/queue/components/playlist-switcher"
 import logo from "@/assets/logo.png"
+import { useChatConnection } from "@/features/player/hooks/use-chat-connection"
+import { useTranslate } from "@/features/i18n/hooks/use-translate"
+import { buttonVariants } from "@/components/ui/button"
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -24,6 +26,8 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   const { isLoading, data: queueData } = useQueue()
   const { isPlaying, playTime, volume, status } = usePlayerData()
+  const { data: isChatConnected } = useChatConnection()
+  const { t } = useTranslate()
   const playerRef = useRef<HTMLVideoElement>(null)
   const currentSong = queueData?.[0] ?? null
   useDetectTheme()
@@ -68,6 +72,19 @@ function RouteComponent() {
               <div className="[&_[data-slot=button]:hover]:bg-accent flex min-w-0 items-center gap-1 sm:gap-2">
                 <TwitchAuthButton />
                 <SettingsDropdown />
+                <span
+                  className={buttonVariants({
+                    variant: "outline",
+                    size: "default",
+                    className:
+                      "bg-primary/40 dark:bg-primary/50 text-foreground hover:bg-primary/60 dark:hover:bg-primary/70 duration-200",
+                  })}
+                  role="status"
+                  aria-label={t(isChatConnected ? "chat.connected" : "chat.disconnected")}
+                  title={t(isChatConnected ? "chat.connected" : "chat.disconnected")}
+                >
+                  {t(isChatConnected ? "chat.connected" : "chat.disconnected")}
+                </span>
               </div>
             </LayoutGroup>
           </motion.header>

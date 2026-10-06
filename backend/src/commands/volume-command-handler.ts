@@ -50,7 +50,5 @@ export class VolumeCommandHandler extends CommandHandler {
     }
 
     playbackManager.setVolume(volume)
-
-    await sendChatMessage(t("commands.volume.set", { volume }), messageId)
   }
 }

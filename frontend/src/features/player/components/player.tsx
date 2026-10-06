@@ -80,14 +80,14 @@ export const Player = ({
           </span>
           {isPlaying && (
             <span
-              className="absolute bottom-3 left-3.5 z-30 flex h-4 items-end gap-1"
+              className="border-primary/30 bg-background/70 absolute bottom-0.5 left-1 z-30 flex h-9 w-10 items-center justify-center gap-1 rounded-lg border p-1 px-3 pt-3 shadow-lg backdrop-blur-sm"
               aria-label="Playing"
             >
               {[0, 1, 2, 3].map((bar) => (
                 <motion.span
                   key={bar}
                   animate={shouldReduceMotion ? { scaleY: 1 } : { scaleY: [0.35, 1, 0.55, 0.85] }}
-                  className="bg-primary block h-full w-1 origin-bottom rounded-full shadow-sm"
+                  className="bg-primary block h-4 w-1 shrink-0 origin-bottom rounded-full shadow-sm"
                   transition={{
                     duration: 0.85 + bar * 0.12,
                     repeat: shouldReduceMotion ? 0 : Infinity,

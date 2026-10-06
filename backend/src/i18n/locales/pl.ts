@@ -1,13 +1,4 @@
 export const pl = {
-  bot: {
-    startMessage: "Bot uruchomiony!",
-    startChat: "Bot uruchomiony TwitchLit",
-    stopMessage: "Bot wyłączony StinkyGlitch",
-  },
-  reminders: {
-    helpPrompt: "Wpisz {prefix}help, aby zobaczyć dostępne komendy.",
-    songRequestPrompt: "Możesz poprosić o piosenkę, wpisując {prefix}sr <link_lub_fraza>!",
-  },
   ytSearchErrors: {
     metadataRetrievalFailed: "Nie udało się pobrać utworu.",
   },
@@ -62,7 +53,6 @@ export const pl = {
     },
     volume: {
       current: "Aktualna głośność to {volume}%.",
-      set: "Ustawiono głośność na {volume}%.",
     },
     playlist: {
       queueFull: "Kolejka jest pełna! Nie można dodać playlisty.",

@@ -2,7 +2,6 @@ import { cors } from "@elysiajs/cors"
 import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 
-import { sendChatMessage } from "@/api/send-chat-message"
 import { env } from "@/config/env"
 import { ChatWebSocket } from "@/connectors/chat-ws"
 import { backupPlaylistManager } from "@/core/backup-playlist-manager"
@@ -18,8 +17,8 @@ import { CommandProcessor } from "@/processors/command-processor"
 import { commandHandlers } from "@/commands/handlers"
 import { unsubscribeAll } from "@/connectors/chat-subscription"
 import { twitchUserResponseSchema } from "@/schemas/user-response"
-import { t as translate } from "@/i18n/i18n"
-import { CyclicMessageService } from "@/services/cyclic-message.service"
+
+let chatWebSocket: ChatWebSocket | undefined
 
 async function init() {
   await unsubscribeAll()
@@ -40,8 +39,7 @@ async function init() {
   songRequestEngine.setBackupPlaylistManager(backupPlaylistManager)
   songRequestEngine.setupEventListeners()
   const commandProcessor = new CommandProcessor(commandHandlers, twitchAuth)
-  const cyclicMessageService = new CyclicMessageService(twitchAuth)
-  new ChatWebSocket(commandProcessor, cyclicMessageService)
+  chatWebSocket = new ChatWebSocket(commandProcessor)
 }
 
 await init()
@@ -69,7 +67,6 @@ export const app = new Elysia()
   })
   .onStart(async ({ server }) => {
     logger.info(`[SERVER] [UP] listening on ${env.API_URL}`)
-    await sendChatMessage(translate("bot.startChat"))
     setBunServer(server)
 
     if (env.NODE_ENV === "development") {
@@ -82,9 +79,6 @@ export const app = new Elysia()
         videoId: "_jZuz3NEr18",
       })
     }
-  })
-  .onStop(async () => {
-    await sendChatMessage(translate("bot.stopMessage"))
   })
   .onError(async ({ code, status }) => {
     if (code === "NOT_FOUND") {
@@ -101,6 +95,9 @@ export const app = new Elysia()
       .get("/queue", async () => {
         const data = songRequestEngine.getSongQueue().getQueue()
         return data
+      })
+      .get("/chat-connection", () => {
+        return { isConnected: chatWebSocket?.isConnected ?? false }
       })
       .group("/auth", (authRoutes) => {
         return authRoutes

@@ -6,13 +6,11 @@ describe("i18n", () => {
   test("pl locale has expected translations", () => {
     expect(pl.commands.volume.current).toBe("Aktualna głośność to {volume}%.")
     expect(pl.commands.errors.queueEmpty).toBe("Kolejka jest pusta.")
-    expect(pl.bot.startChat).toBe("Bot uruchomiony TwitchLit")
   })
 
   test("en locale has expected translations", () => {
     expect(en.commands.errors.queueEmpty).toBe("The queue is empty.")
-    expect(en.commands.volume.set).toBe("Volume set to {volume}%.")
-    expect(en.bot.stopMessage).toBe("Bot stopped StinkyGlitch")
+    expect(en.commands.volume.current).toBe("Current volume is {volume}%.")
   })
 
   test("pl and en locales have matching structure", () => {

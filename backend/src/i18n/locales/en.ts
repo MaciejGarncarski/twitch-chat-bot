@@ -1,15 +1,6 @@
 import { TranslationSchema } from "@/i18n/types"
 
 export const en: TranslationSchema = {
-  bot: {
-    startMessage: "Bot started!",
-    startChat: "Bot is online TwitchLit",
-    stopMessage: "Bot stopped StinkyGlitch",
-  },
-  reminders: {
-    helpPrompt: "Type {prefix}help to see available commands.",
-    songRequestPrompt: "You can request a song by typing {prefix}sr <link_or_phrase>!",
-  },
   ytSearchErrors: {
     metadataRetrievalFailed: "Failed to retrieve song metadata.",
   },
@@ -62,7 +53,6 @@ export const en: TranslationSchema = {
     },
     volume: {
       current: "Current volume is {volume}%.",
-      set: "Volume set to {volume}%.",
     },
     playlist: {
       queueFull: "The queue is full! Cannot add a playlist.",

@@ -2,6 +2,10 @@ export const pl = {
   navigation: {
     modMode: "Tryb moda",
   },
+  chat: {
+    connected: "Bot działa",
+    disconnected: "Bot nie działa",
+  },
   settings: {
     title: "Ustawienia",
   },
@@ -62,6 +66,9 @@ export const pl = {
   queue: {
     empty: "Brak utworów w kolejce.",
     loading: "Ładowanie kolejki...",
+  },
+  obs: {
+    nextUp: "Następny utwór",
   },
   auth: {
     login: "Zaloguj się",

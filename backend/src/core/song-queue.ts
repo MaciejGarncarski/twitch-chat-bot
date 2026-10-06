@@ -89,6 +89,7 @@ export class SongQueue extends EventEmitter implements ISongQueue {
       Object.assign(finalMetadata, fetchedMetadata)
     }
     const { duration, title, thumbnail, author } = finalMetadata
+
     const videoUrl = getVideoUrl(validatedInput.videoId)
 
     if (this.checkIfExists(videoUrl)) {
