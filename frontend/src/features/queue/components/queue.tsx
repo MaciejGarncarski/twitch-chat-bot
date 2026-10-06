@@ -27,7 +27,13 @@ const itemVariants: Variants = {
   },
 }
 
-export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
+export const Queue = ({
+  showRemoveButton,
+  embedded = false,
+}: {
+  showRemoveButton: boolean
+  embedded?: boolean
+}) => {
   const { t } = useTranslate()
   const { data: queueData } = useQueue()
   const auth = useAuth()
@@ -39,14 +45,24 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
   return (
     <motion.div
       layout
-      className={cn("bg-background flex flex-col gap-1 rounded-md border px-4 py-4 pb-10")}
+      className={cn(
+        "border-border bg-card/75 dark:bg-card/80 flex flex-col gap-1 rounded-3xl border p-5 shadow-xl backdrop-blur-2xl",
+        embedded && "border-0 bg-transparent p-0 shadow-none backdrop-blur-none",
+      )}
     >
-      <h2 className="text-muted-foreground mr-auto ml-1 pb-2 text-xl font-semibold">
-        {t("common.queue")}
-      </h2>
+      {!embedded && (
+        <div className="flex items-center justify-between pb-4">
+          <h2 className="text-foreground m-0 text-lg font-semibold tracking-tight">
+            {t("common.queue")}
+          </h2>
+          <span className="border-border text-muted-foreground grid h-7 min-w-8 place-items-center rounded-lg border px-2 text-xs tabular-nums">
+            {String(queuedCount).padStart(2, "0")}
+          </span>
+        </div>
+      )}
       <motion.ul
         className={cn(
-          "bg-secondary/30 border-border min-h-26 overflow-hidden rounded-lg border",
+          "border-border bg-muted/75/75 min-h-26 overflow-hidden rounded-2xl border",
           queuedCount === 0 && "border-transparent bg-transparent",
         )}
       >
@@ -56,7 +72,7 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
               key="empty"
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-14 text-center"
+              className="text-muted-foreground p-14 text-center"
             >
               {t("queue.empty")}
             </motion.p>
@@ -71,7 +87,7 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
               animate="visible"
               exit="exit"
               className={cn(
-                "bg-secondary focus-within:bg-background hover:bg-background flex flex-col items-center gap-6 border-b p-4 md:flex-row",
+                "border-border focus-within:bg-accent hover:bg-accent dark:focus-within:bg-accent dark:hover:bg-accent flex flex-col items-center gap-6 border-b bg-transparent p-4 transition-colors md:flex-row md:gap-4 md:px-4 md:py-3",
                 idx === filteredCurrent?.length - 1 && "border-b-0",
               )}
             >
@@ -85,24 +101,24 @@ export const Queue = ({ showRemoveButton }: { showRemoveButton: boolean }) => {
                   <img
                     src={item.thumbnail}
                     alt={item.title}
-                    className="h-11 w-20 rounded border border-neutral-700 object-cover md:h-22 md:w-39"
+                    className="border-border h-11 w-20 rounded-lg border object-cover md:h-22 md:w-39"
                   />
                 </a>
               )}
               <div className="flex w-full flex-col gap-2 text-left">
                 <div>
-                  <h3 className="max-w-[40ch] truncate font-semibold md:text-lg">{item.title}</h3>
-                  <h4 className="text-muted-foreground max-w-[20ch] truncate text-base">
+                  <h3 className="max-w-sm truncate font-semibold md:text-lg">{item.title}</h3>
+                  <h4 className="text-muted-foreground max-w-48 truncate text-base">
                     {item.videoAuthor || ""}
                   </h4>
                 </div>
                 <div className="text-muted-foreground flex h-8 items-center gap-4 text-sm md:text-base">
                   <span className="flex items-center gap-2">
-                    <Clock3 size={16} /> {formatDuration(item.duration)}
+                    <Clock3 className="size-4" /> {formatDuration(item.duration)}
                   </span>
                   <span>|</span>
                   <p className="flex items-center gap-2">
-                    <UserIcon size={16} />
+                    <UserIcon className="size-4" />
                     {item.username}
                   </p>
 

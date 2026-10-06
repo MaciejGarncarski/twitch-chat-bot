@@ -1,4 +1,3 @@
-import { Queue } from "@/features/queue/components/queue"
 import { QueueEmptyMessage } from "@/features/queue/components/queue-empty-message"
 import { QueueLoadingMessage } from "@/features/queue/components/queue-loading-message"
 import { useDetectTheme } from "@/hooks/use-detect-theme"
@@ -6,14 +5,14 @@ import { usePlayState } from "@/features/player/hooks/use-play-state"
 import { queueQueryOptions, useQueue } from "@/features/queue/hooks/use-queue"
 import { useVolume } from "@/features/player/hooks/use-volume"
 import { createFileRoute } from "@tanstack/react-router"
-import { AnimatePresence, LayoutGroup } from "motion/react"
+import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "motion/react"
 import { useRef } from "react"
 import { usePlayerData } from "@/features/player/components/player-data-provider"
 import { Player } from "@/features/player/components/player"
 import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { TwitchAuthButton } from "@/features/auth/components/twitch-auth-button"
 import { SettingsDropdown } from "@/components/settings-dropdown"
-import { BackupPlaylistSection } from "@/features/backup-playlist/components/backup-playlist-section"
+import { PlaylistSwitcher } from "@/features/queue/components/playlist-switcher"
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -27,47 +26,75 @@ function RouteComponent() {
   const { isPlaying, playTime, volume, status } = usePlayerData()
   const playerRef = useRef<HTMLVideoElement>(null)
   const currentSong = queueData?.[0] ?? null
-  const { isModMode } = useIsModMode()
-
   useDetectTheme()
   usePlayState(playerRef, playTime, isPlaying)
   useVolume(playerRef, volume)
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-3xl flex-col gap-4 px-4 py-4 text-center md:py-8">
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <LayoutGroup>
-          <TwitchAuthButton />
-          <SettingsDropdown />
-        </LayoutGroup>
-      </div>
-      <div className="flex min-h-40 flex-col items-center gap-4">
-        <AnimatePresence mode="popLayout">
-          {isLoading ? (
-            <QueueLoadingMessage />
-          ) : currentSong ? (
-            <Player
-              dataStatus={status}
-              videoId={currentSong.id}
-              author={currentSong.videoAuthor}
-              duration={currentSong.duration}
-              title={currentSong.title}
-              username={currentSong.username}
-              thumbnail={currentSong.thumbnail}
-              isPlaying={isPlaying}
-              playTime={playTime}
-            />
-          ) : (
-            <QueueEmptyMessage />
-          )}
-        </AnimatePresence>
-      </div>
+    <MotionConfig reducedMotion="user">
+      <main className="bg-muted text-foreground relative isolate min-h-screen overflow-hidden">
+        <div
+          className="from-primary/20 dark:from-primary/25 pointer-events-none absolute -top-48 left-1/2 -z-10 h-96 w-full -translate-x-1/2 bg-radial to-transparent"
+          aria-hidden="true"
+        />
+        <div
+          className="bg-primary/15 dark:bg-primary/30 pointer-events-none absolute top-80 -left-56 -z-10 size-96 rounded-full blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="bg-primary/10 dark:bg-primary/25 pointer-events-none absolute top-176 -right-52 -z-10 size-96 rounded-full blur-3xl"
+          aria-hidden="true"
+        />
+        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-5 px-3.5 py-4 md:gap-6 md:px-5 md:py-6">
+          <motion.header
+            className="flex min-h-10 items-center justify-between gap-2"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <a
+              className="text-foreground flex shrink-0 items-center gap-2.5 text-base font-semibold tracking-tight no-underline"
+              href="/"
+              aria-label="Twitch Song Queue home"
+            >
+              <span className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-xl text-lg shadow-lg">
+                ♪
+              </span>
+              <span>BOT_MG</span>
+            </a>
+            <LayoutGroup>
+              <div className="[&_[data-slot=button]]:border-border [&_[data-slot=button]]:bg-card/75 [&_[data-slot=button]]:text-foreground [&_[data-slot=button]:hover]:bg-accent dark:[&_[data-slot=button]]:bg-card/80 flex min-w-0 items-center gap-1 sm:gap-2 [&_[data-slot=button]]:min-h-9 [&_[data-slot=button]]:rounded-xl [&_[data-slot=button]]:px-2 [&_[data-slot=button]]:backdrop-blur-xl sm:[&_[data-slot=button]]:px-3">
+                <TwitchAuthButton />
+                <SettingsDropdown />
+              </div>
+            </LayoutGroup>
+          </motion.header>
 
-      {isModMode && <BackupPlaylistSection />}
+          <section className="min-h-52">
+            <AnimatePresence mode="popLayout">
+              {isLoading ? (
+                <QueueLoadingMessage />
+              ) : currentSong ? (
+                <Player
+                  dataStatus={status}
+                  videoId={currentSong.id}
+                  author={currentSong.videoAuthor}
+                  duration={currentSong.duration}
+                  title={currentSong.title}
+                  username={currentSong.username}
+                  thumbnail={currentSong.thumbnail}
+                  isPlaying={isPlaying}
+                  playTime={playTime}
+                />
+              ) : (
+                <QueueEmptyMessage />
+              )}
+            </AnimatePresence>
+          </section>
 
-      <AnimatePresence mode="popLayout">
-        {isLoading || queueData?.length === 0 ? null : <Queue showRemoveButton={isModMode} />}
-      </AnimatePresence>
-    </div>
+          <PlaylistSwitcher />
+        </div>
+      </main>
+    </MotionConfig>
   )
 }

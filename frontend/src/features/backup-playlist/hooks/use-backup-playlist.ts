@@ -36,8 +36,8 @@ export const backupVideosQueryOptions = queryOptions({
   staleTime: 60_000,
 })
 
-export function useBackupStatus() {
-  return useQuery(backupQueryOptions)
+export function useBackupStatus(enabled = true) {
+  return useQuery({ ...backupQueryOptions, enabled })
 }
 
 export function useBackupVideos() {

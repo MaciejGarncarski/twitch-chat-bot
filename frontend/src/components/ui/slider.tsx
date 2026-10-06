@@ -51,7 +51,7 @@ function Slider({
             className="border-ring ring-ring/50 relative block size-3 shrink-0 rounded-full border bg-white transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3 disabled:pointer-events-none disabled:opacity-50"
           >
             <SliderPrimitive.Value
-              className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-black/80 px-1.5 py-0.5 text-xs whitespace-nowrap text-white transition-opacity"
+              className="bg-foreground text-background pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded px-1.5 py-0.5 text-xs whitespace-nowrap transition-opacity"
               style={{ opacity: isHovering ? 1 : 0 }}
             >
               {(_, values) => `${values[index]}%`}

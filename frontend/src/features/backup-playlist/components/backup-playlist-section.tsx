@@ -2,121 +2,63 @@ import {
   useBackupStatus,
   useBackupVideos,
 } from "@/features/backup-playlist/hooks/use-backup-playlist"
-import { Button } from "@/components/ui/button"
-import { usePlayerData } from "@/features/player/components/player-data-provider"
-import { useSetPlayState } from "@/features/player/hooks/use-set-play-state"
 import { useTranslate } from "@/features/i18n/hooks/use-translate"
-import { cn } from "@/lib/utils"
 import { formatDuration } from "@/utils/format-duration"
-import { ChevronDown, Clock3, Loader, Pause, Play } from "lucide-react"
-import { AnimatePresence, motion } from "motion/react"
-import { useState } from "react"
+import { Clock3, Loader } from "lucide-react"
+import { motion } from "motion/react"
 
 export function BackupPlaylistSection() {
   const { t } = useTranslate()
-  const { data: status } = useBackupStatus()
-  const [isOpen, setIsOpen] = useState(false)
-  const { data: videos, isLoading } = useBackupVideos()
-  const { isPlaying } = usePlayerData()
-  const playStateMutation = useSetPlayState({ isPlaying })
+  const { data: status, isLoading: isStatusLoading } = useBackupStatus()
+  const { data: videos, isLoading: isVideosLoading } = useBackupVideos()
+  const isEmpty = (status?.videoIds.length ?? 0) === 0
 
-  const count = status?.videoIds.length ?? 0
-  const isEmpty = count === 0
+  if (isStatusLoading || isVideosLoading) {
+    return (
+      <div className="text-primary dark:text-primary grid min-h-28 place-items-center">
+        <Loader className="animate-spin" />
+      </div>
+    )
+  }
 
-  if (isEmpty) return null
+  if (isEmpty) {
+    return (
+      <p className="border-border text-muted-foreground m-0 rounded-xl border border-dashed px-4 py-8 text-center text-sm">
+        {t("player.backup.notSet")}
+      </p>
+    )
+  }
 
   return (
-    <motion.div
-      className={cn("bg-background flex flex-col gap-1 rounded-md border px-4 py-4 pb-4")}
-    >
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex cursor-pointer items-center gap-2 text-left"
+    <div className="border-border bg-muted/75/75 overflow-hidden rounded-2xl border">
+      {videos?.map((video, idx) => (
+        <motion.div
+          key={video.id}
+          layout
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, delay: Math.min(idx * 0.035, 0.25) }}
+          className={`border-border hover:bg-primary/[0.06] flex items-center gap-2.5 border-b p-2 transition-colors md:gap-4 md:px-3 md:py-2.5 ${idx === (videos?.length ?? 0) - 1 ? "border-b-0" : ""}`}
         >
-          <ChevronDown
-            size={18}
-            className={cn(
-              "text-muted-foreground transition-transform duration-200",
-              !isOpen && "-rotate-90",
-            )}
-          />
-          <h2 className="text-muted-foreground mr-auto text-xl font-semibold">
-            {t("player.backup.title")}
-            <span className="text-muted-foreground/60 ml-2 text-base font-normal">({count})</span>
-          </h2>
-        </button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => playStateMutation.mutate()}
-          disabled={playStateMutation.isPending}
-          className="ml-auto shrink-0"
-        >
-          {playStateMutation.isPending ? (
-            <Loader className="animate-spin" />
-          ) : isPlaying ? (
-            <Pause />
-          ) : (
-            <Play />
+          {video.thumbnail && (
+            <img
+              src={video.thumbnail}
+              alt={video.title}
+              className="border-border w-20 shrink-0 rounded-lg border object-cover md:w-24"
+            />
           )}
-          {isPlaying ? t("player.pause") : t("player.play")}
-        </Button>
-      </div>
-
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            key="content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <div className="pt-3">
-              {isLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader className="animation-duration-[2s] animate-spin" />
-                </div>
-              ) : (
-                <div className="bg-secondary/30 border-border min-h-18 overflow-hidden rounded-lg border">
-                  {videos?.map((video, idx) => (
-                    <div
-                      key={video.id}
-                      className={cn(
-                        "bg-secondary focus-within:bg-background hover:bg-background flex flex-col items-center gap-6 border-b p-3 md:flex-row",
-                        idx === (videos?.length ?? 0) - 1 && "border-b-0",
-                      )}
-                    >
-                      {video.thumbnail && (
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="h-11 w-20 shrink-0 rounded border border-neutral-700 object-cover md:h-22 md:w-39"
-                        />
-                      )}
-                      <div className="flex w-full min-w-0 flex-col gap-1 text-left">
-                        <h3 className="max-w-[40ch] truncate font-semibold md:text-lg">
-                          {video.title}
-                        </h3>
-                        <h4 className="text-muted-foreground max-w-[20ch] truncate text-sm">
-                          {video.author || ""}
-                        </h4>
-                        <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                          <Clock3 size={14} />
-                          {formatDuration(video.duration)}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+          <div className="min-w-0 flex-1 text-left">
+            <h3 className="text-foreground m-0 truncate text-sm font-medium">{video.title}</h3>
+            <h4 className="text-muted-foreground mt-1 mb-0 truncate text-xs font-normal">
+              {video.author || ""}
+            </h4>
+            <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs tabular-nums">
+              <Clock3 className="size-4" />
+              {formatDuration(video.duration)}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          </div>
+        </motion.div>
+      ))}
+    </div>
   )
 }

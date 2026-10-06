@@ -23,7 +23,7 @@ export const app = new Elysia()
         const refreshToken = await twitchAuth.handleCallback(request)
 
         const html = `
-          <main style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+          <main style="font-family: Arial, sans-serif; max-width: 450pt; margin: 37.5pt auto; padding: 15pt; border: 0.75pt solid #ccc; border-radius: 6pt; box-shadow: 0 1.5pt 6pt rgba(0, 0, 0, 0.1);">
 
             <h1>Setup Complete</h1>
             <p>Copy the refresh token below and add it to your .env file as TWITCH_REFRESH_TOKEN:</p>

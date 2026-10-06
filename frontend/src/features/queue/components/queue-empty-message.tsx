@@ -7,7 +7,7 @@ export function QueueEmptyMessage() {
   return (
     <motion.p
       key="empty"
-      className="bg-background/95 flex h-34 w-full items-center justify-center rounded-md border text-2xl"
+      className="border-border bg-card/75 text-muted-foreground dark:bg-card/80 flex h-34 w-full items-center justify-center rounded-3xl border text-2xl shadow-2xl backdrop-blur-2xl"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >

@@ -41,6 +41,7 @@ export const pl = {
     },
     backup: {
       title: "Playlista zapasowa",
+      titleShort: "Zapasowa",
       changePlaylist: "Zmień playlistę",
       save: "Zapisz",
       clear: "Wyczyść",
@@ -84,6 +85,8 @@ export const pl = {
     theme: "Motyw",
     cancel: "Anuluj",
     queue: "Kolejka",
+    playlists: "Playlisty",
+    playlistDescription: "Wybierz, co zagra następne.",
     song: "Piosenka",
   },
 } as const

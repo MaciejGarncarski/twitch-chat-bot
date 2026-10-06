@@ -14,6 +14,7 @@ export const pl = {
   player: {
     backup: {
       title: "Playlista zapasowa",
+      titleShort: "Zapasowa",
       save: "Zapisz",
       clear: "Wyczyść",
       refill: "Odśwież",

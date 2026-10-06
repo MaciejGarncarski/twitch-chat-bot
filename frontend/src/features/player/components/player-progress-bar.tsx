@@ -17,7 +17,7 @@ export function PlayerProgressBar() {
   const { data: queueData } = useQueue()
   const currentSong = queueData?.[0] ?? null
   const duration = currentSong ? currentSong.duration : 0
-  const progress = playTime / duration
+  const progress = duration > 0 ? Math.max(0, Math.min(1, playTime / duration)) : 0
   const seekMutation = useSeekPosition()
 
   const { data } = useAuth()
@@ -94,68 +94,78 @@ export function PlayerProgressBar() {
   const floatingLeft = isDragging ? dragX.get() : hoverProgress * (containerWidth.current || 1)
 
   return (
-    <div
-      ref={containerRef}
-      className={`relative ${canSeek ? "cursor-pointer" : ""}`}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => {
-        setIsHovering(false)
-        setHoverTime(null)
-      }}
-      onMouseMove={handleMouseMove}
-      onClick={handleBarClick}
-    >
-      <div className="bg-secondary relative h-2 w-full overflow-hidden rounded-sm border">
-        <motion.div
-          className="bg-foreground h-full origin-left"
-          style={{
-            width: "100%",
-            scaleX: isDragging ? dragProgress : progress,
-          }}
-          animate={isDragging ? undefined : { scaleX: progress }}
-          transition={{ duration: 0 }}
-        />
+    <div className="flex flex-col gap-2">
+      <div
+        className="text-muted-foreground flex justify-between text-xs tabular-nums"
+        aria-hidden="true"
+      >
+        <span>
+          {formatTime(isDragging && dragDisplayTime !== null ? dragDisplayTime : playTime)}
+        </span>
+        <span>{formatTime(duration)}</span>
       </div>
-
-      {canSeek && (
-        <motion.div
-          className="absolute top-1/2 z-10"
-          style={{
-            x: dragX,
-            translateX: "-50%",
-            translateY: "-50%",
-          }}
-          drag="x"
-          dragConstraints={containerRef}
-          dragElastic={0}
-          dragMomentum={false}
-          onDragStart={handleDragStart}
-          onDrag={handleDrag}
-          onDragEnd={handleDragEnd}
-          whileHover={{ scale: 1.2 }}
-          whileDrag={{ scale: 1.3 }}
-        >
+      <div
+        ref={containerRef}
+        className={`relative py-1 ${canSeek ? "cursor-pointer" : ""}`}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => {
+          setIsHovering(false)
+          setHoverTime(null)
+        }}
+        onMouseMove={handleMouseMove}
+        onClick={handleBarClick}
+      >
+        <div className="bg-border dark:bg-muted relative h-1 w-full overflow-hidden rounded-full">
           <motion.div
-            className="bg-foreground rounded-full shadow-md"
-            initial={{ width: 0, height: 0, opacity: 0 }}
-            animate={{
-              width: showHandle ? 14 : 0,
-              height: showHandle ? 14 : 0,
-              opacity: showHandle ? 1 : 0,
+            className="from-primary to-chart-1 h-full origin-left rounded-full bg-gradient-to-r shadow-sm"
+            style={{
+              width: "100%",
+              scaleX: isDragging ? dragProgress : progress,
             }}
-            transition={{ duration: 0.15 }}
+            animate={isDragging ? undefined : { scaleX: progress }}
+            transition={{ duration: 0 }}
           />
-        </motion.div>
-      )}
-
-      {canSeek && floatingTime !== null && (isHovering || isDragging) && (
-        <div
-          className="pointer-events-none absolute -top-7 z-20 -translate-x-1/2 rounded bg-black/80 px-1.5 py-0.5 text-xs text-white"
-          style={{ left: floatingLeft }}
-        >
-          {formatTime(floatingTime)}
         </div>
-      )}
+
+        {canSeek && (
+          <motion.div
+            className="absolute top-1/2 z-10"
+            style={{
+              x: dragX,
+              translateX: "-50%",
+              translateY: "-50%",
+            }}
+            drag="x"
+            dragConstraints={containerRef}
+            dragElastic={0}
+            dragMomentum={false}
+            onDragStart={handleDragStart}
+            onDrag={handleDrag}
+            onDragEnd={handleDragEnd}
+            whileHover={{ scale: 1.2 }}
+            whileDrag={{ scale: 1.3 }}
+          >
+            <motion.div
+              className="size-3.5 rounded-full bg-white shadow-md"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{
+                scale: showHandle ? 1 : 0,
+                opacity: showHandle ? 1 : 0,
+              }}
+              transition={{ duration: 0.15 }}
+            />
+          </motion.div>
+        )}
+
+        {canSeek && floatingTime !== null && (isHovering || isDragging) && (
+          <div
+            className="bg-foreground text-background pointer-events-none absolute -top-7 z-20 -translate-x-1/2 rounded px-1.5 py-0.5 text-xs"
+            style={{ left: floatingLeft }}
+          >
+            {formatTime(floatingTime)}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

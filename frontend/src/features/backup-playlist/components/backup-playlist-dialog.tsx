@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Loader, Shuffle } from "lucide-react"
+import { ListMusic, Loader, Shuffle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -54,10 +54,15 @@ export function BackupPlaylistDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" size="default" />}>
-        <span>{t("player.backup.title")}</span>
+      <DialogTrigger
+        render={
+          <Button variant="outline" size="default" className="border-border text-foreground" />
+        }
+      >
+        <ListMusic className="size-4 sm:hidden" />
+        <span className="hidden sm:inline">{t("player.backup.title")}</span>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="border-border bg-popover/95 text-foreground rounded-2xl border shadow-2xl backdrop-blur-2xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t("player.backup.title")}</DialogTitle>
           <DialogDescription>
@@ -81,12 +86,12 @@ export function BackupPlaylistDialog() {
               value={url || status?.playlistUrl || ""}
               onChange={(e) => setUrl(e.target.value)}
               placeholder={t("player.backup.urlPlaceholder")}
-              className="focus-visible:border-ring focus-visible:ring-ring/50 rounded-lg border bg-clip-padding px-3 py-2 text-sm outline-none"
+              className="focus-visible:border-ring focus-visible:ring-ring/50 border-border bg-muted text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground rounded-lg border bg-clip-padding px-3 py-2 text-sm outline-none"
             />
           </div>
         )}
 
-        <DialogFooter className="gap-2">
+        <DialogFooter className="border-border bg-muted/80 dark:bg-muted/50 -mx-4 -mb-4 gap-2 rounded-b-2xl border-t p-4">
           {statusNotEmpty && (
             <Button variant="outline" onClick={handleRefill} disabled={isPending}>
               {refillMutation.isPending ? (
@@ -118,6 +123,7 @@ export function BackupPlaylistDialog() {
             </Button>
           )}
           <Button
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={handleSave}
             disabled={isPending || (!url.trim() && !status?.playlistUrl)}
           >

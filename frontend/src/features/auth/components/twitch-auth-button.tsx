@@ -62,7 +62,7 @@ export function TwitchAuthButton() {
             render={
               <Button
                 variant="outline"
-                className={"cursor-pointer"}
+                className="max-w-24 cursor-pointer sm:max-w-none"
                 disabled={isFetching || signOutMutation.isPending}
               />
             }
@@ -76,7 +76,7 @@ export function TwitchAuthButton() {
             ) : (
               <User size={18} className="mr-2" />
             )}
-            {data.user.login}
+            <span className="truncate">{data.user.login}</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuGroup>
@@ -104,7 +104,7 @@ export function TwitchAuthButton() {
       className={cn(
         buttonVariants({
           variant: "default",
-          className: "cursor-pointer bg-[#9146FF] text-white [a]:hover:bg-[#772ce8]",
+          className: "cursor-pointer bg-primary text-primary-foreground [a]:hover:bg-primary/90",
         }),
       )}
     >

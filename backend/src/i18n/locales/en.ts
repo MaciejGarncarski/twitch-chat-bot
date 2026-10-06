@@ -16,6 +16,7 @@ export const en: TranslationSchema = {
   player: {
     backup: {
       title: "Backup Playlist",
+      titleShort: "Backup",
       save: "Save",
       clear: "Clear",
       refill: "Refill",

@@ -43,6 +43,7 @@ export const en: TranslationSchema = {
     },
     backup: {
       title: "Backup Playlist",
+      titleShort: "Backup",
       changePlaylist: "Change Playlist",
       save: "Save",
       clear: "Clear",
@@ -86,6 +87,8 @@ export const en: TranslationSchema = {
     theme: "Theme",
     cancel: "Cancel",
     queue: "Queue",
+    playlists: "Playlists",
+    playlistDescription: "Choose what plays next.",
     song: "Song",
   },
 }

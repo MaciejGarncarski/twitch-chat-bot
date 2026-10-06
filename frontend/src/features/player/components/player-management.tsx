@@ -261,9 +261,7 @@ export function PlayerManagement({ playTime, duration }: PlayerManagementProps) 
           aria-label={t("player.volume")}
         />
       </div>
-      <span className="text-muted-foreground min-w-[3ch] text-sm tabular-nums">
-        {scaledVolume}%
-      </span>
+      <span className="text-muted-foreground min-w-12 text-sm tabular-nums">{scaledVolume}%</span>
     </div>
   )
 }

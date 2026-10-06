@@ -28,8 +28,8 @@ export function SettingsDropdown() {
       {isMod && <BackupPlaylistDialog />}
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button size="default" variant="outline" />}>
-          <Settings size={12} />
-          <span>{t("settings.title")}</span>
+          <Settings className="size-4 sm:size-3" />
+          <span className="hidden sm:inline">{t("settings.title")}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-38" align="start">
           <DropdownMenuGroup>

@@ -52,7 +52,7 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
               variants={btnVariants}
               initial="initial"
               animate="animate"
-              size={17}
+              className="size-4"
             />
           ) : (
             <MotionPlay
@@ -60,7 +60,7 @@ export function PlayIndicator({ isPlaying }: { isPlaying: boolean }) {
               variants={btnVariants}
               initial="initial"
               animate="animate"
-              size={17}
+              className="size-4"
             />
           )}
         </button>
