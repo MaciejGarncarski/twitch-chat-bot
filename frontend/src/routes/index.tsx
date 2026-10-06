@@ -12,6 +12,7 @@ import { useIsModMode } from "@/hooks/use-is-mod-mode"
 import { TwitchAuthButton } from "@/features/auth/components/twitch-auth-button"
 import { SettingsDropdown } from "@/components/settings-dropdown"
 import { PlaylistSwitcher } from "@/features/queue/components/playlist-switcher"
+import logo from "@/assets/logo.png"
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -60,19 +61,16 @@ function RouteComponent() {
               href="/"
               aria-label="Twitch Song Queue home"
             >
-              <span className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-xl text-lg shadow-lg">
-                ♪
-              </span>
+              <img className="size-8 rounded-xl object-contain" src={logo} alt="" />
               <span>BOT_MG</span>
             </a>
             <LayoutGroup>
-              <div className="[&_[data-slot=button]]:border-border [&_[data-slot=button]]:bg-card/75 [&_[data-slot=button]]:text-foreground [&_[data-slot=button]:hover]:bg-accent dark:[&_[data-slot=button]]:bg-card/80 flex min-w-0 items-center gap-1 sm:gap-2 [&_[data-slot=button]]:min-h-9 [&_[data-slot=button]]:rounded-xl [&_[data-slot=button]]:px-2 [&_[data-slot=button]]:backdrop-blur-xl sm:[&_[data-slot=button]]:px-3">
+              <div className="[&_[data-slot=button]:hover]:bg-accent flex min-w-0 items-center gap-1 sm:gap-2">
                 <TwitchAuthButton />
                 <SettingsDropdown />
               </div>
             </LayoutGroup>
           </motion.header>
-
           <section className="min-h-52">
             <AnimatePresence mode="popLayout">
               {isLoading ? (
@@ -92,7 +90,6 @@ function RouteComponent() {
               )}
             </AnimatePresence>
           </section>
-
           <PlaylistSwitcher />
         </div>
       </main>

@@ -62,7 +62,7 @@ export function TwitchAuthButton() {
             render={
               <Button
                 variant="outline"
-                className="max-w-24 cursor-pointer sm:max-w-none"
+                className="max-w-32 cursor-pointer sm:max-w-none"
                 disabled={isFetching || signOutMutation.isPending}
               />
             }

@@ -37,7 +37,7 @@ export const Player = ({
     <motion.div
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
-      className="border-border bg-card/75 dark:bg-card/80 relative flex w-full flex-col items-stretch justify-center gap-4 overflow-hidden rounded-3xl border p-3 text-left shadow-2xl backdrop-blur-2xl md:flex-row md:items-stretch md:gap-6 md:p-5"
+      className="border-border bg-card/75 relative flex w-full flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl border p-3 text-left shadow-2xl backdrop-blur-2xl md:flex-row md:gap-6 md:p-5"
     >
       <AnimatePresence>
         {dataStatus === "loading" ? (
@@ -59,7 +59,7 @@ export const Player = ({
           href={`https://youtu.be/${videoId}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group bg-muted focus-visible:outline-ring relative isolate block aspect-video w-full shrink-0 overflow-hidden rounded-2xl shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 sm:aspect-square sm:size-48"
+          className="group bg-muted focus-visible:outline-ring relative isolate block aspect-video w-full shrink-0 overflow-hidden rounded-2xl shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 sm:aspect-square sm:size-40"
         >
           <span
             className="absolute -inset-3 z-0 scale-110 bg-cover bg-center blur-md brightness-50"
@@ -101,7 +101,7 @@ export const Player = ({
         </a>
       ) : (
         <div
-          className="bg-muted text-muted-foreground grid aspect-video w-full shrink-0 place-items-center rounded-2xl sm:aspect-square sm:size-48"
+          className="bg-muted text-muted-foreground grid aspect-video w-full shrink-0 place-items-center rounded-2xl sm:aspect-square sm:size-44"
           aria-hidden="true"
         >
           <Music className="size-12" />
