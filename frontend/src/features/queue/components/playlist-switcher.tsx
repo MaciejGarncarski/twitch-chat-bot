@@ -39,7 +39,7 @@ export function PlaylistSwitcher() {
         >
           <TabsTrigger
             value="queue"
-            className="text-muted-foreground hover:text-foreground data-[active]:border-primary/30 data-[active]:bg-primary/15 data-[active]:text-foreground dark:data-[active]:text-foreground relative flex min-w-0 items-center justify-center gap-1 rounded-lg border border-transparent px-2 py-2 text-xs font-medium transition after:hidden data-[active]:shadow-none max-sm:w-full md:gap-2 md:px-3"
+            className="text-muted-foreground hover:text-foreground data-[active]:border-primary/30 data-[active]:bg-primary/15 data-[active]:text-foreground dark:data-[active]:text-foreground relative flex min-w-0 items-center justify-center gap-1 rounded-lg border border-transparent px-2 text-xs font-medium transition after:hidden data-[active]:shadow-none max-sm:w-full md:gap-2 md:px-3"
           >
             <Music2 className="text-primary dark:text-primary size-4 shrink-0" />
             <span className="whitespace-nowrap">{t("common.queue")}</span>
@@ -49,7 +49,7 @@ export function PlaylistSwitcher() {
           </TabsTrigger>
           <TabsTrigger
             value="backup"
-            className="text-muted-foreground hover:text-foreground data-active:border-primary/30 data-active:bg-primary/15 data-active:text-foreground dark:data-active:text-foreground relative flex min-w-0 items-center justify-center gap-1 rounded-lg border border-transparent px-2 py-2 text-xs font-medium transition after:hidden data-active:shadow-none max-sm:w-full md:gap-2 md:px-3"
+            className="text-muted-foreground hover:text-foreground data-active:border-primary/30 data-active:bg-primary/15 data-active:text-foreground dark:data-active:text-foreground relative flex min-w-0 items-center justify-center gap-1 rounded-lg border border-transparent px-2 text-xs font-medium transition after:hidden data-active:shadow-none max-sm:w-full md:gap-2 md:px-3"
           >
             <ListMusic className="text-primary dark:text-primary size-4 shrink-0" />
             <span className="whitespace-nowrap">{t("player.backup.titleShort")}</span>

@@ -71,7 +71,7 @@ export const Player = ({
             alt={title}
             className="absolute top-1/2 left-0 z-1 aspect-video h-auto w-full -translate-y-1/2 object-contain transition-transform duration-700 ease-out group-hover:scale-105"
           />
-          <span className="from-background/90 absolute inset-x-0 bottom-0 z-2 h-1/3 bg-linear-to-t to-transparent" />
+          <span className="from-background/50 absolute inset-x-0 bottom-0 z-2 h-1/3 bg-linear-to-t to-transparent" />
           <span
             className="border-border text-primary bg-background/80 absolute top-2.5 right-2.5 z-30 grid size-8 -translate-y-1 place-items-center rounded-xl border opacity-0 backdrop-blur-xl transition group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
             aria-hidden="true"
