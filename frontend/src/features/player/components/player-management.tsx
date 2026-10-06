@@ -52,6 +52,7 @@ function ActionButton({
   disabled,
   active,
   label,
+  dialogTrigger = false,
   variant = "outline",
 }: {
   isPending: boolean
@@ -60,22 +61,25 @@ function ActionButton({
   disabled?: boolean
   active?: boolean
   label: string
+  dialogTrigger?: boolean
   variant?: "outline" | "destructive"
 }) {
+  const button = (
+    <Button
+      size="icon-sm"
+      variant={variant}
+      onClick={onClick}
+      disabled={isPending || disabled}
+      aria-label={label}
+      className={cn(active && "border-green-500 text-green-500")}
+    >
+      {isPending ? <Loader className="animate-spin" /> : <Icon />}
+    </Button>
+  )
+
   return (
     <Tooltip>
-      <TooltipTrigger>
-        <Button
-          size="icon-sm"
-          variant={variant}
-          onClick={onClick}
-          disabled={isPending || disabled}
-          aria-label={label}
-          className={cn(active && "border-green-500 text-green-500")}
-        >
-          {isPending ? <Loader className="animate-spin" /> : <Icon />}
-        </Button>
-      </TooltipTrigger>
+      <TooltipTrigger render={dialogTrigger ? <DialogTrigger render={button} /> : button} />
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>
   )
@@ -143,14 +147,11 @@ export function PlayerManagement({ playTime, duration }: PlayerManagementProps) 
         label={t("player.loopToggle")}
       />
       <Dialog>
-        <DialogTrigger
-          render={
-            <ActionButton
-              icon={SkipForward}
-              isPending={skipMutation.isPending}
-              label={t("player.skip")}
-            />
-          }
+        <ActionButton
+          icon={SkipForward}
+          isPending={skipMutation.isPending}
+          label={t("player.skip")}
+          dialogTrigger
         />
         <DialogContent>
           <DialogHeader>
@@ -168,15 +169,12 @@ export function PlayerManagement({ playTime, duration }: PlayerManagementProps) 
         </DialogContent>
       </Dialog>
       <Dialog>
-        <DialogTrigger
-          render={
-            <ActionButton
-              icon={Dices}
-              isPending={shuffleMutation.isPending}
-              label={t("player.shuffle")}
-              disabled={isQueueEmpty}
-            />
-          }
+        <ActionButton
+          icon={Dices}
+          isPending={shuffleMutation.isPending}
+          label={t("player.shuffle")}
+          disabled={isQueueEmpty}
+          dialogTrigger
         />
 
         <DialogContent>
@@ -193,15 +191,12 @@ export function PlayerManagement({ playTime, duration }: PlayerManagementProps) 
         </DialogContent>
       </Dialog>
       <Dialog>
-        <DialogTrigger
-          render={
-            <ActionButton
-              icon={Trash}
-              isPending={clearQueueMutation.isPending}
-              label={t("player.clearAll")}
-              variant="destructive"
-            />
-          }
+        <ActionButton
+          icon={Trash}
+          isPending={clearQueueMutation.isPending}
+          label={t("player.clearAll")}
+          variant="destructive"
+          dialogTrigger
         />
 
         <DialogContent>
@@ -220,17 +215,19 @@ export function PlayerManagement({ playTime, duration }: PlayerManagementProps) 
         </DialogContent>
       </Dialog>
       <Tooltip>
-        <TooltipTrigger>
-          <Button
-            size="icon-sm"
-            variant="outline"
-            onClick={() => muteMutation.mutate()}
-            disabled={muteMutation.isPending}
-            aria-label={scaledVolume === 0 ? t("player.unmute") : t("player.mute")}
-          >
-            {muteMutation.isPending ? <Loader className="animate-spin" /> : <VolumeIcon />}
-          </Button>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <Button
+              size="icon-sm"
+              variant="outline"
+              onClick={() => muteMutation.mutate()}
+              disabled={muteMutation.isPending}
+              aria-label={scaledVolume === 0 ? t("player.unmute") : t("player.mute")}
+            >
+              {muteMutation.isPending ? <Loader className="animate-spin" /> : <VolumeIcon />}
+            </Button>
+          }
+        />
         <TooltipContent>
           {scaledVolume === 0 ? t("player.unmute") : t("player.mute")}
         </TooltipContent>
