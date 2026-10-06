@@ -33,7 +33,7 @@ export function BackupPlaylistSection() {
     <div className="border-border bg-muted/75/75 overflow-hidden rounded-2xl border">
       {videos?.map((video, idx) => (
         <motion.div
-          key={video.id}
+          key={`${video.id}-${idx}`}
           layout
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}

@@ -1,7 +1,16 @@
 pre-commit:
   jobs:
-    - name: Backend lint and format
+    - name: Backend lint
       root: backend/
-      glob: "*.{js,ts}"
-      run: bun lint && bun format
+      glob:
+        - "backend/*.{js,ts,jsx,tsx}"
+        - "backend/**/*.{js,ts,jsx,tsx}"
+      run: bunx oxlint --fix {staged_files}
+      stage_fixed: true
+    - name: Backend format
+      root: backend/
+      glob:
+        - "backend/*.{js,ts,jsx,tsx,json,jsonc,json5,css,html,md,mdx,yml,yaml}"
+        - "backend/**/*.{js,ts,jsx,tsx,json,jsonc,json5,css,html,md,mdx,yml,yaml}"
+      run: bunx oxfmt --write {staged_files}
       stage_fixed: true

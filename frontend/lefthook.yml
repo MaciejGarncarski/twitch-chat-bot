@@ -1,7 +1,16 @@
 pre-commit:
   jobs:
-    - name: Frontend lint and format
+    - name: Frontend lint
       root: frontend/
-      glob: "*.{js,ts,jsx,tsx}"
-      run: bun lint && bun format
+      glob:
+        - "frontend/*.{js,ts,jsx,tsx}"
+        - "frontend/**/*.{js,ts,jsx,tsx}"
+      run: bunx oxlint --fix {staged_files}
+      stage_fixed: true
+    - name: Frontend format
+      root: frontend/
+      glob:
+        - "frontend/*.{js,ts,jsx,tsx,json,jsonc,json5,css,html,md,mdx,yml,yaml}"
+        - "frontend/**/*.{js,ts,jsx,tsx,json,jsonc,json5,css,html,md,mdx,yml,yaml}"
+      run: bunx oxfmt --write {staged_files}
       stage_fixed: true

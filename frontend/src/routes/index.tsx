@@ -34,7 +34,11 @@ function RouteComponent() {
     <MotionConfig reducedMotion="user">
       <main className="bg-muted text-foreground relative isolate min-h-screen overflow-hidden">
         <div
-          className="from-primary/20 dark:from-primary/25 pointer-events-none absolute -top-48 left-1/2 -z-10 h-96 w-full -translate-x-1/2 bg-radial to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-140"
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse 120% 100% at 50% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, color-mix(in oklab, var(--primary) 9%, transparent) 45%, transparent 72%)",
+          }}
           aria-hidden="true"
         />
         <div

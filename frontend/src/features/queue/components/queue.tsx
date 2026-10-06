@@ -79,7 +79,7 @@ export const Queue = ({
           )}
           {filteredCurrent?.map((item, idx) => (
             <motion.li
-              key={item.id}
+              key={`${item.id}-${idx}`}
               layout
               custom={idx}
               variants={itemVariants}
