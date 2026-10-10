@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM oven/bun:1.4.2 AS base
+FROM oven/bun:1.4.3 AS base
 WORKDIR /app
 
 # Install dependencies

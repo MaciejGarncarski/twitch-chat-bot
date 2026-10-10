@@ -33,7 +33,7 @@
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
     "elysia": "1.4.30",
-    "bun-types": "1.4.2",
+    "bun-types": "1.4.3",
     "typescript-eslint": "^8.71.1"
   }
 }
