@@ -16,15 +16,15 @@
     "test:cov": "bun test --coverage"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.4.2",
+    "@elysiajs/cors": "^1.4.3",
     "@elysiajs/jwt": "^1.4.2",
     "@ttv-song-request/types": "workspace:*",
-    "elysia": "latest",
+    "elysia": "1.4.32",
     "lru-cache": "^11.0.1",
-    "p-retry": "^8.0.1",
+    "p-retry": "^9.0.0",
     "pino": "^10.4.0",
     "pino-pretty": "^13.2.0",
-    "youtubei.js": "^18.1.0",
+    "youtubei.js": "^18.3.0",
     "zod": "catalog:"
   },
   "devDependencies": {

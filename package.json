@@ -22,18 +22,18 @@
     "test:backend": "bun --filter=backend test"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "lefthook": "^2.1.17"
+    "@types/bun": "1.4.4",
+    "lefthook": "^2.2.2"
   },
   "peerDependencies": {
     "typescript": "^7.0.2"
   },
   "catalog": {
-    "zod": "^4.6.5",
-    "oxfmt": "^0.72.0",
-    "oxlint": "^1.87.0",
-    "elysia": "1.4.30",
-    "bun-types": "1.4.3",
-    "typescript-eslint": "^8.71.1"
+    "zod": "^4.6.7",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "elysia": "1.4.32",
+    "bun-types": "1.4.4",
+    "typescript-eslint": "^8.72.2"
   }
 }
